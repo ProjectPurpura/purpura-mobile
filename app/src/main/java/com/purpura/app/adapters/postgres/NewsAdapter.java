@@ -1,10 +1,10 @@
 package com.purpura.app.adapters.postgres;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -15,8 +15,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.purpura.app.R;
 import com.purpura.app.configuration.Methods;
-import com.purpura.app.model.postgres.news.News;
+import com.purpura.app.model.postgres.News;
 import com.purpura.app.remote.service.MongoService;
+import com.purpura.app.remote.service.PostgresService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,8 +25,6 @@ import java.util.List;
 public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder> {
 
     private List<News> news;
-    private final Methods methods = new Methods();
-    private final MongoService mongoService = new MongoService();
 
     public NewsAdapter(List<News> listNews) {
         this.news = listNews != null ? listNews : new ArrayList<>();
@@ -51,9 +50,8 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
 
         holder.newsButton.setOnClickListener(v -> {
             String url = news2.getLink();
-            WebView webView = new WebView(holder.newsButton.getContext());
-            webView.setWebViewClient(new WebViewClient());
-            webView.loadUrl(url);
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            holder.newsButton.getContext().startActivity(intent);
         });
 
     }

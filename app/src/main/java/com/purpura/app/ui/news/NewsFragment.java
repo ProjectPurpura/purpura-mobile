@@ -4,26 +4,17 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.purpura.app.R;
-import com.purpura.app.adapters.mongo.HomeAdapter;
 import com.purpura.app.adapters.postgres.NewsAdapter;
 import com.purpura.app.configuration.Methods;
-import com.purpura.app.model.mongo.Residue;
-import com.purpura.app.model.postgres.news.News;
-import com.purpura.app.remote.service.MongoService;
+import com.purpura.app.model.postgres.News;
 import com.purpura.app.remote.service.PostgresService;
 import com.purpura.app.ui.screens.errors.GenericError;
 
@@ -56,7 +47,7 @@ public class NewsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         recyclerView = view.findViewById(R.id.newsFragmentReciclerView);
-        recyclerView.setLayoutManager(new GridLayoutManager(requireContext(), 2));
+        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         adapter = new NewsAdapter(new ArrayList<>());
         recyclerView.setAdapter(adapter);
 
@@ -72,7 +63,6 @@ public class NewsFragment extends Fragment {
                     if (response.isSuccessful() && response.body() != null) {
                         adapter.updateList(response.body());
                     } else {
-                        methods.openScreenFragments(fragment, GenericError.class);
                     }
                 }
 

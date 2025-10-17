@@ -2,10 +2,10 @@ package com.purpura.app.model.mongo;
 
 public class Company {
     private String cnpj;
-    private String email;
-    private String urlFoto;
     private String nome;
+    private String email;
     private String telefone;
+    private String urlFoto;
 
     public Company(String cnpj, String email, String imagem, String nome, String telefone) {
         this.cnpj = cnpj;

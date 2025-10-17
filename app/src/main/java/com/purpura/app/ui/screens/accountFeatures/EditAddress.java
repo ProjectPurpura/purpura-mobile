@@ -49,8 +49,7 @@ public class EditAddress extends AppCompatActivity {
 
         RecyclerView recyclerView = findViewById(R.id.editAdressesRecycleView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-
+        
           try {
             FirebaseFirestore.getInstance()
                     .collection("empresa")

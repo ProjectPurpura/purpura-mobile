@@ -1,4 +1,4 @@
-package com.purpura.app.model.postgres.order;
+package com.purpura.app.model.postgres;
 
 import java.time.LocalDateTime;
 
@@ -7,6 +7,7 @@ public class Order {
     private Long idPedido;
     private String idVendedor;
     private String idComprador;
+    private Double valorTotal;
     private String observacoes;
     private LocalDateTime data;
     private String status;
@@ -30,6 +31,14 @@ public class Order {
 
     public String getIdComprador() {
         return idComprador;
+    }
+
+    public Double getValorTotal() {
+        return valorTotal;
+    }
+
+    public void setValorTotal(Double valorTotal) {
+        this.valorTotal = valorTotal;
     }
 
     public void setIdComprador(String idComprador) {

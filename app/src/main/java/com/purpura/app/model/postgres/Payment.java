@@ -1,4 +1,4 @@
-package com.purpura.app.model.postgres.payment;
+package com.purpura.app.model.postgres;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

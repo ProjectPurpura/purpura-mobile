@@ -135,6 +135,10 @@ public class Register extends AppCompatActivity {
         SignInButton btnGoogle = findViewById(R.id.loginWithGoogle);
         TextView txtLogin = findViewById(R.id.registerLoginText);
 
+        image.setOnClickListener(v -> {
+            requestGallery.launch(new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI));
+        });
+
         btnCadastrar.setOnClickListener(v -> {
             String nome = edtNome.getText().toString().trim();
             String telefone = edtTelefone.getText().toString().trim();
@@ -175,6 +179,7 @@ public class Register extends AppCompatActivity {
                                 .addOnSuccessListener(aVoid -> {
                                     try {
                                         runOnUiThread(() -> {
+                                            Log.e("Entrou antes da requisição", "Entrou antes da requisição");
                                             mongoService.createCompany(company, this);
                                             Toast.makeText(this, "Cadastro finalizado!", Toast.LENGTH_SHORT).show();
                                             methods.openScreenActivity(this, MainActivity.class);

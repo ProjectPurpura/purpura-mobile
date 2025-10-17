@@ -13,7 +13,7 @@
         android:layout_width="314dp"
         android:layout_height="120dp"
         android:layout_marginTop="15dp"
-        android:text="Ops! Algo deu errado por aqui. Nâo foi possível concluir essa ação, tente novamente."
+        android:text="Ops! Algo deu errado por aqui. Não foi possível concluir essa ação, tente novamente."
         android:textAlignment="center"
         android:textColor="@color/roxo_padrao"
         android:textSize="26sp"

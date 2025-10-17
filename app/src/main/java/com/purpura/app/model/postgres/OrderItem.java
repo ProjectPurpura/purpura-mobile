@@ -1,4 +1,4 @@
-package com.purpura.app.model.postgres.order;
+package com.purpura.app.model.postgres;
 
 public class OrderItem {
 

@@ -5,9 +5,9 @@ import retrofit2.Call;
 import retrofit2.http.*;
 
 import com.purpura.app.model.mongo.Residue;
-import com.purpura.app.model.postgres.news.News;
-import com.purpura.app.model.postgres.order.Order;
-import com.purpura.app.model.postgres.payment.Payment;
+import com.purpura.app.model.postgres.News;
+import com.purpura.app.model.postgres.Order;
+import com.purpura.app.model.postgres.Payment;
 import com.purpura.app.remote.util.Api;
 
 import java.util.List;

@@ -138,6 +138,8 @@ public class MongoService {
     }
 
     public void createCompany(Company company, Context context) {
+
+        Log.e("Entrou antes da requisição MongoService", "Entrou antes da requisição  MongoService");
         Call<Company> call = mongoAPI.createCompany(company);
 
         call.enqueue(new Callback<>() {

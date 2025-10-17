@@ -1,4 +1,4 @@
-package com.purpura.app.model.postgres.news;
+package com.purpura.app.model.postgres;
 
 public class News {
 
