@@ -3,7 +3,6 @@ package com.purpura.app.adapters;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,16 +35,12 @@ import retrofit2.Response;
 
 public class ProductPageAdapter extends RecyclerView.Adapter<ProductPageAdapter.ViewHolder> {
 
-    private static final String TAG = "ProductPageAdapter";
     private enum LoadState { LOADING, SUCCESS, ERROR }
 
     private final MongoService mongoService = new MongoService();
     private final Residue residue;
-
-    // Fallback de CNPJ (quando Residue não traz cnpj mapeado)
     private final String cnpjFallback;
 
-    // Dados e estados
     private Company company;
     private Address address;
     private LoadState companyState = LoadState.LOADING;
@@ -58,71 +53,66 @@ public class ProductPageAdapter extends RecyclerView.Adapter<ProductPageAdapter.
     private Call<Address> addressCall;
 
     private final Handler handler = new Handler(Looper.getMainLooper());
-    private static final long TIMEOUT_MS = 12000L; // 12s watchdog
+    private static final long TIMEOUT_MS = 12000L;
+
+    private String ownerCnpj = "";
+    private boolean probing = false;
 
     public ProductPageAdapter(@NonNull Residue residue, @NonNull String cnpjFallback) {
         this.residue = residue;
-        // limpa e guarda CNPJ externo (não confie no model depois do refresh)
-        this.cnpjFallback = sanitizeCnpj(cnpjFallback);
-
+        this.cnpjFallback = sanitize(cnpjFallback);
         fetchCompanyOnce();
         fetchAddressOnce();
         startWatchdogs();
     }
 
-    // Construtor compatível (se algum lugar antigo ainda chama com 1 arg)
     public ProductPageAdapter(@NonNull Residue residue) {
         this(residue, "");
     }
 
-    private String sanitizeCnpj(String c) {
-        if (c == null) return "";
-        return c.replaceAll("\\D+", "");
-    }
+    private String sanitize(String s) { return s == null ? "" : s.replaceAll("\\D+", ""); }
 
     private String effectiveCnpj() {
-        // tenta do Residue, senão usa fallback fornecido pela Activity
+        if (!TextUtils.isEmpty(ownerCnpj)) return ownerCnpj;
         String c = residue.getCnpj();
         if (TextUtils.isEmpty(c)) c = cnpjFallback;
-        return sanitizeCnpj(c);
+        return sanitize(c);
     }
 
     private void fetchCompanyOnce() {
         if (companyRequested) return;
         companyRequested = true;
         companyState = LoadState.LOADING;
-
         String cnpj = effectiveCnpj();
         if (TextUtils.isEmpty(cnpj)) {
-            Log.w(TAG, "CNPJ vazio/nulo para buscar empresa");
-            company = null;
             companyState = LoadState.ERROR;
             notifyItemChanged(0);
+            probeOwnerCnpj();
             return;
         }
+        fetchCompanyWithCnpj(cnpj, true);
+    }
 
+    private void fetchCompanyWithCnpj(String cnpj, boolean allowProbe) {
         companyCall = mongoService.getCompanyByCnpj(cnpj);
         companyCall.enqueue(new Callback<Company>() {
-            @Override
-            public void onResponse(@NonNull Call<Company> call, @NonNull Response<Company> resp) {
-                if (resp.isSuccessful() && resp.body() != null
-                        && notEmpty(resp.body().getNome())) {
+            @Override public void onResponse(@NonNull Call<Company> call, @NonNull Response<Company> resp) {
+                if (resp.isSuccessful() && resp.body() != null && notEmpty(resp.body().getNome())) {
                     company = resp.body();
                     companyState = LoadState.SUCCESS;
+                    notifyItemChanged(0);
                 } else {
-                    Log.w(TAG, "Empresa não encontrada. code=" + resp.code());
                     company = null;
                     companyState = LoadState.ERROR;
+                    notifyItemChanged(0);
+                    if (allowProbe) probeOwnerCnpj();
                 }
-                notifyItemChanged(0);
             }
-
-            @Override
-            public void onFailure(@NonNull Call<Company> call, @NonNull Throwable t) {
-                Log.e(TAG, "Falha ao buscar empresa: " + t.getMessage(), t);
+            @Override public void onFailure(@NonNull Call<Company> call, @NonNull Throwable t) {
                 company = null;
                 companyState = LoadState.ERROR;
                 notifyItemChanged(0);
+                if (allowProbe) probeOwnerCnpj();
             }
         });
     }
@@ -131,44 +121,30 @@ public class ProductPageAdapter extends RecyclerView.Adapter<ProductPageAdapter.
         if (addressRequested) return;
         addressRequested = true;
         addressState = LoadState.LOADING;
-
         String cnpj = effectiveCnpj();
-        if (TextUtils.isEmpty(cnpj)) {
-            Log.w(TAG, "CNPJ vazio/nulo para buscar endereço");
-            address = null;
-            addressState = LoadState.ERROR;
-            notifyItemChanged(0);
-            return;
-        }
-
         String enderecoId = residue.getIdEndereco();
-        if (TextUtils.isEmpty(enderecoId)) {
-            Log.w(TAG, "idEndereco vazio/nulo no Residue");
-            address = null;
+        if (TextUtils.isEmpty(cnpj) || TextUtils.isEmpty(enderecoId)) {
             addressState = LoadState.ERROR;
             notifyItemChanged(0);
             return;
         }
+        fetchAddressWithCnpj(cnpj);
+    }
 
-        addressCall = mongoService.getAdressById(cnpj, enderecoId);
+    private void fetchAddressWithCnpj(String cnpj) {
+        addressCall = mongoService.getAdressById(cnpj, residue.getIdEndereco());
         addressCall.enqueue(new Callback<Address>() {
-            @Override
-            public void onResponse(@NonNull Call<Address> call, @NonNull Response<Address> resp) {
-                if (resp.isSuccessful() && resp.body() != null
-                        && notEmpty(resp.body().getNome())) {
+            @Override public void onResponse(@NonNull Call<Address> call, @NonNull Response<Address> resp) {
+                if (resp.isSuccessful() && resp.body() != null && notEmpty(resp.body().getNome())) {
                     address = resp.body();
                     addressState = LoadState.SUCCESS;
                 } else {
-                    Log.w(TAG, "Endereço não encontrado. code=" + resp.code());
                     address = null;
                     addressState = LoadState.ERROR;
                 }
                 notifyItemChanged(0);
             }
-
-            @Override
-            public void onFailure(@NonNull Call<Address> call, @NonNull Throwable t) {
-                Log.e(TAG, "Falha ao buscar endereço: " + t.getMessage(), t);
+            @Override public void onFailure(@NonNull Call<Address> call, @NonNull Throwable t) {
                 address = null;
                 addressState = LoadState.ERROR;
                 notifyItemChanged(0);
@@ -176,19 +152,49 @@ public class ProductPageAdapter extends RecyclerView.Adapter<ProductPageAdapter.
         });
     }
 
+    private void probeOwnerCnpj() {
+        if (probing) return;
+        probing = true;
+        mongoService.getAllCompanies().enqueue(new Callback<List<Company>>() {
+            @Override public void onResponse(@NonNull Call<List<Company>> call, @NonNull Response<List<Company>> resp) {
+                if (!resp.isSuccessful() || resp.body() == null || resp.body().isEmpty()) return;
+                List<Company> companies = resp.body();
+                attemptFindResidueOwner(companies, 0);
+            }
+            @Override public void onFailure(@NonNull Call<List<Company>> call, @NonNull Throwable t) { }
+        });
+    }
+
+    private void attemptFindResidueOwner(List<Company> companies, int idx) {
+        if (idx >= companies.size()) return;
+        String cnpjTry = sanitize(companies.get(idx).getCnpj());
+        mongoService.getResidueById(cnpjTry, residue.getId()).enqueue(new Callback<Residue>() {
+            @Override public void onResponse(@NonNull Call<Residue> call, @NonNull Response<Residue> resp) {
+                if (resp.isSuccessful() && resp.body() != null) {
+                    ownerCnpj = cnpjTry;
+                    fetchCompanyWithCnpj(ownerCnpj, false);
+                    fetchAddressWithCnpj(ownerCnpj);
+                } else {
+                    attemptFindResidueOwner(companies, idx + 1);
+                }
+            }
+            @Override public void onFailure(@NonNull Call<Residue> call, @NonNull Throwable t) {
+                attemptFindResidueOwner(companies, idx + 1);
+            }
+        });
+    }
+
     private void startWatchdogs() {
         handler.postDelayed(() -> {
             if (companyState == LoadState.LOADING) {
-                Log.w(TAG, "Timeout empresa - marcando ERROR");
                 if (companyCall != null) companyCall.cancel();
                 companyState = LoadState.ERROR;
                 notifyItemChanged(0);
+                probeOwnerCnpj();
             }
         }, TIMEOUT_MS);
-
         handler.postDelayed(() -> {
             if (addressState == LoadState.LOADING) {
-                Log.w(TAG, "Timeout endereço - marcando ERROR");
                 if (addressCall != null) addressCall.cancel();
                 addressState = LoadState.ERROR;
                 notifyItemChanged(0);
@@ -214,7 +220,6 @@ public class ProductPageAdapter extends RecyclerView.Adapter<ProductPageAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull ProductPageAdapter.ViewHolder h, int position) {
-        // Imagens do resíduo
         List<String> imgs = isEmpty(residue.getUrlFoto())
                 ? Collections.emptyList()
                 : Arrays.asList(residue.getUrlFoto());
@@ -222,17 +227,15 @@ public class ProductPageAdapter extends RecyclerView.Adapter<ProductPageAdapter.
 
         DecimalFormat df = new DecimalFormat("#,##0.00");
 
-        // Campos do resíduo
         h.residueName.setText(nvl(residue.getNome()));
         h.residuePrice.setText("R$ " + df.format(residue.getPreco()));
         h.residueDescription.setText(nvl(residue.getDescricao()));
         h.residueWeight.setText(df.format(residue.getPeso()));
         h.residueUnitType.setText(nvl(residue.getTipoUnidade()));
 
-        // COMPANY (estado)
         String companyName =
                 companyState == LoadState.SUCCESS ? nvl(company != null ? company.getNome() : "") :
-                        companyState == LoadState.ERROR   ? "Empresa não encontrada" :
+                        companyState == LoadState.ERROR ? "Empresa não encontrada" :
                                 "Carregando empresa...";
         h.companyName.setText(companyName);
 
@@ -244,10 +247,9 @@ public class ProductPageAdapter extends RecyclerView.Adapter<ProductPageAdapter.
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(h.companyPhoto);
 
-        // ADDRESS (estado)
         String addressTxt =
                 addressState == LoadState.SUCCESS ? nvl(address != null ? address.getNome() : "") :
-                        addressState == LoadState.ERROR   ? "Endereço não encontrado" :
+                        addressState == LoadState.ERROR ? "Endereço não encontrado" :
                                 "Carregando endereço...";
         h.addressName.setText(addressTxt);
     }
@@ -319,3 +321,4 @@ public class ProductPageAdapter extends RecyclerView.Adapter<ProductPageAdapter.
         public int getItemCount() { return urls.size(); }
     }
 }
+
