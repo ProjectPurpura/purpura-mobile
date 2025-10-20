@@ -25,7 +25,7 @@ public class RegisterProductEndPage extends AppCompatActivity {
     MongoService mongoService = new MongoService();
     String pixKeyName = bundle.getString("pixKeyName");
     String pixKeyPixKey = bundle.getString("pixKey");
-    PixKey pixKey = new PixKey(pixKeyName, pixKeyPixKey);
+    PixKey pixKey = new PixKey(pixKeyName, pixKeyPixKey, null);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

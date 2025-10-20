@@ -6,6 +6,15 @@ public class Address {
     private String cep;
     private String complement;
     private int number;
+    private String id;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getNome() {
         return nome;
@@ -39,10 +48,12 @@ public class Address {
         this.number = number;
     }
 
-    public Address(String nome, String cep, String complement, int number) {
+    public Address(String id, String nome, String cep, String complement, int number) {
+        this.id = id;
         this.nome = nome;
         this.cep = cep;
         this.complement = complement;
         this.number = number;
+
     }
 }

@@ -26,15 +26,10 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.cloudinary.android.MediaManager;
 import com.cloudinary.android.callback.ErrorInfo;
 import com.cloudinary.android.callback.UploadCallback;
-import com.cloudinary.android.preprocess.BitmapDecoder;
-import com.cloudinary.android.preprocess.BitmapEncoder;
-import com.cloudinary.android.preprocess.DimensionsValidator;
-import com.cloudinary.android.preprocess.ImagePreprocessChain;
-import com.cloudinary.android.preprocess.Limit;
-import com.cloudinary.android.preprocess.Rotate;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -49,11 +44,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.purpura.app.R;
 import com.purpura.app.configuration.Methods;
 import com.purpura.app.model.mongo.Company;
-import com.purpura.app.remote.cloudnary.Cloudinary;
 import com.purpura.app.remote.service.MongoService;
 import com.purpura.app.ui.screens.MainActivity;
-import com.purpura.app.ui.screens.errors.GenericError;
-import com.purpura.app.ui.screens.productRegister.RegisterProduct;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -64,22 +56,23 @@ public class Register extends AppCompatActivity {
     MongoService mongoService = new MongoService();
     FirebaseAuth auth = FirebaseAuth.getInstance();
     GoogleSignInClient googleSignInClient;
-    Cloudinary cloudinary = new Cloudinary();
-    private String uploadedImageUrl = null;
 
+    private static boolean cloudinaryInitialized = false;
+    String cloud_name = "dughz83oa";
+    String project = "Purpura";
+    String uriImage;
 
-    private ActivityResultLauncher<String[]> requestPermission;
-    private ActivityResultLauncher<Intent> requestGallery;
+    boolean imageLoaded = false;
+
+    ActivityResultLauncher<String[]> requestPermission;
+    ActivityResultLauncher<Intent> requestGallery;
 
     ActivityResultLauncher<Intent> googleLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
                 if (result.getResultCode() == RESULT_OK) {
                     try {
-                        GoogleSignInAccount account =
-                                GoogleSignIn.getSignedInAccountFromIntent(result.getData())
-                                        .getResult(ApiException.class);
-
+                        GoogleSignInAccount account = GoogleSignIn.getSignedInAccountFromIntent(result.getData()).getResult(ApiException.class);
                         if (account == null || account.getEmail() == null) {
                             Toast.makeText(this, "Erro ao obter conta do Google.", Toast.LENGTH_LONG).show();
                             return;
@@ -89,8 +82,6 @@ public class Register extends AppCompatActivity {
 
                         auth.fetchSignInMethodsForEmail(email).addOnCompleteListener(task -> {
                             if (task.isSuccessful()) {
-                                boolean existe = !task.getResult().getSignInMethods().isEmpty();
-
                                 AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
                                 auth.signInWithCredential(credential).addOnCompleteListener(loginTask -> {
                                     if (loginTask.isSuccessful()) {
@@ -106,12 +97,12 @@ public class Register extends AppCompatActivity {
                                 Toast.makeText(this, "Erro ao verificar email: " + task.getException(), Toast.LENGTH_LONG).show();
                             }
                         });
-
                     } catch (ApiException e) {
                         Toast.makeText(this, "Erro Google Sign-In: " + e.getMessage(), Toast.LENGTH_LONG).show();
                     }
                 }
-            });
+            }
+    );
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,9 +126,11 @@ public class Register extends AppCompatActivity {
         SignInButton btnGoogle = findViewById(R.id.loginWithGoogle);
         TextView txtLogin = findViewById(R.id.registerLoginText);
 
-        image.setOnClickListener(v -> {
-            requestGallery.launch(new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI));
-        });
+        initCloudnary();
+        setGallery(image);
+        checkPermissions();
+
+        image.setOnClickListener(v -> openGallery(v));
 
         btnCadastrar.setOnClickListener(v -> {
             String nome = edtNome.getText().toString().trim();
@@ -150,12 +143,6 @@ public class Register extends AppCompatActivity {
                 Toast.makeText(this, "Preencha todos os campos!", Toast.LENGTH_SHORT).show();
                 return;
             }
-
-            if (uploadedImageUrl == null) {
-                Toast.makeText(this, "Aguarde o upload da imagem antes de cadastrar!", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
             if (cnpj.length() != 14 || !cnpj.matches("\\d+")) {
                 Toast.makeText(this, "CNPJ inválido. Deve ter 14 dígitos.", Toast.LENGTH_SHORT).show();
                 return;
@@ -164,14 +151,16 @@ public class Register extends AppCompatActivity {
                 Toast.makeText(this, "Telefone inválido. Deve ter no mínimo 10 dígitos.", Toast.LENGTH_SHORT).show();
                 return;
             }
+            if (!imageLoaded) {
+                Toast.makeText(this, "Por favor, envie uma foto antes de cadastrar.", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
             auth.createUserWithEmailAndPassword(email, senha).addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     FirebaseUser user = auth.getCurrentUser();
                     if (user != null) {
-
-                        Company company = new Company(cnpj, email, uploadedImageUrl, nome, telefone);
-
+                        Company company = new Company(cnpj, telefone, email, nome, uriImage);
                         FirebaseFirestore.getInstance()
                                 .collection("empresa")
                                 .document(user.getUid())
@@ -179,7 +168,6 @@ public class Register extends AppCompatActivity {
                                 .addOnSuccessListener(aVoid -> {
                                     try {
                                         runOnUiThread(() -> {
-                                            Log.e("Entrou antes da requisição", "Entrou antes da requisição");
                                             mongoService.createCompany(company, this);
                                             Toast.makeText(this, "Cadastro finalizado!", Toast.LENGTH_SHORT).show();
                                             methods.openScreenActivity(this, MainActivity.class);
@@ -218,61 +206,6 @@ public class Register extends AppCompatActivity {
         if (usuario != null) {
             verificarCNPJTelefone(usuario.getUid());
         }
-
-
-        cloudinary.initCloudinary(this);
-
-        requestGallery =
-                registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-                    if (result.getData() == null || result.getData().getData() == null) {
-                        return;
-                    }
-
-                    if (result.getData() != null) {
-                        Uri loadedURI = result.getData().getData();
-
-                        cloudinary.uploadImage(this, loadedURI, new Cloudinary.ImageUploadCallback() {
-                            @Override
-                            public void onUploadSuccess(String imageUrl) {
-                                uploadedImageUrl = imageUrl;
-                                Glide.with(Register.this)
-                                        .load(imageUrl)
-                                        .into(image);
-                                image.setTag(imageUrl);
-                            }
-
-                            @Override
-                            public void onUploadFailure(String error) {
-                            }
-                        });
-                    }
-                });
-
-        requestPermission =
-                registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), result -> {
-                    for (Map.Entry<String, Boolean> entry : result.entrySet()) {
-                        String permission = entry.getKey();
-                        Boolean isGranted = entry.getValue();
-                        if (isGranted) {
-                            Log.d("Permissions", "Permission granted: " + permission);
-                        } else {
-                        }
-                    }
-                });
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            requestPermission.launch(new String[]{
-                    Manifest.permission.READ_MEDIA_IMAGES,
-                    Manifest.permission.READ_MEDIA_VIDEO,
-                    Manifest.permission.CAMERA
-            });
-        } else {
-            requestPermission.launch(new String[]{
-                    Manifest.permission.READ_EXTERNAL_STORAGE,
-                    Manifest.permission.CAMERA
-            });
-        }
-
     }
 
     private void verificarCNPJTelefone(String uid) {
@@ -284,7 +217,6 @@ public class Register extends AppCompatActivity {
                     if (document.exists()) {
                         String cnpj = document.getString("cnpj");
                         String telefone = document.getString("telefone");
-
                         if (cnpj == null || cnpj.isEmpty() || telefone == null || telefone.isEmpty()) {
                             Toast.makeText(this, "Complete seu cadastro", Toast.LENGTH_SHORT).show();
                             methods.openScreenActivity(this, AddicionalInformacionsRegisterGoogle.class);
@@ -304,4 +236,107 @@ public class Register extends AppCompatActivity {
                     Toast.makeText(this, "Erro ao verificar cadastro", Toast.LENGTH_SHORT).show();
                 });
     }
+
+    private void initCloudnary() {
+        if (!cloudinaryInitialized) {
+            Map<String, String> config = new HashMap<>();
+            config.put("cloud_name", cloud_name);
+            MediaManager.init(this, config);
+            cloudinaryInitialized = true;
+        }
+    }
+
+    private void setGallery(ImageView imageView) {
+        requestGallery = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        if (result.getData() != null) {
+                            Uri imageUri = result.getData().getData();
+                            uploadImagem(imageUri, new ImageUploadCallback() {
+                                @Override
+                                public void onUploadSuccess(String imageUrl) {
+                                    uriImage = imageUrl;
+                                    runOnUiThread(() -> {
+                                        Glide.with(Register.this)
+                                                .load(imageUrl)
+                                                .transform(new CircleCrop())
+                                                .into(imageView);
+                                        imageLoaded = true;
+                                    });
+                                    Toast.makeText(Register.this, "Imagem carregada com sucesso!", Toast.LENGTH_SHORT).show();
+                                }
+                                @Override
+                                public void onUploadFailure(String error) {
+                                    Toast.makeText(Register.this, "Erro ao enviar imagem: " + error, Toast.LENGTH_LONG).show();
+                                }
+                            });
+                        }
+                    }
+                }
+        );
+    }
+
+    private void uploadImagem(Uri imageUri, ImageUploadCallback callback) {
+        MediaManager.get().upload(imageUri)
+                .option("folder", "Purpura")
+                .unsigned(project)
+                .callback(new UploadCallback() {
+                    @Override
+                    public void onStart(String requestId) {
+                        Log.d("UPLOAD", "Upload iniciado");
+                    }
+                    @Override
+                    public void onProgress(String requestId, long bytes, long totalBytes) {
+                        Log.d("UPLOAD", "Enviando imagem...");
+                    }
+                    @Override
+                    public void onSuccess(String requestId, Map resultData) {
+                        String url = (String) resultData.get("secure_url");
+                        callback.onUploadSuccess(url);
+                    }
+                    @Override
+                    public void onError(String requestId, ErrorInfo error) {
+                        callback.onUploadFailure(error.getDescription());
+                    }
+                    @Override
+                    public void onReschedule(String requestId, ErrorInfo error) {
+                        callback.onUploadFailure("Reagendado: " + error.getDescription());
+                    }
+                })
+                .dispatch(Register.this);
+    }
+
+    private void checkPermissions() {
+        requestPermission = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), result -> {
+            for (Map.Entry<String, Boolean> entry : result.entrySet()) {
+                String permission = entry.getKey();
+                Boolean isGranted = entry.getValue();
+            }
+        });
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requestPermission.launch(new String[]{
+                    Manifest.permission.READ_MEDIA_IMAGES,
+                    Manifest.permission.READ_MEDIA_VIDEO,
+                    Manifest.permission.CAMERA
+            });
+        } else {
+            requestPermission.launch(new String[]{
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.CAMERA
+            });
+        }
+    }
+
+    public void openGallery(View view) {
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
+        requestGallery.launch(intent);
+    }
+}
+
+interface ImageUploadCallback {
+    void onUploadSuccess(String imageUrl);
+    void onUploadFailure(String error);
 }

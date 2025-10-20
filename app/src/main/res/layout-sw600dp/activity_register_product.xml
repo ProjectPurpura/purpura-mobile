@@ -179,7 +179,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/registerProductImage" />
 
             <ImageView
-                android:id="@+id/registerProductExportImageIcon"
+                android:id="@+id/registerProductExportIcon"
                 android:layout_width="35sp"
                 android:layout_height="35sp"
                 android:layout_marginEnd="15dp"

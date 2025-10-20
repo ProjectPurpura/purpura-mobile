@@ -8,9 +8,13 @@
     android:layout_marginBottom="20dp"
     app:cardCornerRadius="15dp"
     app:cardElevation="4dp"
-    app:layout_marginBaseline="50dp">
+    app:layout_marginBaseline="50dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackground">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/onClickProduct"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/round_border">
@@ -40,12 +44,13 @@
             android:id="@+id/productCardProductValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="36dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="35dp"
             android:text="0000000"
             android:textColor="#744D9E"
             android:textSize="16sp"
             android:textStyle="bold"
-            app:layout_constraintStart_toEndOf="@+id/rs"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/productCardProductName" />
 
         <ImageView
@@ -81,19 +86,6 @@
             android:text="XX "
             android:textSize="10sp"
             app:layout_constraintStart_toEndOf="@+id/imageView24"
-            app:layout_constraintTop_toBottomOf="@+id/productCardProductName" />
-
-        <TextView
-            android:id="@+id/rs"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="36dp"
-            android:text="R$"
-            android:textColor="#744D9E"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/productCardProductName" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

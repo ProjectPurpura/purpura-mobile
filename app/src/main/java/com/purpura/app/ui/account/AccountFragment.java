@@ -114,7 +114,7 @@ public class AccountFragment extends Fragment {
                     .addOnSuccessListener(document -> {
                         if (document.exists()) {
                             String cnpj = document.getString("cnpj");
-                            Call<Company> call = mongoService.getComapnyByCnpj(cnpj);
+                            Call<Company> call = mongoService.getCompanyByCnpj(cnpj);
                             call.enqueue(new Callback<Company>() {
                                 @Override
                                 public void onResponse(Call<Company> call, Response<Company> response) {

@@ -38,7 +38,7 @@ public class RegisterPixKey extends AppCompatActivity {
         Button continueButton = findViewById(R.id.registerPixKeyAddPixKeyButton);
         EditText pixKeyInput = findViewById(R.id.registerPixKeyInput);
         EditText pixKeyNameInput = findViewById(R.id.registerPixKeyNameInput);
-        PixKey pixKey = new PixKey(pixKeyNameInput.getText().toString(), pixKeyInput.getText().toString());
+        PixKey pixKey = new PixKey(pixKeyNameInput.getText().toString(), pixKeyInput.getText().toString(), null);
 
 
         backButton.setOnClickListener(v -> finish());

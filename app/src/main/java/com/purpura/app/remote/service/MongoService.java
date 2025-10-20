@@ -6,8 +6,8 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.purpura.app.configuration.Methods;
-import com.purpura.app.model.mongo.Address;
 import com.purpura.app.model.mongo.Company;
+import com.purpura.app.model.mongo.Address;
 import com.purpura.app.model.mongo.PixKey;
 import com.purpura.app.model.mongo.Residue;
 import com.purpura.app.remote.api.MongoAPI;
@@ -20,7 +20,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MongoService {
+public class    MongoService {
 
     private MongoAPI mongoAPI;
     private Methods methods;
@@ -61,7 +61,7 @@ public class MongoService {
         return call;
     }
 
-    public Call<Residue> getResidueById(String cnpj, String id){
+    public Call<Residue>getResidueById(String cnpj, String id){
         Call<Residue> call = mongoAPI.getResidueById(cnpj, id);
         return call;
     }
@@ -75,7 +75,7 @@ public class MongoService {
         return call;
     }
 
-    public Call<Company> getComapnyByCnpj(String cnpj){
+    public Call<Company> getCompanyByCnpj(String cnpj){
         Call<Company> call = mongoAPI.getCompanyByCNPJ(cnpj);
         return call;
     }
@@ -236,68 +236,69 @@ public class MongoService {
 
     // Create - Delete
     public void deleteAddress(String cnpj, String id, Context context){
-        Call<Address> call = mongoAPI.deleteAddress(cnpj, id);
+        Call<Void> call = mongoAPI.deleteAddress(cnpj, id);
 
-        call.enqueue(new Callback<Address>() {
+        call.enqueue(new Callback<Void>() {
             @Override
-            public void onResponse(Call<Address> call, Response<Address> response) {
+            public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
                     Toast.makeText(context,"Endereço deletado com sucesso", Toast.LENGTH_SHORT).show();
                 }
             }
             @Override
-            public void onFailure(Call<Address> call, Throwable t) {
+            public void onFailure(Call<Void> call, Throwable t) {
                 Toast.makeText(context, "Erro ao deletar endereço", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     public void deleteCompany(String cnpj, Context context){
-        Call<Company> call = mongoAPI.deleteCompany(cnpj);
+        Call<Void> call = mongoAPI.deleteCompany(cnpj);
 
-        call.enqueue(new Callback<Company>() {
+        call.enqueue(new Callback<Void>() {
             @Override
-            public void onResponse(Call<Company> call, Response<Company> response) {
+            public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
                     Toast.makeText(context,"Empresa deletada com sucesso", Toast.LENGTH_SHORT).show();
                 }
             }
             @Override
-            public void onFailure(Call<Company> call, Throwable t) {
+            public void onFailure(Call<Void> call, Throwable t) {
                 Toast.makeText(context, "Erro ao deletar empresa", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     public void deletePixKey(String cnpj, String id, Context context){
-        Call<PixKey> call = mongoAPI.deletePixKey(cnpj, id);
-
-        call.enqueue(new Callback<PixKey>() {
+        Call<Void> call = mongoAPI.deletePixKey(cnpj, id);
+        call.enqueue(new Callback<Void>() {
             @Override
-            public void onResponse(Call<PixKey> call, Response<PixKey> response) {
+            public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
                     Toast.makeText(context,"Chave deletada com sucesso", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(context, "Erro ao deletar chave: " + response.code(), Toast.LENGTH_SHORT).show();
                 }
             }
             @Override
-            public void onFailure(Call<PixKey> call, Throwable t) {
-                Toast.makeText(context, "Erro ao deletar chave", Toast.LENGTH_SHORT).show();
+            public void onFailure(Call<Void> call, Throwable t) {
+                Toast.makeText(context, "Erro ao deletar chave: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     public void deleteResidue(String cnpj, String id, Context context){
-        Call<Residue> call = mongoAPI.deleteResidue(cnpj, id);
+        Call<Void> call = mongoAPI.deleteResidue(cnpj, id);
 
-        call.enqueue(new Callback<Residue>() {
+        call.enqueue(new Callback<Void>() {
             @Override
-            public void onResponse(Call<Residue> call, Response<Residue> response) {
+            public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
                     Toast.makeText(context,"Resíduo deletado com sucesso", Toast.LENGTH_SHORT).show();
                 }
             }
             @Override
-            public void onFailure(Call<Residue> call, Throwable t) {
+            public void onFailure(Call<Void> call, Throwable t) {
                 Toast.makeText(context, "Erro ao deletar resíduo", Toast.LENGTH_SHORT).show();
             }
         });

@@ -41,7 +41,7 @@ public class RegisterAdress extends AppCompatActivity {
         EditText zipCode = findViewById(R.id.registerAdressZipCode);
         EditText number = findViewById(R.id.registerAdressNumber);
         EditText complement = findViewById(R.id.registerAdressComplement);
-        Address address = new Address(name.getText().toString(), zipCode.getText().toString(), complement.getText().toString(),Integer.parseInt(number.getText().toString()));
+        Address address = new Address(null ,name.getText().toString(), zipCode.getText().toString(), complement.getText().toString(), Integer.parseInt(number.getText().toString()));
 
         backButton.setOnClickListener(v -> finish());
         continueButton.setOnClickListener(v -> {

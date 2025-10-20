@@ -30,6 +30,7 @@ public interface MongoAPI {
     @GET("/empresa/{cnpj}/residuo/viewmain")
     Call<List<Residue>> getAllResiduosMain(@Path("cnpj") String cnpj, @Query("limit") int limit, @Query("page") int page);
 
+    @GET("/empresa/{cnpj}/endereco/{id}")
     Call<Address> getAddressById(@Path("cnpj") String cnpj, @Path("id") String id);
     @GET("/empresa/{cnpj}/residuo/all")
     Call<List<Residue>> getAllResidues(@Path("cnpj") String cnpj);
@@ -64,12 +65,12 @@ public interface MongoAPI {
 
     //DELETE
     @DELETE("/empresa/{cnpj}")
-    Call<Company> deleteCompany(@Path("cnpj") String cnpj);
+    Call<Void> deleteCompany(@Path("cnpj") String cnpj);
     @DELETE("/empresa/{cnpj}/residuo/{id}")
-    Call<Residue> deleteResidue(@Path("cnpj") String cnpj, @Path("id") String id);
+    Call<Void> deleteResidue(@Path("cnpj") String cnpj, @Path("id") String id);
     @DELETE("/empresa/{cnpj}/pix/{id}")
-    Call<PixKey> deletePixKey(@Path("cnpj") String cnpj, @Path("id") String id);
+    Call<Void> deletePixKey(@Path("cnpj") String cnpj, @Path("id") String id);
     @DELETE("/empresa/{cnpj}/endereco/{id}")
-    Call<Address> deleteAddress(@Path("cnpj") String cnpj, @Path("id") String id);
+    Call<Void> deleteAddress(@Path("cnpj") String cnpj, @Path("id") String id);
 
 }

@@ -138,6 +138,7 @@ public class RegisterProduct extends AppCompatActivity {
             double pesoVal = Double.parseDouble(pesoTxt);
             int quantidadeVal = Integer.parseInt(quantidadeTxt);
 
+
             Residue residue = new Residue(
                     null,
                     nomeTxt,
@@ -147,6 +148,7 @@ public class RegisterProduct extends AppCompatActivity {
                     quantidadeVal,
                     unidadeTxt,
                     urlFotoTxt,
+                    null,
                     null,
                     null
             );

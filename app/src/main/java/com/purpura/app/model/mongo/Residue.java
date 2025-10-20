@@ -1,6 +1,8 @@
 package com.purpura.app.model.mongo;
 
-public class Residue {
+import java.io.Serializable;
+
+public class Residue implements Serializable {
     private String id;
     private String nome;
     private String descricao;
@@ -12,8 +14,9 @@ public class Residue {
     private String urlFoto;
     private String idChavePix;
     private String idEndereco;
+    private String cnpj;
 
-    public Residue(String id, String nome, String descricao, double peso, double preco, int estoque, String tipoUnidade, String urlFoto, String idChavePix, String idEndereco) {
+    public Residue(String id, String nome, String descricao, double peso, double preco, int estoque, String tipoUnidade, String urlFoto, String idChavePix, String idEndereco, String cnpj) {
         this.id = id;
         this.nome = nome;
         this.descricao = descricao;
@@ -24,6 +27,7 @@ public class Residue {
         this.urlFoto = urlFoto;
         this.idChavePix = idChavePix;
         this.idEndereco = idEndereco;
+        this.cnpj = cnpj;
     }
 
     public String getNome() {
@@ -88,5 +92,29 @@ public class Residue {
 
     public void setTipoUnidade(String tipoUnidade) {
         this.tipoUnidade = tipoUnidade;
+    }
+
+    public String getIdEndereco() {
+        return idEndereco;
+    }
+
+    public void setIdEndereco(String idEndereco) {
+        this.idEndereco = idEndereco;
+    }
+
+    public String getIdChavePix() {
+        return idChavePix;
+    }
+
+    public void setIdChavePix(String idChavePix) {
+        this.idChavePix = idChavePix;
+    }
+
+    public String getCnpj() {
+        return cnpj;
+    }
+
+    public void setCnpj(String cnpj) {
+        this.cnpj = cnpj;
     }
 }

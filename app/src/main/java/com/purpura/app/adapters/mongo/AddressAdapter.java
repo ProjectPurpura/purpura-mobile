@@ -57,7 +57,7 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.AddressV
                         .addOnSuccessListener(document -> {
                             if (document.exists()) {
                                 String cnpj = document.getString("cnpj");
-                                mongoService.deleteAddress(cnpj, address1.getCep(), v.getContext());
+                                mongoService.deleteAddress(cnpj, address1.getId(), v.getContext());
                                 address.remove(position);
                                 notifyItemRemoved(position);
                                 notifyItemRangeChanged(position, address.size());

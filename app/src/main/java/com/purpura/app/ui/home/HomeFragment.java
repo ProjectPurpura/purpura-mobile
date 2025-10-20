@@ -1,5 +1,6 @@
 package com.purpura.app.ui.home;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,7 +23,9 @@ import com.purpura.app.adapters.mongo.HomeAdapter;
 import com.purpura.app.configuration.Methods;
 import com.purpura.app.model.mongo.Residue;
 import com.purpura.app.remote.service.MongoService;
+import com.purpura.app.ui.screens.ProductPage;
 import com.purpura.app.ui.screens.errors.GenericError;
+import com.purpura.app.ui.screens.errors.InternetError;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +42,8 @@ public class HomeFragment extends Fragment {
     Methods methods = new Methods();
     private final MongoService mongoService = new MongoService();
     private Call<List<Residue>> residuosCall;
+
+    private String currentCompanyCnpj = "";
 
     @Nullable
     @Override
@@ -60,7 +65,17 @@ public class HomeFragment extends Fragment {
 
         recyclerView = view.findViewById(R.id.homeRecyclerView);
         recyclerView.setLayoutManager(new GridLayoutManager(requireContext(), 2));
-        adapter = new HomeAdapter(new ArrayList<>());
+
+        // Adapter com clique abrindo ProductPage + passando CNPJ via Intent
+        adapter = new HomeAdapter(new ArrayList<>(), residue -> {
+            Intent rota = new Intent(requireContext(), ProductPage.class);
+            rota.putExtra("residue", residue);
+            // passa o CNPJ efetivo (do Firestore se já carregado; senão usa o do residue)
+            String cnpjEffective = firstNonEmpty(currentCompanyCnpj, residue.getCnpj());
+            rota.putExtra("cnpj", sanitizeCnpj(cnpjEffective));
+            startActivity(rota);
+        });
+
         recyclerView.setAdapter(adapter);
 
         loadResidues(this);
@@ -69,7 +84,8 @@ public class HomeFragment extends Fragment {
     private void loadResidues(Fragment fragment) {
         try {
             if (FirebaseAuth.getInstance().getCurrentUser() == null) {
-                if (isAdded()) Toast.makeText(requireContext(), "Usuário não autenticado", Toast.LENGTH_SHORT).show();
+                if (isAdded())
+                    Toast.makeText(requireContext(), "Usuário não autenticado", Toast.LENGTH_SHORT).show();
                 return;
             }
             FirebaseFirestore.getInstance()
@@ -84,9 +100,12 @@ public class HomeFragment extends Fragment {
                                 Toast.makeText(requireContext(), "CNPJ não encontrado", Toast.LENGTH_SHORT).show();
                                 return;
                             }
+
+                            currentCompanyCnpj = sanitizeCnpj(cnpj);
+
                             int limit = 50;
                             int page = 1;
-                            residuosCall = mongoService.getAllResiduosMain(cnpj, limit, page);
+                            residuosCall = mongoService.getAllResiduosMain(currentCompanyCnpj, limit, page);
                             residuosCall.enqueue(new Callback<List<Residue>>() {
                                 @Override
                                 public void onResponse(Call<List<Residue>> call, Response<List<Residue>> response) {
@@ -117,5 +136,12 @@ public class HomeFragment extends Fragment {
             residuosCall.cancel();
             residuosCall = null;
         }
+    }
+
+    // helpers
+    private static String sanitizeCnpj(String c) { return c == null ? "" : c.replaceAll("\\D+", ""); }
+    private static String firstNonEmpty(String a, String b) {
+        if (a != null && !a.trim().isEmpty()) return a;
+        return b == null ? "" : b.trim();
     }
 }

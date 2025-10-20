@@ -2,17 +2,18 @@ package com.purpura.app.model.mongo;
 
 public class Company {
     private String cnpj;
-    private String nome;
     private String email;
-    private String telefone;
     private String urlFoto;
+    private String nome;
+    private String telefone;
 
-    public Company(String cnpj, String email, String imagem, String nome, String telefone) {
+
+    public Company(String cnpj, String telefone, String email, String nome, String imagem) {
         this.cnpj = cnpj;
-        this.email = email;
-        this.urlFoto = imagem;
-        this.nome = nome;
         this.telefone = telefone;
+        this.email = email;
+        this.nome = nome;
+        this.urlFoto = imagem;
     }
 
     public String getCnpj() {

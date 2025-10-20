@@ -56,7 +56,7 @@ public class PixKeyAdapter extends RecyclerView.Adapter<PixKeyAdapter.PixKeyView
                         .addOnSuccessListener(document -> {
                             if (document.exists()) {
                                 String cnpj = document.getString("cnpj");
-                                mongoService.deletePixKey(cnpj, pixKey.getKey(), v.getContext());
+                                mongoService.deletePixKey(cnpj, pixKey.getId(), v.getContext());
                                 pixKeys.remove(position);
                                 notifyItemRemoved(position);
                                 notifyItemRangeChanged(position, pixKeys.size());
