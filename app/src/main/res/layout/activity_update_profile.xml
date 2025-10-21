@@ -8,20 +8,6 @@
     tools:context=".ui.screens.UpdateProfile">
 
     <EditText
-        android:id="@+id/updateCNPJ"
-        android:layout_width="320sp"
-        android:layout_height="50sp"
-        android:layout_marginTop="20dp"
-        android:background="@drawable/round_border"
-        android:ems="10"
-        android:hint="CNPJ"
-        android:inputType="number"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.494"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/updateCompanyName" />
-
-    <EditText
         android:id="@+id/updateCompanyName"
         android:layout_width="320sp"
         android:layout_height="50sp"
@@ -48,20 +34,6 @@
         app:layout_constraintHorizontal_bias="0.494"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/updateEmail" />
-
-    <EditText
-        android:id="@+id/registerPassword"
-        android:layout_width="320sp"
-        android:layout_height="50sp"
-        android:layout_marginTop="20dp"
-        android:background="@drawable/round_border"
-        android:ems="10"
-        android:hint="Senha"
-        android:inputType="textPassword"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.494"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/updateCNPJ" />
 
     <EditText
         android:id="@+id/updateEmail"
@@ -133,7 +105,7 @@
         android:layout_marginTop="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/registerPassword"
+        app:layout_constraintTop_toBottomOf="@+id/updateCompanyName"
         app:srcCompat="@drawable/round_border" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -82,6 +82,8 @@ public class Register extends AppCompatActivity {
 
                         auth.fetchSignInMethodsForEmail(email).addOnCompleteListener(task -> {
                             if (task.isSuccessful()) {
+                                boolean existe = !task.getResult().getSignInMethods().isEmpty();
+
                                 AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
                                 auth.signInWithCredential(credential).addOnCompleteListener(loginTask -> {
                                     if (loginTask.isSuccessful()) {
@@ -97,6 +99,7 @@ public class Register extends AppCompatActivity {
                                 Toast.makeText(this, "Erro ao verificar email: " + task.getException(), Toast.LENGTH_LONG).show();
                             }
                         });
+
                     } catch (ApiException e) {
                         Toast.makeText(this, "Erro Google Sign-In: " + e.getMessage(), Toast.LENGTH_LONG).show();
                     }
@@ -143,6 +146,12 @@ public class Register extends AppCompatActivity {
                 Toast.makeText(this, "Preencha todos os campos!", Toast.LENGTH_SHORT).show();
                 return;
             }
+
+            if (uriImage == null || uriImage.isEmpty()) {
+                Toast.makeText(this, "Aguarde o upload da imagem antes de cadastrar!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             if (cnpj.length() != 14 || !cnpj.matches("\\d+")) {
                 Toast.makeText(this, "CNPJ inválido. Deve ter 14 dígitos.", Toast.LENGTH_SHORT).show();
                 return;
@@ -160,7 +169,7 @@ public class Register extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     FirebaseUser user = auth.getCurrentUser();
                     if (user != null) {
-                        Company company = new Company(cnpj, telefone, email, nome, uriImage);
+                        Company company = new Company(cnpj, nome, email, telefone, uriImage);
                         FirebaseFirestore.getInstance()
                                 .collection("empresa")
                                 .document(user.getUid())
@@ -217,6 +226,7 @@ public class Register extends AppCompatActivity {
                     if (document.exists()) {
                         String cnpj = document.getString("cnpj");
                         String telefone = document.getString("telefone");
+
                         if (cnpj == null || cnpj.isEmpty() || telefone == null || telefone.isEmpty()) {
                             Toast.makeText(this, "Complete seu cadastro", Toast.LENGTH_SHORT).show();
                             methods.openScreenActivity(this, AddicionalInformacionsRegisterGoogle.class);
@@ -267,6 +277,7 @@ public class Register extends AppCompatActivity {
                                     });
                                     Toast.makeText(Register.this, "Imagem carregada com sucesso!", Toast.LENGTH_SHORT).show();
                                 }
+
                                 @Override
                                 public void onUploadFailure(String error) {
                                     Toast.makeText(Register.this, "Erro ao enviar imagem: " + error, Toast.LENGTH_LONG).show();
@@ -287,19 +298,31 @@ public class Register extends AppCompatActivity {
                     public void onStart(String requestId) {
                         Log.d("UPLOAD", "Upload iniciado");
                     }
+
                     @Override
                     public void onProgress(String requestId, long bytes, long totalBytes) {
                         Log.d("UPLOAD", "Enviando imagem...");
                     }
+
                     @Override
                     public void onSuccess(String requestId, Map resultData) {
+                        Log.d("UPLOAD", "Upload concluído com sucesso");
                         String url = (String) resultData.get("secure_url");
+
+                        runOnUiThread(() -> {
+                            Glide.with(Register.this)
+                                    .load(url)
+                                    .into((ImageView) findViewById(R.id.registerImage));
+                        });
+
                         callback.onUploadSuccess(url);
                     }
+
                     @Override
                     public void onError(String requestId, ErrorInfo error) {
                         callback.onUploadFailure(error.getDescription());
                     }
+
                     @Override
                     public void onReschedule(String requestId, ErrorInfo error) {
                         callback.onUploadFailure("Reagendado: " + error.getDescription());
@@ -308,13 +331,20 @@ public class Register extends AppCompatActivity {
                 .dispatch(Register.this);
     }
 
+    // Permissões
     private void checkPermissions() {
         requestPermission = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), result -> {
             for (Map.Entry<String, Boolean> entry : result.entrySet()) {
                 String permission = entry.getKey();
                 Boolean isGranted = entry.getValue();
+                if (isGranted) {
+                    Log.d("Permissions", "Permission granted: " + permission);
+                } else {
+                    Log.d("Permissions", "Permission denied: " + permission);
+                }
             }
         });
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             requestPermission.launch(new String[]{
                     Manifest.permission.READ_MEDIA_IMAGES,
@@ -335,7 +365,6 @@ public class Register extends AppCompatActivity {
         requestGallery.launch(intent);
     }
 }
-
 interface ImageUploadCallback {
     void onUploadSuccess(String imageUrl);
     void onUploadFailure(String error);

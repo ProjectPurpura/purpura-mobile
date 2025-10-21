@@ -1,4 +1,4 @@
-package com.purpura.app.adapters;
+package com.purpura.app.adapters.mongo;
 
 import android.os.Handler;
 import android.os.Looper;
@@ -244,6 +244,7 @@ public class ProductPageAdapter extends RecyclerView.Adapter<ProductPageAdapter.
 
         Glide.with(h.companyPhoto.getContext())
                 .load(companyPhotoUrl)
+                .circleCrop()
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(h.companyPhoto);
 

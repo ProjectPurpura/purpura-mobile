@@ -58,7 +58,7 @@ public class MyProducts extends AppCompatActivity {
         recyclerView = findViewById(R.id.myProductsRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        binding.fab.setOnClickListener(v -> {
+        binding.addProducts.setOnClickListener(v -> {
             methods.openScreenActivity(this, RegisterProduct.class);
         });
 

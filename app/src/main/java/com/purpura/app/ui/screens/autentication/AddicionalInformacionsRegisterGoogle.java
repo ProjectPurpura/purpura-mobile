@@ -88,7 +88,7 @@ public class AddicionalInformacionsRegisterGoogle extends AppCompatActivity {
             return;
         }
 
-        Company empresa = new Company( cnpj, telefone, email, nome, foto);
+        Company empresa = new Company( cnpj, nome, email, telefone, foto);
 
         Toast.makeText(this, "Salvando no Firestore...", Toast.LENGTH_SHORT).show();
 

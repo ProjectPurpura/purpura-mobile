@@ -103,32 +103,6 @@ public class Methods implements TextWatcher {
         dialog.show();
     }
 
-    public void openUpdateCompanyPopUp(Context context){
-        View popupView = LayoutInflater.from(context)
-            .inflate(R.layout.pop_up_edit_profile_card, null);
-
-        AlertDialog dialog = new AlertDialog.Builder(context)
-                .setView(popupView)
-                .create();
-
-        String cnpj = ((EditText) popupView.findViewById(R.id.popUpEditCompanyCnpj)).getText().toString();
-
-        Company companyToSave = new Company(
-                ((EditText) popupView.findViewById(R.id.popUpEditCompanyName)).getText().toString(),
-                ((EditText) popupView.findViewById(R.id.popUpEditCompanyEmail)).getText().toString(),
-                cnpj,
-                ((EditText) popupView.findViewById(R.id.popUpEditCompanyPhone)).getText().toString(),
-                ((EditText) popupView.findViewById(R.id.popUpEditCompanyImage)).getText().toString()
-        );
-
-        popupView.findViewById(R.id.popUpEditCompanyConfirmAlterations).setOnClickListener(v -> {
-            openConfirmationPopUp(
-                    context,
-                    () -> mongoService.updateCompany(cnpj, companyToSave, context),
-                    null);
-        });
-
-    }
 
     public static void copyText(Context context, String texto) {
         ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
