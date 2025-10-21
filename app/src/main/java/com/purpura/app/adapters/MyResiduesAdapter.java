@@ -5,11 +5,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.purpura.app.R;
 import com.purpura.app.configuration.Methods;
 import com.purpura.app.model.Residue;
@@ -17,6 +20,7 @@ import com.purpura.app.remote.service.MongoService;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class MyResiduesAdapter extends RecyclerView.Adapter<MyResiduesAdapter.ResidueViewHolder> {
 
@@ -51,6 +55,24 @@ public class MyResiduesAdapter extends RecyclerView.Adapter<MyResiduesAdapter.Re
         });
 
         holder.deleteResidueButton.setOnClickListener(v -> {
+            try {
+                FirebaseFirestore.getInstance()
+                        .collection("empresa")
+                        .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                        .get()
+                        .addOnSuccessListener(document -> {
+                            if (document.exists()) {
+                                String cnpj = document.getString("cnpj");
+                                mongoService.deleteResidue(cnpj, residue.getId(), v.getContext());
+                                products.remove(position);
+                                notifyItemRemoved(position);
+                                notifyItemRangeChanged(position, products.size());
+                            }
+                        });
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
         });
     }

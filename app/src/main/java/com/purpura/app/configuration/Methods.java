@@ -114,9 +114,9 @@ public class Methods implements TextWatcher {
         String cnpj = ((EditText) popupView.findViewById(R.id.popUpEditCompanyCnpj)).getText().toString();
 
         Company companyToSave = new Company(
+                cnpj,
                 ((EditText) popupView.findViewById(R.id.popUpEditCompanyName)).getText().toString(),
                 ((EditText) popupView.findViewById(R.id.popUpEditCompanyEmail)).getText().toString(),
-                cnpj,
                 ((EditText) popupView.findViewById(R.id.popUpEditCompanyPhone)).getText().toString(),
                 ((EditText) popupView.findViewById(R.id.popUpEditCompanyImage)).getText().toString()
         );

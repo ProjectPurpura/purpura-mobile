@@ -8,11 +8,11 @@ public class Company {
     private String urlFoto;
 
 
-    public Company(String cnpj, String telefone, String email, String nome, String imagem) {
+    public Company(String cnpj, String nome, String email, String telefone, String imagem ) {
         this.cnpj = cnpj;
-        this.telefone = telefone;
-        this.email = email;
         this.nome = nome;
+        this.email = email;
+        this.telefone = telefone;
         this.urlFoto = imagem;
     }
 

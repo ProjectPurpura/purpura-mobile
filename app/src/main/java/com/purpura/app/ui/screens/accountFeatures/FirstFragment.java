@@ -66,13 +66,11 @@ public class FirstFragment extends Fragment {
                                 }
                                 @Override
                                 public void onFailure(Call<List<Residue>> call, Throwable t) {
-                                    methods.openScreenFirstFragment(FirstFragment.this, GenericError.class);
                                 }
                             });
                         }
                     });
         } catch (Exception e) {
-            methods.openScreenFirstFragment(FirstFragment.this, GenericError.class);
             throw new RuntimeException(e);
         }
 
