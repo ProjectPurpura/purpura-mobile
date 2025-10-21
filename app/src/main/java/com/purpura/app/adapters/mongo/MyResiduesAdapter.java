@@ -1,4 +1,4 @@
-package com.purpura.app.adapters;
+package com.purpura.app.adapters.mongo;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.purpura.app.R;
 import com.purpura.app.configuration.Methods;
-import com.purpura.app.model.Residue;
+import com.purpura.app.model.mongo.Residue;
 import com.purpura.app.remote.service.MongoService;
 
 import java.util.ArrayList;

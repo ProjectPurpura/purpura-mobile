@@ -19,9 +19,9 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.purpura.app.R;
-import com.purpura.app.model.Address;
-import com.purpura.app.model.Company;
-import com.purpura.app.model.Residue;
+import com.purpura.app.model.mongo.Address;
+import com.purpura.app.model.mongo.Company;
+import com.purpura.app.model.mongo.Residue;
 import com.purpura.app.remote.service.MongoService;
 
 import java.text.DecimalFormat;

@@ -1,11 +1,11 @@
-package com.purpura.app.model;
+package com.purpura.app.model.mongo;
 
 public class Company {
     private String cnpj;
-    private String telefone;
     private String email;
-    private String nome;
     private String urlFoto;
+    private String nome;
+    private String telefone;
 
 
     public Company(String cnpj, String telefone, String email, String nome, String imagem) {

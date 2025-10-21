@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:theme="@style/Theme.PurpuraApp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.screens.productRegister.RegisterAdress">
+
+    <TextView
+        android:id="@+id/textView19"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="80dp"
+        android:text="Atualizando Produto"
+        android:textColor="@color/verde_padrao"
+        android:textSize="34sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/registerAdressBackButton"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:src="@drawable/back_button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/registerAdressName"
+        android:layout_width="320sp"
+        android:layout_height="50sp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/round_border"
+        android:ems="10"
+        android:hint="Nome da empresa/filial"
+        android:inputType="text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView19" />
+
+    <EditText
+        android:id="@+id/registerAdressZipCode"
+        android:layout_width="320sp"
+        android:layout_height="50sp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/round_border"
+        android:ems="10"
+        android:hint="CEP"
+        android:inputType="number"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/registerAdressName" />
+
+    <EditText
+        android:id="@+id/registerAdressNumber"
+        android:layout_width="320sp"
+        android:layout_height="50sp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/round_border"
+        android:ems="10"
+        android:hint="Numero"
+        android:inputType="number"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/registerAdressZipCode" />
+
+    <EditText
+        android:id="@+id/registerAdressComplement"
+        android:layout_width="320sp"
+        android:layout_height="50sp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/round_border"
+        android:ems="10"
+        android:gravity="start|top"
+        android:hint="Complemento"
+        android:inputType="textMultiLine"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/registerAdressNumber" />
+
+    <Button
+        android:id="@+id/registerAdressValidateZipCode"
+        android:layout_width="320sp"
+        android:layout_height="50sp"
+        android:layout_marginTop="20dp"
+        android:backgroundTint="@color/roxo_padrao"
+        android:text="Atualizar"
+        app:cornerRadius="15sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/registerAdressComplement" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

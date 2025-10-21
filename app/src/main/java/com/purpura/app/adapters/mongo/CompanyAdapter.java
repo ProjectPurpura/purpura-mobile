@@ -1,4 +1,4 @@
-package com.purpura.app.adapters;
+package com.purpura.app.adapters.mongo;
 
 import android.view.View;
 import android.view.ViewGroup;
@@ -6,7 +6,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.purpura.app.model.Company;
+import com.purpura.app.model.mongo.Company;
 
 public class CompanyAdapter  extends RecyclerView.Adapter<CompanyAdapter.CompanyViewHolder> {
 

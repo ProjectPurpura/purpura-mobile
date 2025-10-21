@@ -1,7 +1,5 @@
 package com.purpura.app.ui.screens.accountFeatures;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,14 +18,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.purpura.app.R;
-import com.purpura.app.adapters.MyResiduesAdapter;
+import com.purpura.app.adapters.mongo.MyResiduesAdapter;
 import com.purpura.app.configuration.Methods;
 import com.purpura.app.databinding.ActivityMyProductsBinding;
-import com.purpura.app.model.Residue;
+import com.purpura.app.model.mongo.Residue;
 import com.purpura.app.remote.service.MongoService;
-import com.purpura.app.ui.home.HomeFragment;
 import com.purpura.app.ui.screens.errors.GenericError;
-import com.purpura.app.ui.screens.errors.InternetError;
 import com.purpura.app.ui.screens.productRegister.RegisterProduct;
 
 import java.util.ArrayList;

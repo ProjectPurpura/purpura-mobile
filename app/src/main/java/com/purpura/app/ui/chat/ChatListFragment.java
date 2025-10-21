@@ -1,24 +1,20 @@
 package com.purpura.app.ui.chat;
 
-import android.content.Context;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.purpura.app.R;
 import com.purpura.app.configuration.Methods;
-import com.purpura.app.model.Company;
 import com.purpura.app.remote.service.MongoService;
-import com.purpura.app.ui.screens.autentication.RegisterOrLogin;
 import com.purpura.app.ui.screens.errors.GenericError;
 
 public class ChatListFragment extends Fragment {
@@ -80,6 +76,15 @@ public class ChatListFragment extends Fragment {
                             String cnpj = document.getString("cnpj");
 
                             String url = "https://purpura-react-site.onrender.com/#cnpj=" + cnpj;
+
+                            WebSettings webSettings = chatListWebView.getSettings();
+
+
+                            webSettings.setJavaScriptEnabled(true);
+
+                            webSettings.setDomStorageEnabled(true);
+
+                            chatListWebView.setWebViewClient(new WebViewClient());
 
                             chatListWebView.loadUrl(url);
                         }

@@ -26,6 +26,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.cloudinary.android.MediaManager;
 import com.cloudinary.android.callback.ErrorInfo;
 import com.cloudinary.android.callback.UploadCallback;
@@ -42,7 +43,7 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.purpura.app.R;
 import com.purpura.app.configuration.Methods;
-import com.purpura.app.model.Company;
+import com.purpura.app.model.mongo.Company;
 import com.purpura.app.remote.service.MongoService;
 import com.purpura.app.ui.screens.MainActivity;
 
@@ -56,22 +57,22 @@ public class Register extends AppCompatActivity {
     FirebaseAuth auth = FirebaseAuth.getInstance();
     GoogleSignInClient googleSignInClient;
 
-    private String cloud_name = "dughz83oa";
-    private String project = "Purpura";
-    private String uriImage;
+    private static boolean cloudinaryInitialized = false;
+    String cloud_name = "dughz83oa";
+    String project = "Purpura";
+    String uriImage;
 
-    private ActivityResultLauncher<String[]> requestPermission;
-    private ActivityResultLauncher<Intent> requestGallery;
+    boolean imageLoaded = false;
+
+    ActivityResultLauncher<String[]> requestPermission;
+    ActivityResultLauncher<Intent> requestGallery;
 
     ActivityResultLauncher<Intent> googleLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
                 if (result.getResultCode() == RESULT_OK) {
                     try {
-                        GoogleSignInAccount account =
-                                GoogleSignIn.getSignedInAccountFromIntent(result.getData())
-                                        .getResult(ApiException.class);
-
+                        GoogleSignInAccount account = GoogleSignIn.getSignedInAccountFromIntent(result.getData()).getResult(ApiException.class);
                         if (account == null || account.getEmail() == null) {
                             Toast.makeText(this, "Erro ao obter conta do Google.", Toast.LENGTH_LONG).show();
                             return;
@@ -81,8 +82,6 @@ public class Register extends AppCompatActivity {
 
                         auth.fetchSignInMethodsForEmail(email).addOnCompleteListener(task -> {
                             if (task.isSuccessful()) {
-                                boolean existe = !task.getResult().getSignInMethods().isEmpty();
-
                                 AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
                                 auth.signInWithCredential(credential).addOnCompleteListener(loginTask -> {
                                     if (loginTask.isSuccessful()) {
@@ -98,12 +97,12 @@ public class Register extends AppCompatActivity {
                                 Toast.makeText(this, "Erro ao verificar email: " + task.getException(), Toast.LENGTH_LONG).show();
                             }
                         });
-
                     } catch (ApiException e) {
                         Toast.makeText(this, "Erro Google Sign-In: " + e.getMessage(), Toast.LENGTH_LONG).show();
                     }
                 }
-            });
+            }
+    );
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,10 +127,10 @@ public class Register extends AppCompatActivity {
         TextView txtLogin = findViewById(R.id.registerLoginText);
 
         initCloudnary();
-        checkPermissions();
         setGallery(image);
+        checkPermissions();
 
-        image.setOnClickListener(this::openGallery);
+        image.setOnClickListener(v -> openGallery(v));
 
         btnCadastrar.setOnClickListener(v -> {
             String nome = edtNome.getText().toString().trim();
@@ -144,12 +143,6 @@ public class Register extends AppCompatActivity {
                 Toast.makeText(this, "Preencha todos os campos!", Toast.LENGTH_SHORT).show();
                 return;
             }
-
-            if (uriImage == null || uriImage.isEmpty()) {
-                Toast.makeText(this, "Aguarde o upload da imagem antes de cadastrar!", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
             if (cnpj.length() != 14 || !cnpj.matches("\\d+")) {
                 Toast.makeText(this, "CNPJ inválido. Deve ter 14 dígitos.", Toast.LENGTH_SHORT).show();
                 return;
@@ -158,14 +151,16 @@ public class Register extends AppCompatActivity {
                 Toast.makeText(this, "Telefone inválido. Deve ter no mínimo 10 dígitos.", Toast.LENGTH_SHORT).show();
                 return;
             }
+            if (!imageLoaded) {
+                Toast.makeText(this, "Por favor, envie uma foto antes de cadastrar.", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
             auth.createUserWithEmailAndPassword(email, senha).addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     FirebaseUser user = auth.getCurrentUser();
                     if (user != null) {
-
                         Company company = new Company(cnpj, telefone, email, nome, uriImage);
-
                         FirebaseFirestore.getInstance()
                                 .collection("empresa")
                                 .document(user.getUid())
@@ -222,7 +217,6 @@ public class Register extends AppCompatActivity {
                     if (document.exists()) {
                         String cnpj = document.getString("cnpj");
                         String telefone = document.getString("telefone");
-
                         if (cnpj == null || cnpj.isEmpty() || telefone == null || telefone.isEmpty()) {
                             Toast.makeText(this, "Complete seu cadastro", Toast.LENGTH_SHORT).show();
                             methods.openScreenActivity(this, AddicionalInformacionsRegisterGoogle.class);
@@ -243,11 +237,13 @@ public class Register extends AppCompatActivity {
                 });
     }
 
-    //Cloudinary
     private void initCloudnary() {
-        Map config = new HashMap();
-        config.put("cloud_name", cloud_name);
-        MediaManager.init(this, config);
+        if (!cloudinaryInitialized) {
+            Map<String, String> config = new HashMap<>();
+            config.put("cloud_name", cloud_name);
+            MediaManager.init(this, config);
+            cloudinaryInitialized = true;
+        }
     }
 
     private void setGallery(ImageView imageView) {
@@ -255,17 +251,22 @@ public class Register extends AppCompatActivity {
                 new ActivityResultContracts.StartActivityForResult(),
                 new ActivityResultCallback<ActivityResult>() {
                     @Override
-                    public void onActivityResult(ActivityResult o) {
-                        if (o.getData() != null) {
-                            Uri imageUri = o.getData().getData();
-
+                    public void onActivityResult(ActivityResult result) {
+                        if (result.getData() != null) {
+                            Uri imageUri = result.getData().getData();
                             uploadImagem(imageUri, new ImageUploadCallback() {
                                 @Override
                                 public void onUploadSuccess(String imageUrl) {
                                     uriImage = imageUrl;
+                                    runOnUiThread(() -> {
+                                        Glide.with(Register.this)
+                                                .load(imageUrl)
+                                                .transform(new CircleCrop())
+                                                .into(imageView);
+                                        imageLoaded = true;
+                                    });
                                     Toast.makeText(Register.this, "Imagem carregada com sucesso!", Toast.LENGTH_SHORT).show();
                                 }
-
                                 @Override
                                 public void onUploadFailure(String error) {
                                     Toast.makeText(Register.this, "Erro ao enviar imagem: " + error, Toast.LENGTH_LONG).show();
@@ -286,31 +287,19 @@ public class Register extends AppCompatActivity {
                     public void onStart(String requestId) {
                         Log.d("UPLOAD", "Upload iniciado");
                     }
-
                     @Override
                     public void onProgress(String requestId, long bytes, long totalBytes) {
                         Log.d("UPLOAD", "Enviando imagem...");
                     }
-
                     @Override
                     public void onSuccess(String requestId, Map resultData) {
-                        Log.d("UPLOAD", "Upload concluído com sucesso");
                         String url = (String) resultData.get("secure_url");
-
-                        runOnUiThread(() -> {
-                            Glide.with(Register.this)
-                                    .load(url)
-                                    .into((ImageView) findViewById(R.id.registerImage));
-                        });
-
                         callback.onUploadSuccess(url);
                     }
-
                     @Override
                     public void onError(String requestId, ErrorInfo error) {
                         callback.onUploadFailure(error.getDescription());
                     }
-
                     @Override
                     public void onReschedule(String requestId, ErrorInfo error) {
                         callback.onUploadFailure("Reagendado: " + error.getDescription());
@@ -319,20 +308,13 @@ public class Register extends AppCompatActivity {
                 .dispatch(Register.this);
     }
 
-    // Permissões
     private void checkPermissions() {
         requestPermission = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), result -> {
             for (Map.Entry<String, Boolean> entry : result.entrySet()) {
                 String permission = entry.getKey();
                 Boolean isGranted = entry.getValue();
-                if (isGranted) {
-                    Log.d("Permissions", "Permission granted: " + permission);
-                } else {
-                    Log.d("Permissions", "Permission denied: " + permission);
-                }
             }
         });
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             requestPermission.launch(new String[]{
                     Manifest.permission.READ_MEDIA_IMAGES,
@@ -353,6 +335,7 @@ public class Register extends AppCompatActivity {
         requestGallery.launch(intent);
     }
 }
+
 interface ImageUploadCallback {
     void onUploadSuccess(String imageUrl);
     void onUploadFailure(String error);

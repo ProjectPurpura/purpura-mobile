@@ -9,9 +9,11 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.purpura.app.R;
 import com.purpura.app.configuration.Methods;
 import com.purpura.app.ui.screens.MainActivity;
+import com.purpura.app.ui.screens.autentication.RegisterOrLogin;
 
 public class InternetError extends AppCompatActivity {
 
@@ -30,7 +32,12 @@ public class InternetError extends AppCompatActivity {
 
         Button tryAgainButton = findViewById(R.id.tryAgainButton);
 
-        tryAgainButton.setOnClickListener(v -> methods.openActivityToMongoService(this, MainActivity.class));
-
+        tryAgainButton.setOnClickListener(v -> {
+            if(FirebaseAuth.getInstance().getCurrentUser() != null){
+                methods.openScreenActivity(this, MainActivity.class);
+            }else{
+                finish();
+            }
+        });
     }
 }

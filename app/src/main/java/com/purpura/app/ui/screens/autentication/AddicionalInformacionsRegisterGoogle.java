@@ -1,9 +1,7 @@
 package com.purpura.app.ui.screens.autentication;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -21,11 +19,10 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.purpura.app.R;
 import com.purpura.app.configuration.Methods;
-import com.purpura.app.model.Company;
+import com.purpura.app.model.mongo.Company;
 import com.purpura.app.remote.service.MongoService;
 import com.purpura.app.ui.screens.MainActivity;
 import com.purpura.app.ui.screens.errors.GenericError;
-import com.purpura.app.ui.screens.errors.InternetError;
 
 public class AddicionalInformacionsRegisterGoogle extends AppCompatActivity {
 

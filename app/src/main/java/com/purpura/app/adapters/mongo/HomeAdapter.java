@@ -1,4 +1,4 @@
-package com.purpura.app.adapters;
+package com.purpura.app.adapters.mongo;
 
 import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
@@ -14,7 +14,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.purpura.app.R;
 import com.purpura.app.configuration.Methods;
-import com.purpura.app.model.Residue;
+import com.purpura.app.model.mongo.Residue;
 import com.purpura.app.remote.service.MongoService;
 
 import java.text.DecimalFormat;

@@ -94,19 +94,20 @@
                 app:layout_constraintTop_toBottomOf="@+id/productPageProductName" />
 
             <!-- Peso ícone -->
+
+            <!-- Descrição -->
             <ImageView
                 android:id="@+id/imageView20"
                 android:layout_width="35sp"
                 android:layout_height="35sp"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="25dp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.157"
+                app:layout_constraintHorizontal_bias="0.148"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/productPageDescription"
                 app:srcCompat="@drawable/weight_vector"
                 app:tint="@color/verde_padrao" />
 
-            <!-- Descrição -->
             <EditText
                 android:id="@+id/productPageDescription"
                 android:layout_width="320sp"
@@ -150,11 +151,12 @@
                 android:layout_width="35sp"
                 android:layout_height="35sp"
                 android:layout_marginTop="20dp"
+                android:tint="@color/verde_padrao"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.15"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/imageView20"
-                app:srcCompat="@drawable/green_location_vector" />
+                app:srcCompat="@drawable/location_vector" />
 
             <!-- Localização -->
             <TextView
@@ -187,12 +189,16 @@
                 android:layout_width="320sp"
                 android:layout_height="50sp"
                 android:layout_marginTop="15dp"
+                android:layout_marginBottom="10dp"
                 android:background="@drawable/round_border"
                 android:text="Conversar com o vendedor"
                 android:textColor="@color/roxo_padrao"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.494"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/productPageAddToShoppingCart" />
+                app:layout_constraintTop_toBottomOf="@+id/productPageAddToShoppingCart"
+                app:layout_constraintVertical_bias="0.0" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

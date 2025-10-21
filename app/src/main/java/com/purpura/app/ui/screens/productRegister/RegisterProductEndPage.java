@@ -1,6 +1,5 @@
 package com.purpura.app.ui.screens.productRegister;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -15,11 +14,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.purpura.app.R;
 import com.purpura.app.configuration.Methods;
-import com.purpura.app.model.PixKey;
+import com.purpura.app.model.mongo.PixKey;
 import com.purpura.app.remote.service.MongoService;
-import com.purpura.app.ui.screens.accountFeatures.MyProducts;
 import com.purpura.app.ui.screens.errors.GenericError;
-import com.purpura.app.ui.screens.errors.InternetError;
 
 public class RegisterProductEndPage extends AppCompatActivity {
 
