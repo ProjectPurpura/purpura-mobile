@@ -66,13 +66,11 @@ public class HomeFragment extends Fragment {
         recyclerView = view.findViewById(R.id.homeRecyclerView);
         recyclerView.setLayoutManager(new GridLayoutManager(requireContext(), 2));
 
-        // Adapter com clique abrindo ProductPage + passando CNPJ via Intent
         adapter = new HomeAdapter(new ArrayList<>(), residue -> {
             Intent rota = new Intent(requireContext(), ProductPage.class);
             rota.putExtra("residue", residue);
-            // passa o CNPJ efetivo (do Firestore se já carregado; senão usa o do residue)
-            String cnpjEffective = firstNonEmpty(currentCompanyCnpj, residue.getCnpj());
-            rota.putExtra("cnpj", sanitizeCnpj(cnpjEffective));
+            String cnpjFromResidue = residue.getCnpj();
+            rota.putExtra("cnpj", sanitizeCnpj(cnpjFromResidue));
             startActivity(rota);
         });
 
@@ -138,10 +136,5 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    // helpers
     private static String sanitizeCnpj(String c) { return c == null ? "" : c.replaceAll("\\D+", ""); }
-    private static String firstNonEmpty(String a, String b) {
-        if (a != null && !a.trim().isEmpty()) return a;
-        return b == null ? "" : b.trim();
-    }
 }
