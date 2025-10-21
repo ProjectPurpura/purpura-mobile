@@ -1,4 +1,4 @@
-package com.purpura.app.model;
+package com.purpura.app.model.mongo;
 
 public class PixKey {
     private String name;

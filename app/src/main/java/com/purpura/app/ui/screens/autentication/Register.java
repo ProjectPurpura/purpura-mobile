@@ -26,6 +26,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.cloudinary.android.MediaManager;
 import com.cloudinary.android.callback.ErrorInfo;
 import com.cloudinary.android.callback.UploadCallback;
@@ -42,7 +43,7 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.purpura.app.R;
 import com.purpura.app.configuration.Methods;
-import com.purpura.app.model.Company;
+import com.purpura.app.model.mongo.Company;
 import com.purpura.app.remote.service.MongoService;
 import com.purpura.app.ui.screens.MainActivity;
 
@@ -56,22 +57,22 @@ public class Register extends AppCompatActivity {
     FirebaseAuth auth = FirebaseAuth.getInstance();
     GoogleSignInClient googleSignInClient;
 
-    private String cloud_name = "dughz83oa";
-    private String project = "Purpura";
-    private String uriImage;
+    private static boolean cloudinaryInitialized = false;
+    String cloud_name = "dughz83oa";
+    String project = "Purpura";
+    String uriImage;
 
-    private ActivityResultLauncher<String[]> requestPermission;
-    private ActivityResultLauncher<Intent> requestGallery;
+    boolean imageLoaded = false;
+
+    ActivityResultLauncher<String[]> requestPermission;
+    ActivityResultLauncher<Intent> requestGallery;
 
     ActivityResultLauncher<Intent> googleLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
                 if (result.getResultCode() == RESULT_OK) {
                     try {
-                        GoogleSignInAccount account =
-                                GoogleSignIn.getSignedInAccountFromIntent(result.getData())
-                                        .getResult(ApiException.class);
-
+                        GoogleSignInAccount account = GoogleSignIn.getSignedInAccountFromIntent(result.getData()).getResult(ApiException.class);
                         if (account == null || account.getEmail() == null) {
                             Toast.makeText(this, "Erro ao obter conta do Google.", Toast.LENGTH_LONG).show();
                             return;
@@ -103,7 +104,8 @@ public class Register extends AppCompatActivity {
                         Toast.makeText(this, "Erro Google Sign-In: " + e.getMessage(), Toast.LENGTH_LONG).show();
                     }
                 }
-            });
+            }
+    );
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,10 +130,10 @@ public class Register extends AppCompatActivity {
         TextView txtLogin = findViewById(R.id.registerLoginText);
 
         initCloudnary();
-        checkPermissions();
         setGallery(image);
+        checkPermissions();
 
-        image.setOnClickListener(this::openGallery);
+        image.setOnClickListener(v -> openGallery(v));
 
         btnCadastrar.setOnClickListener(v -> {
             String nome = edtNome.getText().toString().trim();
@@ -158,14 +160,16 @@ public class Register extends AppCompatActivity {
                 Toast.makeText(this, "Telefone inválido. Deve ter no mínimo 10 dígitos.", Toast.LENGTH_SHORT).show();
                 return;
             }
+            if (!imageLoaded) {
+                Toast.makeText(this, "Por favor, envie uma foto antes de cadastrar.", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
             auth.createUserWithEmailAndPassword(email, senha).addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     FirebaseUser user = auth.getCurrentUser();
                     if (user != null) {
-
                         Company company = new Company(cnpj, nome, email, telefone, uriImage);
-
                         FirebaseFirestore.getInstance()
                                 .collection("empresa")
                                 .document(user.getUid())
@@ -243,11 +247,13 @@ public class Register extends AppCompatActivity {
                 });
     }
 
-    //Cloudinary
     private void initCloudnary() {
-        Map config = new HashMap();
-        config.put("cloud_name", cloud_name);
-        MediaManager.init(this, config);
+        if (!cloudinaryInitialized) {
+            Map<String, String> config = new HashMap<>();
+            config.put("cloud_name", cloud_name);
+            MediaManager.init(this, config);
+            cloudinaryInitialized = true;
+        }
     }
 
     private void setGallery(ImageView imageView) {
@@ -255,14 +261,20 @@ public class Register extends AppCompatActivity {
                 new ActivityResultContracts.StartActivityForResult(),
                 new ActivityResultCallback<ActivityResult>() {
                     @Override
-                    public void onActivityResult(ActivityResult o) {
-                        if (o.getData() != null) {
-                            Uri imageUri = o.getData().getData();
-
+                    public void onActivityResult(ActivityResult result) {
+                        if (result.getData() != null) {
+                            Uri imageUri = result.getData().getData();
                             uploadImagem(imageUri, new ImageUploadCallback() {
                                 @Override
                                 public void onUploadSuccess(String imageUrl) {
                                     uriImage = imageUrl;
+                                    runOnUiThread(() -> {
+                                        Glide.with(Register.this)
+                                                .load(imageUrl)
+                                                .transform(new CircleCrop())
+                                                .into(imageView);
+                                        imageLoaded = true;
+                                    });
                                     Toast.makeText(Register.this, "Imagem carregada com sucesso!", Toast.LENGTH_SHORT).show();
                                 }
 

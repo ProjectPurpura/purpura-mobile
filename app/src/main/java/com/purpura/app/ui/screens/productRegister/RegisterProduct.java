@@ -26,9 +26,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.purpura.app.R;
 import com.purpura.app.configuration.Methods;
-import com.purpura.app.model.Residue;
+import com.purpura.app.model.mongo.Residue;
 import com.purpura.app.remote.cloudnary.Cloudinary;
-import com.purpura.app.remote.service.MongoService;;
+import com.purpura.app.remote.service.MongoService;
+import com.purpura.app.ui.screens.errors.GenericError;
 
 import java.util.Map;
 
@@ -82,6 +83,7 @@ public class RegisterProduct extends AppCompatActivity {
 
                             @Override
                             public void onUploadFailure(String error) {
+                                methods.openScreenActivity(RegisterProduct.this, GenericError.class);
                             }
                         });
                     }
@@ -95,6 +97,7 @@ public class RegisterProduct extends AppCompatActivity {
                         if (isGranted) {
                             Log.d("Permissions", "Permission granted: " + permission);
                         } else {
+                            methods.openScreenActivity(RegisterProduct.this, GenericError.class);
                         }
                     }
                 });
@@ -162,7 +165,9 @@ public class RegisterProduct extends AppCompatActivity {
                                 mongoService.createResidue(cnpj, residue, this);
                                 methods.openScreenActivity(this, RegisterAdress.class);
                             }
-                        });
+                        }).addOnFailureListener(view ->
+                                methods.openScreenActivity(RegisterProduct.this, GenericError.class)
+                        );
 
             } catch (Exception e) {
                 e.printStackTrace();

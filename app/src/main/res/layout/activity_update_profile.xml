@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.screens.UpdateProfile">
+
+    <EditText
+        android:id="@+id/updateCompanyName"
+        android:layout_width="320sp"
+        android:layout_height="50sp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/round_border"
+        android:ems="10"
+        android:hint="Nome da empresa"
+        android:inputType="text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.494"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/updatePhone" />
+
+    <EditText
+        android:id="@+id/updatePhone"
+        android:layout_width="320sp"
+        android:layout_height="50sp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/round_border"
+        android:ems="10"
+        android:hint="Telefone da empresa"
+        android:inputType="phone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.494"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/updateEmail" />
+
+    <EditText
+        android:id="@+id/updateEmail"
+        android:layout_width="320sp"
+        android:layout_height="50sp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/round_border"
+        android:ems="10"
+        android:hint="Email da empresa"
+        android:inputType="textEmailAddress"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.494"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView3" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="80dp"
+        android:text="Atualizando Perfil"
+        android:textColor="@color/verde_padrao"
+        android:textSize="34sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/registerProductBackButton2"
+        android:layout_width="40sp"
+        android:layout_height="40sp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/back_button" />
+
+    <Button
+        android:id="@+id/registerButton"
+        android:layout_width="320sp"
+        android:layout_height="50sp"
+        android:layout_marginTop="20dp"
+        android:backgroundTint="@color/roxo_padrao"
+        android:text="Atualizar"
+        app:cornerRadius="15sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.494"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/registerImage" />
+
+    <ImageView
+        android:id="@+id/imageView34"
+        android:layout_width="35sp"
+        android:layout_height="35sp"
+        app:layout_constraintBottom_toBottomOf="@+id/registerImage"
+        app:layout_constraintEnd_toEndOf="@+id/registerImage"
+        app:layout_constraintHorizontal_bias="0.971"
+        app:layout_constraintStart_toStartOf="@+id/registerImage"
+        app:layout_constraintTop_toTopOf="@+id/registerImage"
+        app:layout_constraintVertical_bias="0.533"
+        app:srcCompat="@drawable/export_vector" />
+
+    <ImageView
+        android:id="@+id/registerImage"
+        android:layout_width="320sp"
+        android:layout_height="50sp"
+        android:layout_marginTop="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/updateCompanyName"
+        app:srcCompat="@drawable/round_border" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

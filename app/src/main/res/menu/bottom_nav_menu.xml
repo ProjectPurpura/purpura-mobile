@@ -27,7 +27,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:icon="@drawable/notification_icon"
-        android:title="Notificações" />
+        android:title="Notícias" />
 
     <item
         android:id="@+id/accountFragment"

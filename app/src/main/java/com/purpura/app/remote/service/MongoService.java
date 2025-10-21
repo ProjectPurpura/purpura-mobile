@@ -6,10 +6,10 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.purpura.app.configuration.Methods;
-import com.purpura.app.model.Address;
-import com.purpura.app.model.Company;
-import com.purpura.app.model.PixKey;
-import com.purpura.app.model.Residue;
+import com.purpura.app.model.mongo.Company;
+import com.purpura.app.model.mongo.Address;
+import com.purpura.app.model.mongo.PixKey;
+import com.purpura.app.model.mongo.Residue;
 import com.purpura.app.remote.api.MongoAPI;
 import com.purpura.app.remote.util.RetrofitService;
 import com.purpura.app.ui.screens.MainActivity;
@@ -29,7 +29,7 @@ public class    MongoService {
         mongoAPI = new RetrofitService<>(MongoAPI.class).getService();
     }
 
-    // Create - GET
+    //GET
 
     public Call<List<Residue>> getAllResiduosMain(String cnpj, int limit, int page) {
         Call<List<Residue>> call = mongoAPI.getAllResiduosMain(cnpj, limit, page);
@@ -138,6 +138,8 @@ public class    MongoService {
     }
 
     public void createCompany(Company company, Context context) {
+
+        Log.e("Entrou antes da requisição MongoService", "Entrou antes da requisição  MongoService");
         Call<Company> call = mongoAPI.createCompany(company);
 
         call.enqueue(new Callback<>() {
@@ -284,7 +286,6 @@ public class    MongoService {
             }
         });
     }
-
 
     public void deleteResidue(String cnpj, String id, Context context){
         Call<Void> call = mongoAPI.deleteResidue(cnpj, id);

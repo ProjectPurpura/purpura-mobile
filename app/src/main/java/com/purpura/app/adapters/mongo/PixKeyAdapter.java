@@ -1,12 +1,10 @@
-package com.purpura.app.adapters;
+package com.purpura.app.adapters.mongo;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,9 +13,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.purpura.app.R;
 import com.purpura.app.configuration.Methods;
-import com.purpura.app.model.PixKey;
+import com.purpura.app.model.mongo.PixKey;
 import com.purpura.app.remote.service.MongoService;
-import com.purpura.app.ui.screens.productRegister.RegisterAdress;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -86,7 +83,7 @@ public class PixKeyAdapter extends RecyclerView.Adapter<PixKeyAdapter.PixKeyView
     public static class PixKeyViewHolder extends RecyclerView.ViewHolder {
 
         TextView pixKeyCardName;
-        Button pixKeyCardButtonEdit;
+        ImageView pixKeyCardButtonEdit;
         TextView pixKeyCardPixKey;
         ImageView pixKeyCardDeleteButton;
 

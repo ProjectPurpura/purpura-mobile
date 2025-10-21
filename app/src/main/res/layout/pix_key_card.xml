@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="320sp"
-    android:layout_height="180sp"
+    android:layout_height="150sp"
     app:cardCornerRadius="8dp"
     app:cardElevation="4dp">
 
@@ -16,7 +17,7 @@
             android:layout_height="90sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintHorizontal_bias="0.03"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/pix_key" />
@@ -26,7 +27,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="26dp"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="20dp"
             android:text="Chave da empresa"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -44,29 +45,26 @@
             app:layout_constraintStart_toEndOf="@+id/imageView27"
             app:layout_constraintTop_toBottomOf="@+id/pixKeyCardName" />
 
-        <Button
-            android:id="@+id/pixKeyCardButtonEdit"
-            android:layout_width="200sp"
-            android:layout_height="50sp"
-            android:layout_marginTop="8dp"
-            android:backgroundTint="@color/roxo_padrao"
-            android:text="Editar"
-            app:cornerRadius="15sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.404"
-            app:layout_constraintStart_toEndOf="@+id/imageView27"
-            app:layout_constraintTop_toBottomOf="@+id/pixKeyCardPixKey" />
-
         <ImageView
             android:id="@+id/pixKeyCardDeletePixKey"
             android:layout_width="35sp"
             android:layout_height="35sp"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="20dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.567"
             app:layout_constraintStart_toEndOf="@+id/pixKeyCardName"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/delete_icon" />
+
+        <ImageView
+            android:id="@+id/pixKeyCardButtonEdit"
+            android:layout_width="124dp"
+            android:layout_height="38dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="12dp"
+            app:layout_constraintStart_toEndOf="@+id/imageView27"
+            app:layout_constraintTop_toBottomOf="@+id/pixKeyCardPixKey"
+            app:srcCompat="@drawable/edit_button" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

@@ -19,12 +19,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.purpura.app.R;
-import com.purpura.app.adapters.HomeAdapter;
+import com.purpura.app.adapters.mongo.HomeAdapter;
 import com.purpura.app.configuration.Methods;
-import com.purpura.app.model.Residue;
+import com.purpura.app.model.mongo.Residue;
 import com.purpura.app.remote.service.MongoService;
 import com.purpura.app.ui.screens.ProductPage;
 import com.purpura.app.ui.screens.errors.GenericError;
+import com.purpura.app.ui.screens.errors.InternetError;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +39,7 @@ public class HomeFragment extends Fragment {
     private RecyclerView recyclerView;
     private HomeAdapter adapter;
 
-    private final Methods methods = new Methods();
+    Methods methods = new Methods();
     private final MongoService mongoService = new MongoService();
     private Call<List<Residue>> residuosCall;
 
@@ -74,17 +75,17 @@ public class HomeFragment extends Fragment {
         });
 
         recyclerView.setAdapter(adapter);
-        carregarResiduos(this);
+
+        loadResidues(this);
     }
 
-    private void carregarResiduos(Fragment fragment) {
+    private void loadResidues(Fragment fragment) {
         try {
             if (FirebaseAuth.getInstance().getCurrentUser() == null) {
                 if (isAdded())
                     Toast.makeText(requireContext(), "Usuário não autenticado", Toast.LENGTH_SHORT).show();
                 return;
             }
-
             FirebaseFirestore.getInstance()
                     .collection("empresa")
                     .document(FirebaseAuth.getInstance().getCurrentUser().getUid())

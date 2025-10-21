@@ -1,8 +1,5 @@
 package com.purpura.app.remote.util;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 

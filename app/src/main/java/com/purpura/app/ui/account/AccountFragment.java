@@ -1,7 +1,6 @@
 package com.purpura.app.ui.account;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,15 +14,12 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.purpura.app.adapters.PixKeyAdapter;
-import com.purpura.app.model.Company;
-import com.purpura.app.model.PixKey;
+import com.purpura.app.model.mongo.Company;
 import com.purpura.app.remote.service.MongoService;
 import com.purpura.app.ui.screens.Dashboards;
 import com.google.firebase.auth.FirebaseAuth;
@@ -34,11 +30,8 @@ import com.purpura.app.databinding.FragmentAccountBinding;
 import com.purpura.app.ui.screens.accountFeatures.EditAddress;
 import com.purpura.app.ui.screens.accountFeatures.EditPixKeys;
 import com.purpura.app.ui.screens.accountFeatures.MyProducts;
-import com.purpura.app.ui.screens.autentication.Login;
 import com.purpura.app.ui.screens.autentication.RegisterOrLogin;
 import com.purpura.app.ui.screens.errors.GenericError;
-
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;

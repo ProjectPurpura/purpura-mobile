@@ -13,10 +13,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.purpura.app.adapters.MyResiduesAdapter;
+import com.purpura.app.adapters.mongo.MyResiduesAdapter;
 import com.purpura.app.configuration.Methods;
 import com.purpura.app.databinding.FragmentFirstBinding;
-import com.purpura.app.model.Residue;
+import com.purpura.app.model.mongo.Residue;
 import com.purpura.app.remote.service.MongoService;
 import com.purpura.app.ui.account.AccountFragment;
 import com.purpura.app.ui.screens.errors.GenericError;

@@ -12,9 +12,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.purpura.app.R;
-import com.purpura.app.adapters.ProductPageAdapter;
+import com.purpura.app.adapters.mongo.ProductPageAdapter;
 import com.purpura.app.configuration.Methods;
-import com.purpura.app.model.Residue;
+
+import com.purpura.app.model.mongo.Residue;
 
 import java.io.Serializable;
 

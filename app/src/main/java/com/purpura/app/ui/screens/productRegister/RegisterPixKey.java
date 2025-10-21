@@ -1,11 +1,9 @@
 package com.purpura.app.ui.screens.productRegister;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,14 +11,10 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.purpura.app.configuration.Methods;
 import com.purpura.app.R;
-import com.purpura.app.model.PixKey;
+import com.purpura.app.model.mongo.PixKey;
 import com.purpura.app.remote.service.MongoService;
-import com.purpura.app.ui.account.AccountFragment;
-import com.purpura.app.ui.screens.errors.InternetError;
 
 public class RegisterPixKey extends AppCompatActivity {
 

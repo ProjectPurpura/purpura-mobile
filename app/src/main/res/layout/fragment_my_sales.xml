@@ -8,11 +8,12 @@
 
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/mySalesRecicleView"
+        android:id="@+id/mySalesRecyclerView"
         android:layout_width="409dp"
         android:layout_height="889dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:listitem="@layout/my_orders_card" />
 </androidx.constraintlayout.widget.ConstraintLayout>

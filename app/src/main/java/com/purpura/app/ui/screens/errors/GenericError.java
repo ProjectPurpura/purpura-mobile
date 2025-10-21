@@ -9,9 +9,11 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.purpura.app.R;
 import com.purpura.app.configuration.Methods;
 import com.purpura.app.ui.screens.MainActivity;
+import com.purpura.app.ui.screens.autentication.RegisterOrLogin;
 
 public class GenericError extends AppCompatActivity {
 
@@ -29,6 +31,12 @@ public class GenericError extends AppCompatActivity {
         });
 
         Button tryAgain = findViewById(R.id.tryAgainErrorButton);
-        tryAgain.setOnClickListener(v -> methods.openScreenActivity(this, MainActivity.class));
+        tryAgain.setOnClickListener(v -> {
+            if(FirebaseAuth.getInstance().getCurrentUser() != null){
+                methods.openScreenActivity(this, MainActivity.class);
+            }else{
+                finish();
+            }
+        });
     }
 }

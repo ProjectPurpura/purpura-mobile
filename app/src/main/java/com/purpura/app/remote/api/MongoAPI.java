@@ -1,10 +1,9 @@
 package com.purpura.app.remote.api;
 
-import com.purpura.app.model.Address;
-import com.purpura.app.model.Company;
-import com.purpura.app.model.PixKey;
-import com.purpura.app.model.ProductCard;
-import com.purpura.app.model.Residue;
+import com.purpura.app.model.mongo.Address;
+import com.purpura.app.model.mongo.Company;
+import com.purpura.app.model.mongo.PixKey;
+import com.purpura.app.model.mongo.Residue;
 import com.purpura.app.remote.util.Api;
 
 import java.util.List;
