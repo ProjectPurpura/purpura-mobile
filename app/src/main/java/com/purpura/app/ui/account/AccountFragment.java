@@ -1,6 +1,7 @@
 package com.purpura.app.ui.account;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,8 +22,10 @@ import com.google.android.material.imageview.ShapeableImageView;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.purpura.app.model.mongo.Company;
 import com.purpura.app.remote.service.MongoService;
+
 import com.purpura.app.ui.screens.Dashboards;
 import com.google.firebase.auth.FirebaseAuth;
+import com.purpura.app.ui.screens.UpdateProfile;
 import com.purpura.app.ui.screens.accountFeatures.MyOrders;
 import com.purpura.app.configuration.Methods;
 import com.purpura.app.remote.firebase.FirebaseMethods;
@@ -104,6 +107,9 @@ public class AccountFragment extends Fragment {
         myProductsIcon.setOnClickListener(v -> methods.openScreenFragments(this, MyProducts.class));
         myProductsText.setOnClickListener(v -> methods.openScreenFragments(this, MyProducts.class));
 
+        editProfileIcon.setOnClickListener(v -> methods.openScreenFragments(this, UpdateProfile.class));
+        editProfile.setOnClickListener(v -> methods.openScreenFragments(this, UpdateProfile.class));
+
         Activity activity = this.getActivity();
 
         try {
@@ -122,7 +128,7 @@ public class AccountFragment extends Fragment {
                                     accountProfileText.setText(companyResponse.getNome());
                                     Glide.with(AccountFragment.this)
                                             .load(companyResponse.getUrlFoto())
-                                            .transform(new CircleCrop())
+                                            .circleCrop()
                                             .into(profileImage);
                                 }
 
@@ -148,6 +154,8 @@ public class AccountFragment extends Fragment {
                     () -> logOut(),
                     null);
         });
+
+        editProfile.setOnClickListener(v -> methods.openScreenFragments(this, UpdateProfile.class));
 
         return root;
     }

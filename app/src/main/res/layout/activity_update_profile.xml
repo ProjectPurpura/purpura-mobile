@@ -82,24 +82,24 @@
         android:text="Atualizar"
         app:cornerRadius="15sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.494"
+        app:layout_constraintHorizontal_bias="0.406"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/registerImage" />
+        app:layout_constraintTop_toBottomOf="@+id/updateProfileImage" />
 
     <ImageView
         android:id="@+id/imageView34"
         android:layout_width="35sp"
         android:layout_height="35sp"
-        app:layout_constraintBottom_toBottomOf="@+id/registerImage"
-        app:layout_constraintEnd_toEndOf="@+id/registerImage"
+        app:layout_constraintBottom_toBottomOf="@+id/updateProfileImage"
+        app:layout_constraintEnd_toEndOf="@+id/updateProfileImage"
         app:layout_constraintHorizontal_bias="0.971"
-        app:layout_constraintStart_toStartOf="@+id/registerImage"
-        app:layout_constraintTop_toTopOf="@+id/registerImage"
+        app:layout_constraintStart_toStartOf="@+id/updateProfileImage"
+        app:layout_constraintTop_toTopOf="@+id/updateProfileImage"
         app:layout_constraintVertical_bias="0.533"
         app:srcCompat="@drawable/export_vector" />
 
     <ImageView
-        android:id="@+id/registerImage"
+        android:id="@+id/updateProfileImage"
         android:layout_width="320sp"
         android:layout_height="50sp"
         android:layout_marginTop="20dp"

@@ -22,7 +22,7 @@
 
             <!-- Botão de voltar -->
             <ImageView
-                android:id="@+id/imageView12"
+                android:id="@+id/productPageBackButton"
                 android:layout_width="40sp"
                 android:layout_height="40dp"
                 android:layout_marginStart="20dp"
@@ -32,8 +32,8 @@
                 app:srcCompat="@drawable/back_button" />
 
             <!-- ViewPager2 (imagens do produto) -->
-            <androidx.viewpager2.widget.ViewPager2
-                android:id="@+id/viewPager"
+            <ImageView
+                android:id="@+id/productPageImage"
                 android:layout_width="320sp"
                 android:layout_height="200dp"
                 android:layout_marginTop="88dp"
@@ -43,19 +43,21 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <!-- Nome do produto -->
+
+            <!-- Valor -->
+
             <TextView
                 android:id="@+id/productPageProductName"
-                android:layout_width="185dp"
-                android:layout_height="55dp"
-                android:layout_marginTop="250dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="264dp"
                 android:text="Nome do produto"
                 android:textSize="20sp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.25"
+                app:layout_constraintHorizontal_bias="0.188"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/imageView12" />
+                app:layout_constraintTop_toBottomOf="@+id/productPageBackButton" />
 
-            <!-- Valor -->
             <TextView
                 android:id="@+id/productPageProductValue"
                 android:layout_width="wrap_content"
@@ -66,21 +68,22 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.52"
                 app:layout_constraintStart_toEndOf="@+id/productPageProductName"
-                app:layout_constraintTop_toBottomOf="@+id/imageView12" />
+                app:layout_constraintTop_toBottomOf="@+id/productPageBackButton" />
 
             <!-- Foto da empresa -->
+
+            <!-- Nome da empresa -->
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/productPageCompanyPhoto"
                 android:layout_width="60sp"
                 android:layout_height="60sp"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="16dp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.167"
+                app:layout_constraintHorizontal_bias="0.128"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/productPageProductName"
                 app:srcCompat="@drawable/generic_error" />
 
-            <!-- Nome da empresa -->
             <TextView
                 android:id="@+id/productPageCompanyName"
                 android:layout_width="wrap_content"
@@ -114,6 +117,7 @@
                 android:layout_height="70sp"
                 android:layout_marginTop="15dp"
                 android:ems="10"
+                android:focusable="true"
                 android:gravity="start|top"
                 android:hint="Descrição do produto"
                 android:inputType="textMultiLine"
