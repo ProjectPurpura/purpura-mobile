@@ -1,6 +1,7 @@
 package com.purpura.app.ui.screens;
 
 import android.os.Bundle;
+import android.widget.ImageView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -8,6 +9,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.bumptech.glide.Glide;
 import com.purpura.app.R;
 
 public class UpdateProfile extends AppCompatActivity {
@@ -22,5 +24,15 @@ public class UpdateProfile extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        String cnpj = getIntent() != null ? getIntent().getStringExtra("cnpj") : "";
+        String urlPhoto = getIntent() != null ? getIntent().getStringExtra("urlPhoto") : "";
+
+        ImageView profileImage = findViewById(R.id.updateProfileImage);
+
+        Glide.with(this)
+                .load(urlPhoto)
+                .circleCrop()
+                .into(profileImage);
+
     }
 }
