@@ -1,5 +1,7 @@
 package com.purpura.app.remote.util;
 
+import com.purpura.app.configuration.EnvLoader;
+
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -17,8 +19,12 @@ public class RetrofitService<T> {
             );
         }
 
+        EnvLoader envLoader = new EnvLoader(apiAnnotation.value());
+
+        String baseUrl = envLoader.load();
+
         this.retrofit = new Retrofit.Builder()
-                .baseUrl(apiAnnotation.value())
+                .baseUrl(baseUrl)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
     }
