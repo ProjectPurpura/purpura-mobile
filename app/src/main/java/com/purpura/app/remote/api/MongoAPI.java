@@ -17,7 +17,7 @@ import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
-@Api("https://mongodb-api-purpura.onrender.com")
+@Api("https://api-mg-purpura.onrender.com")
 public interface MongoAPI {
 
     //GET

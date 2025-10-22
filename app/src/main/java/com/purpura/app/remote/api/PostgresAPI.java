@@ -12,7 +12,7 @@ import com.purpura.app.remote.util.Api;
 
 import java.util.List;
 
-@Api("https://api-pg-purpura-latest.onrender.com/")
+@Api("https://api-pg-purpura.onrender.com/")
 public interface PostgresAPI {
 
     //GET
