@@ -1,5 +1,7 @@
 package com.purpura.app.configuration;
 
+import android.util.Log;
+
 public class EnvLoader {
     private final String name;
     public EnvLoader(String name) {
@@ -7,6 +9,11 @@ public class EnvLoader {
     }
 
     public String load() {
-        return System.getenv(this.name);
+        try {
+            return System.getenv(this.name);
+        } catch (Exception e) {
+            Log.e("EnvLoader", "Erro ao carregar variável de ambiente: " + e.getMessage());
+            throw e;
+        }
     }
 }
