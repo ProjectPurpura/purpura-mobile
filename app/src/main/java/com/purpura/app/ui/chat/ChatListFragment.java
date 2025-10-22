@@ -13,7 +13,6 @@ import android.webkit.WebViewClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.purpura.app.R;
-import com.purpura.app.configuration.EnvLoader;
 import com.purpura.app.configuration.EnvironmentVariables;
 import com.purpura.app.configuration.Methods;
 import com.purpura.app.remote.service.MongoService;
@@ -68,7 +67,7 @@ public class ChatListFragment extends Fragment {
         chatListWebView.getSettings().setJavaScriptEnabled(true);
         chatListWebView.setWebViewClient(new WebViewClient());
 
-        baseSiteUrl = new EnvLoader(EnvironmentVariables.SITE_URL).load();
+        baseSiteUrl = EnvironmentVariables.SITE_URL;
 
         try{
 
