@@ -1,6 +1,6 @@
 package com.purpura.app.remote.api;
 
-import com.purpura.app.configuration.ApiEndpoints;
+import com.purpura.app.configuration.EnvironmentVariables;
 import com.purpura.app.model.mongo.Address;
 import com.purpura.app.model.mongo.Company;
 import com.purpura.app.model.mongo.PixKey;
@@ -18,7 +18,7 @@ import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
-@Api(ApiEndpoints.MONGO_URL)
+@Api(value = EnvironmentVariables.MONGO_API)
 public interface MongoAPI {
 
     //GET
