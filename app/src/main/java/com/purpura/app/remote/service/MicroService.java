@@ -1,12 +1,11 @@
 package com.purpura.app.remote.service;
 
 import com.purpura.app.remote.api.MicroApi;
-import com.purpura.app.remote.util.RetrofitService;
 
-public class MicroService {
+public class MicroService extends BaseService<MicroApi> {
     private MicroApi microApi;
 
     public MicroService() {
-        this.microApi = new RetrofitService<>(MicroApi.class).getService();
+        super(MicroApi.class);
     }
 }
