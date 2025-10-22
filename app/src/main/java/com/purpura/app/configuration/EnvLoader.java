@@ -1,8 +1,8 @@
 package com.purpura.app.configuration;
 
-public class EnvProvider {
+public class EnvLoader {
     private final String name;
-    public EnvProvider(String name) {
+    public EnvLoader(String name) {
         this.name = name;
     }
 
