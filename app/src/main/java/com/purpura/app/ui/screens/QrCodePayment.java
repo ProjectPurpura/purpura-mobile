@@ -1,6 +1,5 @@
 package com.purpura.app.ui.screens;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -12,13 +11,18 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.bumptech.glide.Glide;
 import com.purpura.app.R;
 import com.purpura.app.configuration.Methods;
-import com.purpura.app.ui.screens.errors.InternetError;
+import com.purpura.app.remote.service.MicroService;
+import com.purpura.app.ui.screens.errors.GenericError;
 
 public class QrCodePayment extends AppCompatActivity {
 
     Methods methods = new Methods();
+    MicroService microService = new MicroService();
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +41,21 @@ public class QrCodePayment extends AppCompatActivity {
         ImageView copyButton = findViewById(R.id.qrCodePaymentCopyPasteButton);
         TextView qrCodeTextView = findViewById(R.id.qrCodePaymentPixURL);
 
+
+        //----- Bundle -----------------//
+        String pixKey = null;
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            pixKey = extras.getString("pix");
+        }
+        if (pixKey == null) {
+            pixKey = "1234567890876543";
+        }
+        qrCodeTextView.setText(pixKey);
+
+        loadQr(pixKey);
+
+
         //----- SetOnClickListener -----//
 
         backButton.setOnClickListener(v -> finish());
@@ -44,8 +63,20 @@ public class QrCodePayment extends AppCompatActivity {
         continueButton.setOnClickListener(v -> methods.openScreenActivity(this, PaymentStatus.class));
 
         copyButton.setOnClickListener(v -> {
-            String qrCodeText = qrCodeTextView.getText().toString();
-            methods.copyText(this, qrCodeText);
+            String key = qrCodeTextView.getText().toString();
+            methods.copyText(this, key);
         });
+    }
+
+    private void loadQr(String pixKey) {
+        ImageView qrCodeImage = findViewById(R.id.imageView14);
+
+        microService.generateQr(pixKey,
+                bytes -> Glide.with(this)
+                        .load(bytes)
+                        .into(qrCodeImage),
+                error ->
+                        methods.openScreenActivity(this, GenericError.class)
+        );
     }
 }
