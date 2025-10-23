@@ -15,7 +15,7 @@ import java.util.List;
 
 public class IndividualOrderAdapter extends RecyclerView.Adapter<IndividualOrderAdapter.IndividualOrderViewHolder> {
 
-    private List<Order> orderList;
+    private final List<Order> orderList;
 
     public IndividualOrderAdapter(List<Order> orderList) {
         this.orderList = orderList;
