@@ -4,6 +4,7 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.*;
 
+import com.purpura.app.configuration.EnvironmentVariables;
 import com.purpura.app.model.mongo.Residue;
 import com.purpura.app.model.postgres.News;
 import com.purpura.app.model.postgres.Order;
@@ -12,7 +13,7 @@ import com.purpura.app.remote.util.Api;
 
 import java.util.List;
 
-@Api("https://api-pg-purpura.onrender.com/")
+@Api(value = EnvironmentVariables.POSTGRES_URL)
 public interface PostgresAPI {
 
     //GET

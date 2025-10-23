@@ -1,5 +1,6 @@
 package com.purpura.app.remote.api;
 
+import com.purpura.app.configuration.EnvironmentVariables;
 import com.purpura.app.model.mongo.Address;
 import com.purpura.app.model.mongo.Company;
 import com.purpura.app.model.mongo.PixKey;
@@ -17,7 +18,7 @@ import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
-@Api("https://api-mg-purpura.onrender.com")
+@Api(value = EnvironmentVariables.MONGO_API)
 public interface MongoAPI {
 
     //GET
@@ -29,7 +30,6 @@ public interface MongoAPI {
     Call<PixKey> getPixKeyById(@Path("cnpj") String cnpj, @Path("id") String id);
     @GET("/empresa/{cnpj}/residuo/viewmain")
     Call<List<Residue>> getAllResiduosMain(@Path("cnpj") String cnpj, @Query("limit") int limit, @Query("page") int page);
-
     @GET("/empresa/{cnpj}/endereco/{id}")
     Call<Address> getAddressById(@Path("cnpj") String cnpj, @Path("id") String id);
     @GET("/empresa/{cnpj}/residuo/all")
