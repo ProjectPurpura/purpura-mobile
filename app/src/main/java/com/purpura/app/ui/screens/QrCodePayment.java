@@ -23,11 +23,7 @@ public class QrCodePayment extends AppCompatActivity {
     Methods methods = new Methods();
     MicroService microService = new MicroService();
 
-    ImageView backButton = findViewById(R.id.qrCodePaymentBackButton);
-    Button continueButton = findViewById(R.id.qrCodePaymentContinueButton);
-    ImageView copyButton = findViewById(R.id.qrCodePaymentCopyPasteButton);
-    TextView qrCodeTextView = findViewById(R.id.qrCodePaymentPixURL);
-    ImageView qrCodeImage = findViewById(R.id.imageView14);
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,13 +37,21 @@ public class QrCodePayment extends AppCompatActivity {
             return insets;
         });
 
+        ImageView backButton = findViewById(R.id.qrCodePaymentBackButton);
+        Button continueButton = findViewById(R.id.qrCodePaymentContinueButton);
+        ImageView copyButton = findViewById(R.id.qrCodePaymentCopyPasteButton);
+        TextView qrCodeTextView = findViewById(R.id.qrCodePaymentPixURL);
+
 
         //----- Bundle -----------------//
-        String pixKey = savedInstanceState.getString("pix");
+        String pixKey = null;
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            pixKey = extras.getString("pix");
+        }
         if (pixKey == null) {
             pixKey = "1234567890876543";
         }
-
         qrCodeTextView.setText(pixKey);
 
         loadQr(pixKey);
@@ -66,6 +70,8 @@ public class QrCodePayment extends AppCompatActivity {
     }
 
     private void loadQr(String pixKey) {
+        ImageView qrCodeImage = findViewById(R.id.imageView14);
+
         microService.generateQr(pixKey,
                 bytes -> Glide.with(this)
                         .load(bytes)
