@@ -7,6 +7,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.Nullable;
@@ -47,6 +48,9 @@ public class ProductPage extends AppCompatActivity {
     private ShapeableImageView companyPhoto;
     private TextView companyName;
     private TextView addressName;
+    private ImageView addQuantity;
+    private TextView productQuantity;
+    private ImageView removeQuantity;
     private Button addToCart;
     private Button goToChat;
 
@@ -74,6 +78,24 @@ public class ProductPage extends AppCompatActivity {
         }
         backButton.setOnClickListener(v -> finish());
         setupResidueData(cnpjFromIntent);
+
+        addQuantity.setOnClickListener(v -> {
+
+            Integer currentQuantity = Integer.getInteger(productQuantity.getText().toString());
+
+            if(residue.getEstoque() >= currentQuantity + 1){
+                productQuantity.setText(String.valueOf(currentQuantity + 1));
+            } else {
+                Toast.makeText(this, "Quantidade máxima atingida", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        removeQuantity.setOnClickListener(v -> {
+            Integer currentQuantity = Integer.getInteger(productQuantity.getText().toString());
+            if(currentQuantity > 1){
+                productQuantity.setText(String.valueOf(currentQuantity - 1));
+            }
+        });
     }
 
     @Override
@@ -96,6 +118,9 @@ public class ProductPage extends AppCompatActivity {
         addressName        = findViewById(R.id.productPageProductLocation);
         addToCart          = findViewById(R.id.productPageAddToShoppingCart);
         goToChat           = findViewById(R.id.productPageGoToChat);
+        productQuantity    = findViewById(R.id.productPageQuantity);
+        addQuantity      = findViewById(R.id.addQuantity);
+        removeQuantity   = findViewById(R.id.removeQuantity);
     }
 
     private void setupResidueData(String cnpjFallback) {
