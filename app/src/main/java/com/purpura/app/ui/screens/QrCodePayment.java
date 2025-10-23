@@ -16,6 +16,7 @@ import com.bumptech.glide.Glide;
 import com.purpura.app.R;
 import com.purpura.app.configuration.Methods;
 import com.purpura.app.remote.service.MicroService;
+import com.purpura.app.ui.screens.errors.GenericError;
 
 public class QrCodePayment extends AppCompatActivity {
 
@@ -70,7 +71,7 @@ public class QrCodePayment extends AppCompatActivity {
                         .load(bytes)
                         .into(qrCodeImage),
                 error ->
-                    Toast.makeText(this, "", Toast.LENGTH_SHORT).show()
+                        methods.openScreenActivity(this, GenericError.class)
         );
     }
 }
