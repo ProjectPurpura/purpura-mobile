@@ -13,6 +13,7 @@ import android.webkit.WebViewClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.purpura.app.R;
+import com.purpura.app.configuration.EnvironmentVariables;
 import com.purpura.app.configuration.Methods;
 import com.purpura.app.remote.service.MongoService;
 import com.purpura.app.ui.screens.errors.GenericError;
@@ -28,6 +29,7 @@ public class ChatListFragment extends Fragment {
     private WebView chatListWebView;
     private Methods methods = new Methods();
     private MongoService mongoService = new MongoService();
+    private String baseSiteUrl;
 
     public ChatListFragment() {
         // Required empty public constructor
@@ -65,6 +67,8 @@ public class ChatListFragment extends Fragment {
         chatListWebView.getSettings().setJavaScriptEnabled(true);
         chatListWebView.setWebViewClient(new WebViewClient());
 
+        baseSiteUrl = EnvironmentVariables.SITE_URL;
+
         try{
 
             FirebaseFirestore.getInstance()
@@ -75,7 +79,7 @@ public class ChatListFragment extends Fragment {
                         if (document.exists()) {
                             String cnpj = document.getString("cnpj");
 
-                            String url = "https://purpura-react-site.onrender.com/#cnpj=" + cnpj;
+                            String url = baseSiteUrl +"#cnpj=" + cnpj;
 
                             WebSettings webSettings = chatListWebView.getSettings();
 
