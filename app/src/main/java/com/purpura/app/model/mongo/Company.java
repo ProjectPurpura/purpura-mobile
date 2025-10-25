@@ -52,4 +52,16 @@ public class Company {
     public void setCnpj(String cnpj) {
         this.cnpj = cnpj;
     }
+
+
+    @Override
+    public String toString() {
+        return "Company{" +
+                "cnpj='" + cnpj + '\'' +
+                ", email='" + email + '\'' +
+                ", urlFoto='" + urlFoto + '\'' +
+                ", nome='" + nome + '\'' +
+                ", telefone='" + telefone + '\'' +
+                '}';
+    }
 }

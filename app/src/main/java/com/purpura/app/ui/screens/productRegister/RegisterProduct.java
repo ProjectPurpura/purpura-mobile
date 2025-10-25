@@ -1,181 +1,241 @@
 package com.purpura.app.ui.screens.productRegister;
 
+import static android.content.ContentValues.TAG;
+
 import android.Manifest;
-import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.MediaStore;
+import android.os.Environment;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import androidx.core.content.FileProvider;
 
 import com.bumptech.glide.Glide;
+import com.cloudinary.android.MediaManager;
+import com.cloudinary.android.callback.ErrorInfo;
+import com.cloudinary.android.callback.UploadCallback;
+import com.cloudinary.android.preprocess.BitmapDecoder;
+import com.cloudinary.android.preprocess.BitmapEncoder;
+import com.cloudinary.android.preprocess.DimensionsValidator;
+import com.cloudinary.android.preprocess.ImagePreprocessChain;
+import com.cloudinary.android.preprocess.Limit;
+import com.cloudinary.android.preprocess.Rotate;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.purpura.app.R;
+import com.purpura.app.configuration.EnvironmentVariables;
 import com.purpura.app.configuration.Methods;
 import com.purpura.app.model.mongo.Residue;
-import com.purpura.app.remote.cloudnary.Cloudinary;
 import com.purpura.app.remote.service.MongoService;
-import com.purpura.app.ui.screens.errors.GenericError;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class RegisterProduct extends AppCompatActivity {
 
-    Methods methods = new Methods();
-    Cloudinary cloudinary = new Cloudinary();
-    MongoService mongoService = new MongoService();
-    private ActivityResultLauncher<Intent> requestGallery;
-    private ActivityResultLauncher<String[]> requestPermission;
-    private Uri imageUri = null;
+    MongoService service = new MongoService();
+
+    private static boolean cloudinaryInitialized = false;
+    private ActivityResultLauncher<String[]> requestPermissions;
+    private ActivityResultLauncher<Intent> galleryLauncher;
+    private ActivityResultLauncher<Uri> cameraLauncher;
+    private Uri photoUri;
+    private String cloudname = EnvironmentVariables.CLOUD_NAME;
+    private String uploadProjeto = "Purpura";
+    private String cnpj;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_register_product);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.constraintLayout), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
 
-        ImageView backButton = findViewById(R.id.registerProductBackButton);
+        TextView name = findViewById(R.id.registerProductName);
+        TextView description = findViewById(R.id.registerProductDescription);
+        TextView quantity = findViewById(R.id.registerProductQuantity);
+        TextView price = findViewById(R.id.registerProductPrice);
+        TextView weight = findViewById(R.id.registerProductWeight);
+        TextView weightType = findViewById(R.id.registerProductWeightType);
+        ImageView imageView = findViewById(R.id.registerProductImage);
         Button continueButton = findViewById(R.id.registerProductAddProductButton);
 
-        EditText nome = findViewById(R.id.registerProductName);
-        EditText descricao = findViewById(R.id.registerProductDescription);
-        EditText preco = findViewById(R.id.registerProductPrice);
-        EditText peso = findViewById(R.id.registerProductWeight);
-        EditText unidadeMedida = findViewById(R.id.registerProductWeightType);
-        EditText quantidade = findViewById(R.id.registerProductQuantity);
-        ImageView urlFoto = findViewById(R.id.registerProductImage);
 
-        cloudinary.initCloudinary(this);
-
-        requestGallery =
-                registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-                    if (result.getData() != null) {
-                        imageUri = result.getData().getData();
-
-                        cloudinary.uploadImage(this, imageUri, new Cloudinary.ImageUploadCallback() {
-                            @Override
-                            public void onUploadSuccess(String imageUrl) {
-                                Glide.with(RegisterProduct.this)
-                                        .load(imageUrl)
-                                        .into(urlFoto);
-                                urlFoto.setTag(imageUrl);
-                            }
-
-                            @Override
-                            public void onUploadFailure(String error) {
-                                methods.openScreenActivity(RegisterProduct.this, GenericError.class);
-                            }
-                        });
+        FirebaseFirestore.getInstance()
+                .collection("empresa")
+                .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .get()
+                .addOnSuccessListener(document -> {
+                    if (document.exists()) {
+                        cnpj = document.getString("cnpj");
                     }
                 });
 
-        requestPermission =
-                registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), result -> {
-                    for (Map.Entry<String, Boolean> entry : result.entrySet()) {
-                        String permission = entry.getKey();
-                        Boolean isGranted = entry.getValue();
-                        if (isGranted) {
-                            Log.d("Permissions", "Permission granted: " + permission);
-                        } else {
-                            methods.openScreenActivity(RegisterProduct.this, GenericError.class);
-                        }
-                    }
-                });
+        Residue residue = new Residue(
+                null,
+                name.getText().toString(),
+                description.getText().toString(),
+                Double.parseDouble(price.getText().toString()),
+                Double.parseDouble(weight.getText().toString()),
+                Integer.parseInt(quantity.getText().toString()),
+                weightType.getText().toString(),
+                null,
+                null,
+                null,
+                cnpj
+        );
+
+        imageView.setOnClickListener(v -> {
+            try {
+                captureImage(v);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        checkPermissions();
+        initCloudnary();
+        setCamera();
+
+    }
+
+    private void initCloudnary() {
+        if (!cloudinaryInitialized) {
+            Map<String, String> config = new HashMap<>();
+            config.put("cloud_name", EnvironmentVariables.CLOUD_NAME);
+            MediaManager.init(this, config);
+            cloudinaryInitialized = true;
+        }
+    }
+    private void checkPermissions() {
+        requestPermissions = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), result -> {
+            for (Map.Entry<String, Boolean> entry : result.entrySet()) {
+                String permission = entry.getKey();
+                Boolean isGranted = entry.getValue();
+                if (isGranted) {
+                    Log.d(TAG, "Permission granted: " + permission);
+                } else {
+                    Log.d(TAG, "Permission denied: " + permission);
+                }
+            }
+        });
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            requestPermission.launch(new String[]{
+            requestPermissions.launch(new String[]{
                     Manifest.permission.READ_MEDIA_IMAGES,
                     Manifest.permission.READ_MEDIA_VIDEO,
                     Manifest.permission.CAMERA
             });
         } else {
-            requestPermission.launch(new String[]{
+            requestPermissions.launch(new String[]{
                     Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
                     Manifest.permission.CAMERA
             });
         }
-
-        urlFoto.setOnClickListener(v -> {
-            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            requestGallery.launch(intent);
-        });
-
-        continueButton.setOnClickListener(v -> {
-            String nomeTxt = nome.getText().toString().trim();
-            String descricaoTxt = descricao.getText().toString().trim();
-            String precoTxt = preco.getText().toString().trim();
-            String pesoTxt = peso.getText().toString().trim();
-            String unidadeTxt = unidadeMedida.getText().toString().trim();
-            String quantidadeTxt = quantidade.getText().toString().trim();
-            String urlFotoTxt = urlFoto.getTag().toString();
-
-            if (nomeTxt.isEmpty() || descricaoTxt.isEmpty() || precoTxt.isEmpty() || pesoTxt.isEmpty()
-                    || unidadeTxt.isEmpty() || quantidadeTxt.isEmpty() || urlFotoTxt.isEmpty()) {
-                Toast.makeText(this, "Preencha todos os campos", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            double precoVal = Double.parseDouble(precoTxt);
-            double pesoVal = Double.parseDouble(pesoTxt);
-            int quantidadeVal = Integer.parseInt(quantidadeTxt);
-
-
-            Residue residue = new Residue(
-                    null,
-                    nomeTxt,
-                    descricaoTxt,
-                    pesoVal,
-                    precoVal,
-                    quantidadeVal,
-                    unidadeTxt,
-                    urlFotoTxt,
-                    null,
-                    null,
-                    null
-            );
-
-            try {
-                FirebaseFirestore.getInstance()
-                        .collection("empresa")
-                        .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                        .get()
-                        .addOnSuccessListener(document -> {
-                            if (document.exists()) {
-                                String cnpj = document.getString("cnpj");
-                                mongoService.createResidue(cnpj, residue, this);
-                                methods.openScreenActivity(this, RegisterAdress.class);
-                            }
-                        }).addOnFailureListener(view ->
-                                methods.openScreenActivity(RegisterProduct.this, GenericError.class)
-                        );
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                Toast.makeText(this, "Erro ao cadastrar produto", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        backButton.setOnClickListener(v -> finish());
     }
 
+    public void captureImage(View v) throws IOException {
+        String time = new SimpleDateFormat("yyMMdd_HHmmss").format(new Date());
+        String name = "Purpura_Products_" + time;
+        File pasta = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        if (pasta == null) {
+            throw new IOException("Diretório de imagens externo indisponível");
+        }
+        File photo = File.createTempFile(name, ".jpg", pasta);
+
+        photoUri = FileProvider.getUriForFile(this, getApplicationContext().getPackageName() + ".provider", photo);
+
+        cameraLauncher.launch(photoUri);
+    }
+    private void setCamera() {
+        cameraLauncher = registerForActivityResult(
+                new ActivityResultContracts.TakePicture(),
+                new ActivityResultCallback<Boolean>() {
+                    @Override
+                    public void onActivityResult(Boolean success) {
+                        if (Boolean.TRUE.equals(success)) {
+                            if (photoUri != null) {
+                                preUpload(photoUri);
+                            } else {
+                                Toast.makeText(RegisterProduct.this, "URI da foto não está disponível.", Toast.LENGTH_SHORT).show();
+                                Log.w(TAG, "photoUri é null após TakePicture");
+                            }
+                        } else {
+                            Toast.makeText(RegisterProduct.this, "Foto não foi tirada", Toast.LENGTH_SHORT).show();
+                            Log.d(TAG, "TakePicture retornou false");
+                        }
+                    }
+                }
+        );
+    }
+
+    private void preUpload(Uri imageUri) {
+        if (imageUri == null) {
+            Log.w(TAG, "preUpload chamado com uri nula");
+            return;
+        }
+        MediaManager.get().upload(imageUri)
+                .option("folder", "AulaFoto")
+                .unsigned(uploadProjeto)
+                .preprocess(new ImagePreprocessChain()
+                        .loadWith(new BitmapDecoder(1000, 1000))
+                        .addStep(new Limit(1000, 1000))
+                        .addStep(new DimensionsValidator(10, 10, 1000, 1000))
+                        .addStep(new Rotate(90))
+                        .saveWith(new BitmapEncoder(BitmapEncoder.Format.JPEG, 60))
+                )
+                .callback(new UploadCallback() {
+                    @Override
+                    public void onStart(String requestId) {
+                    }
+
+                    @Override
+                    public void onProgress(String requestId, long bytes, long totalBytes) {
+                    }
+
+                    @Override
+                    public void onSuccess(String requestId, Map resultData) {
+                        String url = (String) resultData.get("secure_url");
+                        Log.d(TAG, "Upload success: " + requestId + " url=" + url);
+
+                        runOnUiThread(() -> {
+                            ImageView iv = findViewById(R.id.registerProductImage);
+                            if (iv != null) {
+                                Glide.with(RegisterProduct.this)
+                                        .load(url)
+                                        .into(iv);
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onError(String requestId, ErrorInfo error) {
+                        runOnUiThread(() -> Toast.makeText(RegisterProduct.this, "Erro no upload: " + (error != null ? error.getDescription() : "desconhecido"), Toast.LENGTH_SHORT).show());
+                    }
+
+                    @Override
+                    public void onReschedule(String requestId, ErrorInfo error) {
+                    }
+                })
+                .dispatch(RegisterProduct.this);
+    }
 }

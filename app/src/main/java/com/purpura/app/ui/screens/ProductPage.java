@@ -119,11 +119,11 @@ public class ProductPage extends AppCompatActivity {
         addToCart          = findViewById(R.id.productPageAddToShoppingCart);
         goToChat           = findViewById(R.id.productPageGoToChat);
         productQuantity    = findViewById(R.id.productPageQuantity);
-        addQuantity      = findViewById(R.id.addQuantity);
-        removeQuantity   = findViewById(R.id.removeQuantity);
+        addQuantity         = findViewById(R.id.addQuantity);
+        removeQuantity      = findViewById(R.id.removeQuantity);
     }
 
-    private void setupResidueData(String cnpjFallback) {
+    public void setupResidueData(String cnpjFallback) {
         DecimalFormat df = new DecimalFormat("#,##0.00");
         residueName.setText(nvl(residue.getNome()));
         residuePrice.setText("R$ " + df.format(residue.getPreco()));

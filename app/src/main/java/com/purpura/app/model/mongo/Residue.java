@@ -10,7 +10,6 @@ public class Residue implements Serializable {
     private double peso;
     private String tipoUnidade;
     private int estoque;
-
     private String urlFoto;
     private String idChavePix;
     private String idEndereco;

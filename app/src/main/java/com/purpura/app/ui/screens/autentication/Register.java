@@ -42,11 +42,13 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.purpura.app.R;
+import com.purpura.app.configuration.EnvironmentVariables;
 import com.purpura.app.configuration.Methods;
 import com.purpura.app.model.mongo.Company;
 import com.purpura.app.remote.service.MongoService;
 import com.purpura.app.ui.screens.MainActivity;
 
+import java.sql.SQLOutput;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -58,8 +60,6 @@ public class Register extends AppCompatActivity {
     GoogleSignInClient googleSignInClient;
 
     private static boolean cloudinaryInitialized = false;
-    String cloud_name = "dughz83oa";
-    String project = "Purpura";
     String uriImage;
 
     boolean imageLoaded = false;
@@ -169,14 +169,17 @@ public class Register extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     FirebaseUser user = auth.getCurrentUser();
                     if (user != null) {
+
                         Company company = new Company(cnpj, nome, email, telefone, uriImage);
                         FirebaseFirestore.getInstance()
                                 .collection("empresa")
                                 .document(user.getUid())
                                 .set(company)
                                 .addOnSuccessListener(aVoid -> {
+
                                     try {
                                         runOnUiThread(() -> {
+
                                             mongoService.createCompany(company, this);
                                             Toast.makeText(this, "Cadastro finalizado!", Toast.LENGTH_SHORT).show();
                                             methods.openScreenActivity(this, MainActivity.class);
@@ -224,6 +227,7 @@ public class Register extends AppCompatActivity {
                 .get()
                 .addOnSuccessListener(document -> {
                     if (document.exists()) {
+
                         String cnpj = document.getString("cnpj");
                         String telefone = document.getString("telefone");
 
@@ -250,7 +254,7 @@ public class Register extends AppCompatActivity {
     private void initCloudnary() {
         if (!cloudinaryInitialized) {
             Map<String, String> config = new HashMap<>();
-            config.put("cloud_name", cloud_name);
+            config.put("cloud_name", EnvironmentVariables.CLOUD_NAME);
             MediaManager.init(this, config);
             cloudinaryInitialized = true;
         }
@@ -292,7 +296,7 @@ public class Register extends AppCompatActivity {
     private void uploadImagem(Uri imageUri, ImageUploadCallback callback) {
         MediaManager.get().upload(imageUri)
                 .option("folder", "Purpura")
-                .unsigned(project)
+                .unsigned("Purpura")
                 .callback(new UploadCallback() {
                     @Override
                     public void onStart(String requestId) {

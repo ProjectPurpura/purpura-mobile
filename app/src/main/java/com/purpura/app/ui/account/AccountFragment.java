@@ -1,5 +1,8 @@
 package com.purpura.app.ui.account;
 
+import static android.view.View.INVISIBLE;
+import static android.view.View.VISIBLE;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -120,16 +123,19 @@ public class AccountFragment extends Fragment {
                     .addOnSuccessListener(document -> {
                         if (document.exists()) {
                             String cnpj = document.getString("cnpj");
-                            Call<Company> call = mongoService.getCompanyByCnpj(cnpj);
-                            call.enqueue(new Callback<Company>() {
+                            profileImage.setVisibility(INVISIBLE);
+                            accountProfileText.setVisibility(INVISIBLE);
+                            mongoService.getCompanyByCnpj(cnpj).enqueue(new Callback<Company>() {
                                 @Override
                                 public void onResponse(Call<Company> call, Response<Company> response) {
                                     Company companyResponse = response.body();
-                                    accountProfileText.setText(companyResponse.getNome());
-                                    Glide.with(AccountFragment.this)
+                                    profileImage.setVisibility(VISIBLE);
+                                    Glide.with(activity)
                                             .load(companyResponse.getUrlFoto())
-                                            .circleCrop()
+                                            .transform(new CircleCrop())
                                             .into(profileImage);
+                                    accountProfileText.setVisibility(VISIBLE);
+                                    accountProfileText.setText(companyResponse.getNome());
                                 }
 
                                 @Override
