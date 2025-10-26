@@ -73,7 +73,6 @@ public class UpdateProduct extends AppCompatActivity {
                                     Glide.with(UpdateProduct.this)
                                             .load(residue.getUrlFoto())
                                             .into(image);
-
                                 }
 
                                 @Override

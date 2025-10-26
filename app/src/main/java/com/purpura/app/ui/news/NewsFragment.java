@@ -59,10 +59,8 @@ public class NewsFragment extends Fragment {
             postgresService.getAllNotifications().enqueue(new Callback<List<News>>() {
                 @Override
                 public void onResponse(Call<List<News>> call, Response<List<News>> response) {
-                    if (!isAdded()) return;
                     if (response.isSuccessful() && response.body() != null) {
                         adapter.updateList(response.body());
-                    } else {
                     }
                 }
 

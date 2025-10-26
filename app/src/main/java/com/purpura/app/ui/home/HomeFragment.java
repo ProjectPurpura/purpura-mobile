@@ -107,7 +107,6 @@ public class HomeFragment extends Fragment {
                             residuosCall.enqueue(new Callback<List<Residue>>() {
                                 @Override
                                 public void onResponse(Call<List<Residue>> call, Response<List<Residue>> response) {
-                                    if (!isAdded()) return;
                                     if (response.isSuccessful() && response.body() != null) {
                                         adapter.updateList(response.body());
                                     } else {

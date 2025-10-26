@@ -29,6 +29,20 @@ public class Residue implements Serializable {
         this.cnpj = cnpj;
     }
 
+    public Residue(String nome, String descricao, double peso, double preco, int estoque, String tipoUnidade, String urlFoto, String idChavePix, String idEndereco) {
+        this.nome = nome;
+        this.descricao = descricao;
+        this.peso = peso;
+        this.preco = preco;
+        this.estoque = estoque;
+        this.tipoUnidade = tipoUnidade;
+        this.urlFoto = urlFoto;
+        this.idChavePix = idChavePix;
+        this.idEndereco = idEndereco;
+    }
+
+    public Residue(){};
+
     public String getNome() {
         return nome;
     }

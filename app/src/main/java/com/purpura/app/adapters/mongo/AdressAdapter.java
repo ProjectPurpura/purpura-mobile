@@ -14,33 +14,33 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.purpura.app.R;
 import com.purpura.app.configuration.Methods;
-import com.purpura.app.model.mongo.Address;
+import com.purpura.app.model.mongo.Adress;
 import com.purpura.app.remote.service.MongoService;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.AddressViewHolder> {
+public class AdressAdapter extends RecyclerView.Adapter<AdressAdapter.AddressViewHolder> {
 
-    private List<Address> address;
+    private List<Adress> address;
     private final Methods methods = new Methods();
     private final MongoService mongoService = new MongoService();
 
-    public AddressAdapter(List<Address> Adresses) {
+    public AdressAdapter(List<Adress> Adresses) {
         this.address = Adresses != null ? Adresses : new ArrayList<>();
     }
 
     @NonNull
     @Override
-    public AddressAdapter.AddressViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public AdressAdapter.AddressViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.adresses_card, parent, false);
-        return new AddressAdapter.AddressViewHolder(view);
+        return new AdressAdapter.AddressViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull AddressViewHolder holder, int position) {
-        Address address1 = address.get(position);
+        Adress address1 = address.get(position);
 
         holder.addressCardName.setText(address1.getNome());
         holder.addresCardZipCode.setText(address1.getCep());
@@ -76,7 +76,7 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.AddressV
         return address != null ? address.size() : 0;
     }
 
-    public void updateList(List<Address> newAddress) {
+    public void updateList(List<Adress> newAddress) {
         this.address = newAddress != null ? newAddress : new ArrayList<>();
         notifyDataSetChanged();
     }

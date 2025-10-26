@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,16 +12,16 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.purpura.app.R;
 import com.purpura.app.configuration.Methods;
-import com.purpura.app.model.mongo.Address;
+import com.purpura.app.model.mongo.Adress;
+import com.purpura.app.model.mongo.Residue;
 import com.purpura.app.remote.service.MongoService;
-import com.purpura.app.ui.screens.errors.GenericError;
+
+import java.io.Serializable;
 
 public class RegisterAdress extends AppCompatActivity {
-
+    Adress address = null;
     Methods methods = new Methods();
     MongoService mongoService = new MongoService();
 
@@ -35,34 +36,39 @@ public class RegisterAdress extends AppCompatActivity {
             return insets;
         });
 
+        Bundle received = getIntent().getExtras();
+        Bundle sent = new Bundle();
+
         ImageView backButton = findViewById(R.id.registerAdressBackButton);
         Button continueButton = findViewById(R.id.registerAdressValidateZipCode);
         EditText name = findViewById(R.id.registerAdressName);
         EditText zipCode = findViewById(R.id.registerAdressZipCode);
         EditText number = findViewById(R.id.registerAdressNumber);
         EditText complement = findViewById(R.id.registerAdressComplement);
-        Address address = new Address(null ,name.getText().toString(), zipCode.getText().toString(), complement.getText().toString(), Integer.parseInt(number.getText().toString()));
 
-        backButton.setOnClickListener(v -> finish());
         continueButton.setOnClickListener(v -> {
-            try{
-                FirebaseFirestore.getInstance()
-                        .collection("empresa")
-                        .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                        .get()
-                        .addOnSuccessListener(document -> {
-                            if (document.exists()) {
-                                String cnpj = document.getString("cnpj");
-                                mongoService.createAdress(cnpj, address, this);
-                                methods.openScreenActivity(this, RegisterPixKey.class);
-                            }
-                        }).addOnFailureListener(view ->
-                                methods.openScreenActivity(RegisterAdress.this, GenericError.class)
-                        );
+            if(name != null || zipCode != null || number != null || complement != null){
+                address = new Adress(
+                        name.getText().toString(),
+                        zipCode.getText().toString(),
+                        complement.getText().toString(),
+                        Integer.parseInt(number.getText().toString())
+                );
 
-            }catch (Exception e){
-                e.printStackTrace();
+                Residue residue = (Residue) received.getSerializable("residue");
+                sent.putSerializable("residue", residue);
+
+                System.out.println(residue);
+
+                sent.putSerializable("address", (Serializable) address);
+
+                System.out.println(address);
+                methods.openScreenActivityWithBundle(this, RegisterPixKey.class, sent);
+            }else{
+                Toast.makeText(this, "Preencha todos os campos!", Toast.LENGTH_SHORT).show();
             }
         });
+
+        backButton.setOnClickListener(v -> finish());
     }
 }

@@ -1,6 +1,8 @@
 package com.purpura.app.model.mongo;
 
-public class PixKey {
+import java.io.Serializable;
+
+public class PixKey implements Serializable {
     private String name;
     private String key;
     private String id;
@@ -32,5 +34,19 @@ public class PixKey {
         this.name = name;
         this.key = key;
         this.id = id;
+    }
+
+    @Override
+    public String toString() {
+        return "PixKey{" +
+                "name='" + name + '\'' +
+                ", key='" + key + '\'' +
+                ", id='" + id + '\'' +
+                '}';
+    }
+
+    public PixKey(String name, String key) {
+        this.name = name;
+        this.key = key;
     }
 }

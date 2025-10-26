@@ -1,22 +1,17 @@
 package com.purpura.app.ui.screens.productRegister;
 
-import static android.content.ContentValues.TAG;
-
 import android.Manifest;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
@@ -47,13 +42,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
 public class RegisterProduct extends AppCompatActivity {
 
     MongoService service = new MongoService();
+    Methods methods = new Methods();
+    Bundle sent = new Bundle();
 
     private static boolean cloudinaryInitialized = false;
     private ActivityResultLauncher<String[]> requestPermissions;
@@ -63,6 +56,8 @@ public class RegisterProduct extends AppCompatActivity {
     private String cloudname = EnvironmentVariables.CLOUD_NAME;
     private String uploadProjeto = "Purpura";
     private String cnpj;
+    private Residue residue;
+    private String uploadedImageUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,7 +72,7 @@ public class RegisterProduct extends AppCompatActivity {
         TextView weightType = findViewById(R.id.registerProductWeightType);
         ImageView imageView = findViewById(R.id.registerProductImage);
         Button continueButton = findViewById(R.id.registerProductAddProductButton);
-
+        ImageView backButton = findViewById(R.id.registerProductBackButton);
 
         FirebaseFirestore.getInstance()
                 .collection("empresa")
@@ -87,27 +82,18 @@ public class RegisterProduct extends AppCompatActivity {
                     if (document.exists()) {
                         cnpj = document.getString("cnpj");
                     }
-                });
+                })
+                .addOnFailureListener(e -> cnpj = null);
 
-        Residue residue = new Residue(
-                null,
-                name.getText().toString(),
-                description.getText().toString(),
-                Double.parseDouble(price.getText().toString()),
-                Double.parseDouble(weight.getText().toString()),
-                Integer.parseInt(quantity.getText().toString()),
-                weightType.getText().toString(),
-                null,
-                null,
-                null,
-                cnpj
-        );
+        residue = new Residue();
+
+        continueButton.setEnabled(false);
 
         imageView.setOnClickListener(v -> {
             try {
                 captureImage(v);
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                Toast.makeText(this, "Erro ao acessar a câmera", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -115,6 +101,36 @@ public class RegisterProduct extends AppCompatActivity {
         initCloudnary();
         setCamera();
 
+        backButton.setOnClickListener(v -> finish());
+
+        continueButton.setOnClickListener(v -> {
+            if (name == null || description == null || price == null || weight == null || quantity == null || weightType == null) {
+                Toast.makeText(this, "Preencha todos os campos", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            String rName = name.getText() == null ? "" : name.getText().toString();
+            String rDescription = description.getText() == null ? "" : description.getText().toString();
+            String rPrice = price.getText() == null ? "0" : price.getText().toString();
+            String rWeight = weight.getText() == null ? "0" : weight.getText().toString();
+            String rQuantity = quantity.getText() == null ? "0" : quantity.getText().toString();
+            String rWeightType = weightType.getText() == null ? "" : weightType.getText().toString();
+
+            residue = new Residue(
+                    rName,
+                    rDescription,
+                    Double.valueOf(rWeight),
+                    Double.valueOf(rPrice),
+                    Integer.valueOf(rQuantity),
+                    rWeightType,
+                    uploadedImageUrl,
+                    null,
+                    null
+            );
+
+            sent.putSerializable("residue", residue);
+            System.out.println(residue);
+            methods.openScreenActivityWithBundle(this, RegisterAdress.class, sent);
+        });
     }
 
     private void initCloudnary() {
@@ -125,19 +141,9 @@ public class RegisterProduct extends AppCompatActivity {
             cloudinaryInitialized = true;
         }
     }
-    private void checkPermissions() {
-        requestPermissions = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), result -> {
-            for (Map.Entry<String, Boolean> entry : result.entrySet()) {
-                String permission = entry.getKey();
-                Boolean isGranted = entry.getValue();
-                if (isGranted) {
-                    Log.d(TAG, "Permission granted: " + permission);
-                } else {
-                    Log.d(TAG, "Permission denied: " + permission);
-                }
-            }
-        });
 
+    private void checkPermissions() {
+        requestPermissions = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), result -> {});
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             requestPermissions.launch(new String[]{
                     Manifest.permission.READ_MEDIA_IMAGES,
@@ -157,42 +163,33 @@ public class RegisterProduct extends AppCompatActivity {
         String time = new SimpleDateFormat("yyMMdd_HHmmss").format(new Date());
         String name = "Purpura_Products_" + time;
         File pasta = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        if (pasta == null) {
-            throw new IOException("Diretório de imagens externo indisponível");
-        }
+        if (pasta == null) throw new IOException("Diretório de imagens externo indisponível");
         File photo = File.createTempFile(name, ".jpg", pasta);
-
         photoUri = FileProvider.getUriForFile(this, getApplicationContext().getPackageName() + ".provider", photo);
-
         cameraLauncher.launch(photoUri);
     }
+
     private void setCamera() {
         cameraLauncher = registerForActivityResult(
                 new ActivityResultContracts.TakePicture(),
-                new ActivityResultCallback<Boolean>() {
-                    @Override
-                    public void onActivityResult(Boolean success) {
-                        if (Boolean.TRUE.equals(success)) {
-                            if (photoUri != null) {
-                                preUpload(photoUri);
-                            } else {
-                                Toast.makeText(RegisterProduct.this, "URI da foto não está disponível.", Toast.LENGTH_SHORT).show();
-                                Log.w(TAG, "photoUri é null após TakePicture");
-                            }
+                success -> {
+                    if (Boolean.TRUE.equals(success)) {
+                        if (photoUri != null) {
+                            preUpload(photoUri);
                         } else {
-                            Toast.makeText(RegisterProduct.this, "Foto não foi tirada", Toast.LENGTH_SHORT).show();
-                            Log.d(TAG, "TakePicture retornou false");
+                            Toast.makeText(RegisterProduct.this, "URI da foto não está disponível.", Toast.LENGTH_SHORT).show();
                         }
+                    } else {
+                        Toast.makeText(RegisterProduct.this, "Foto não foi tirada", Toast.LENGTH_SHORT).show();
                     }
                 }
         );
     }
 
     private void preUpload(Uri imageUri) {
-        if (imageUri == null) {
-            Log.w(TAG, "preUpload chamado com uri nula");
-            return;
-        }
+        if (imageUri == null) return;
+        Button continueButton = findViewById(R.id.registerProductAddProductButton);
+        continueButton.setEnabled(false);
         MediaManager.get().upload(imageUri)
                 .option("folder", "AulaFoto")
                 .unsigned(uploadProjeto)
@@ -205,18 +202,15 @@ public class RegisterProduct extends AppCompatActivity {
                 )
                 .callback(new UploadCallback() {
                     @Override
-                    public void onStart(String requestId) {
-                    }
+                    public void onStart(String requestId) {}
 
                     @Override
-                    public void onProgress(String requestId, long bytes, long totalBytes) {
-                    }
+                    public void onProgress(String requestId, long bytes, long totalBytes) {}
 
                     @Override
                     public void onSuccess(String requestId, Map resultData) {
                         String url = (String) resultData.get("secure_url");
-                        Log.d(TAG, "Upload success: " + requestId + " url=" + url);
-
+                        uploadedImageUrl = url;
                         runOnUiThread(() -> {
                             ImageView iv = findViewById(R.id.registerProductImage);
                             if (iv != null) {
@@ -224,17 +218,20 @@ public class RegisterProduct extends AppCompatActivity {
                                         .load(url)
                                         .into(iv);
                             }
+                            continueButton.setEnabled(true);
                         });
                     }
 
                     @Override
                     public void onError(String requestId, ErrorInfo error) {
-                        runOnUiThread(() -> Toast.makeText(RegisterProduct.this, "Erro no upload: " + (error != null ? error.getDescription() : "desconhecido"), Toast.LENGTH_SHORT).show());
+                        runOnUiThread(() -> {
+                            Toast.makeText(RegisterProduct.this, "Erro no upload: " + (error != null ? error.getDescription() : "desconhecido"), Toast.LENGTH_SHORT).show();
+                            continueButton.setEnabled(false);
+                        });
                     }
 
                     @Override
-                    public void onReschedule(String requestId, ErrorInfo error) {
-                    }
+                    public void onReschedule(String requestId, ErrorInfo error) {}
                 })
                 .dispatch(RegisterProduct.this);
     }

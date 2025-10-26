@@ -1,7 +1,7 @@
 package com.purpura.app.remote.api;
 
 import com.purpura.app.configuration.EnvironmentVariables;
-import com.purpura.app.model.mongo.Address;
+import com.purpura.app.model.mongo.Adress;
 import com.purpura.app.model.mongo.Company;
 import com.purpura.app.model.mongo.PixKey;
 import com.purpura.app.model.mongo.Residue;
@@ -31,13 +31,13 @@ public interface MongoAPI {
     @GET("/empresa/{cnpj}/residuo/viewmain")
     Call<List<Residue>> getAllResiduosMain(@Path("cnpj") String cnpj, @Query("limit") int limit, @Query("page") int page);
     @GET("/empresa/{cnpj}/endereco/{id}")
-    Call<Address> getAddressById(@Path("cnpj") String cnpj, @Path("id") String id);
+    Call<Adress> getAddressById(@Path("cnpj") String cnpj, @Path("id") String id);
     @GET("/empresa/{cnpj}/residuo/all")
     Call<List<Residue>> getAllResidues(@Path("cnpj") String cnpj);
     @GET("/empresa/{cnpj}/pix/all")
     Call<List<PixKey>> getAllPixKeys(@Path("cnpj") String cnpj);
     @GET("/empresa/{cnpj}/endereco/all")
-    Call<List<Address>> getAllAddress(@Path("cnpj") String cnpj);
+    Call<List<Adress>> getAllAddress(@Path("cnpj") String cnpj);
     @GET("/empresa/search")
     Call<List<Company>> searchCompany(@Query("cnpj") String cnpj);
     @GET("/empresa/all")
@@ -51,7 +51,7 @@ public interface MongoAPI {
     @POST("/empresa/{cnpj}/pix")
     Call<PixKey> createPixKey(@Path("cnpj") String cnpj, @Body PixKey pixKey);
     @POST("/empresa/{cnpj}/endereco")
-    Call<Address> createAddress(@Path("cnpj") String cnpj, @Body Address address);
+    Call<Adress> createAddress(@Path("cnpj") String cnpj, @Body Adress address);
 
     //PUT
     @PUT("/empresa/{cnpj}")
@@ -61,7 +61,7 @@ public interface MongoAPI {
     @PUT("/empresa/{cnpj}/pix/{id}")
     Call<PixKey> updatePixKey(@Path("cnpj") String cnpj, @Path("id") String id, @Body PixKey pixKey);
     @PUT("/empresa/{cnpj}/endereco/{id}")
-    Call<Address> updateAddress(@Path("cnpj") String cnpj, @Path("id") String id, @Body Address address);
+    Call<Adress> updateAddress(@Path("cnpj") String cnpj, @Path("id") String id, @Body Adress address);
 
     //DELETE
     @DELETE("/empresa/{cnpj}")

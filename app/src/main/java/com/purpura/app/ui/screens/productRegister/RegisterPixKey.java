@@ -13,13 +13,16 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.purpura.app.configuration.Methods;
 import com.purpura.app.R;
+import com.purpura.app.model.mongo.Adress;
 import com.purpura.app.model.mongo.PixKey;
+import com.purpura.app.model.mongo.Residue;
 import com.purpura.app.remote.service.MongoService;
+
+import java.io.Serializable;
 
 public class RegisterPixKey extends AppCompatActivity {
 
     Methods methods = new Methods();
-    Bundle bundle = new Bundle();
     MongoService mongoService = new MongoService();
 
     @Override
@@ -34,18 +37,29 @@ public class RegisterPixKey extends AppCompatActivity {
             return insets;
         });
 
+        Bundle received = getIntent().getExtras();
+        Bundle sent = new Bundle();
+
         ImageView backButton = findViewById(R.id.registerAdressBackButton);
         Button continueButton = findViewById(R.id.registerPixKeyAddPixKeyButton);
         EditText pixKeyInput = findViewById(R.id.registerPixKeyInput);
         EditText pixKeyNameInput = findViewById(R.id.registerPixKeyNameInput);
-        PixKey pixKey = new PixKey(pixKeyNameInput.getText().toString(), pixKeyInput.getText().toString(), null);
-
 
         backButton.setOnClickListener(v -> finish());
         continueButton.setOnClickListener(v -> {
-            bundle.putString("pixKeyName", pixKeyNameInput.getText().toString());
-            bundle.putString("pixKey", pixKeyInput.getText().toString());
-            methods.openScreenActivityWithBundle(this, RegisterProductEndPage.class, bundle);
+            if(pixKeyInput != null || pixKeyNameInput != null){
+                PixKey pixKey = new PixKey(
+                        pixKeyNameInput.getText().toString(),
+                        pixKeyInput.getText().toString()
+                );
+
+                Residue residue = (Residue) received.getSerializable("residue");
+                Adress adress = (Adress) received.getSerializable("address");
+                sent.putSerializable("residue", residue);
+                sent.putSerializable("address", (Serializable) adress);
+                sent.putSerializable("pixKey", (Serializable) pixKey);
+                methods.openScreenActivityWithBundle(this, RegisterProductEndPage.class, sent);
+            }
         });
 
     }

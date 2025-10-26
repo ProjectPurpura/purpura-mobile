@@ -127,7 +127,6 @@ public class UpdateProfile extends AppCompatActivity {
     private void probeByListingCompanies() {
         mongoService.getAllCompanies().enqueue(new Callback<List<Company>>() {
             @Override public void onResponse(Call<List<Company>> call, Response<List<Company>> resp) {
-                if (!resp.isSuccessful() || resp.body() == null) return;
                 for (Company c : resp.body()) {
                     if (sanitize(n(c.getCnpj())).equals(cnpj)) {
                         company = c;

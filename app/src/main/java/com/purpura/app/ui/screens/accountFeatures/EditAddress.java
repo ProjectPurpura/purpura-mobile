@@ -14,8 +14,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.purpura.app.R;
-import com.purpura.app.adapters.mongo.AddressAdapter;
-import com.purpura.app.model.mongo.Address;
+import com.purpura.app.adapters.mongo.AdressAdapter;
+import com.purpura.app.model.mongo.Adress;
 import com.purpura.app.configuration.Methods;
 import com.purpura.app.remote.service.MongoService;
 import com.purpura.app.ui.screens.errors.GenericError;
@@ -58,19 +58,19 @@ public class EditAddress extends AppCompatActivity {
                     .addOnSuccessListener(document -> {
                         if (document.exists()) {
                             String cnpj = document.getString("cnpj");
-                            Call<List<Address>> call = mongoService.getAllAddress(cnpj);
-                            call.enqueue(new Callback<List<Address>>() {
+                            Call<List<Adress>> call = mongoService.getAllAddress(cnpj);
+                            call.enqueue(new Callback<List<Adress>>() {
                                 @Override
-                                public void onResponse(Call<List<Address>> call, Response<List<Address>> response) {
+                                public void onResponse(Call<List<Adress>> call, Response<List<Adress>> response) {
                                     if (response.isSuccessful()) {
-                                        List<Address> address = response.body();
-                                        AddressAdapter adapter = new AddressAdapter(address);
+                                        List<Adress> address = response.body();
+                                        AdressAdapter adapter = new AdressAdapter(address);
                                         recyclerView.setAdapter(adapter);
                                     }
                                 }
 
                                 @Override
-                                public void onFailure(Call<List<Address>> call, Throwable t) {
+                                public void onFailure(Call<List<Adress>> call, Throwable t) {
                                     methods.openScreenActivity(EditAddress.this, GenericError.class);
                                 }
                             });
