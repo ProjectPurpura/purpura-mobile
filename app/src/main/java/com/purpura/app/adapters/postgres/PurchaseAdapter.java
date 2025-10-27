@@ -15,26 +15,29 @@ import com.purpura.app.model.postgres.OrderItem;
 import com.purpura.app.remote.service.MongoService;
 import com.purpura.app.remote.service.PostgresService;
 
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class SalesAdapter extends RecyclerView.Adapter<SalesAdapter.VH> {
+public class PurchaseAdapter extends RecyclerView.Adapter<PurchaseAdapter.VH> {
 
     private List<Order> orders;
     private final PostgresService service;
     private final String cnpj;
     private final MongoService mongoService;
 
-    public SalesAdapter(List<Order> orders, PostgresService service, String cnpj, MongoService mongoService) {
+    public PurchaseAdapter(List<Order> orders, PostgresService service, String cnpj, MongoService mongoService) {
         this.orders = orders != null ? orders : new ArrayList<>();
         this.service = service;
         this.cnpj = cnpj;
