@@ -16,6 +16,7 @@ import androidx.core.view.WindowInsetsCompat;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.purpura.app.R;
+import com.purpura.app.configuration.PriceMask;
 import com.purpura.app.model.mongo.Company;
 import com.purpura.app.remote.service.MongoService;
 import java.util.List;
@@ -60,6 +61,8 @@ public class UpdateProfile extends AppCompatActivity {
         update = findViewById(R.id.registerButton);
         exportIcon = findViewById(R.id.imageView34);
         profileImage = findViewById(R.id.updateProfileImage);
+
+        phone.addTextChangedListener(new PriceMask.PhoneMask(phone));
 
         String extraCnpj = getIntent() != null ? getIntent().getStringExtra("cnpj") : "";
         String urlPhoto = getIntent() != null ? getIntent().getStringExtra("urlPhoto") : "";

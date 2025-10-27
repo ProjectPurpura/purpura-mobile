@@ -22,8 +22,6 @@ public class QrCodePayment extends AppCompatActivity {
     Methods methods = new Methods();
     MicroService microService = new MicroService();
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

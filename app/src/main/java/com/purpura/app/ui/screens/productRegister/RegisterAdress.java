@@ -13,6 +13,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.purpura.app.R;
+import com.purpura.app.configuration.ZipCodeMask;
 import com.purpura.app.configuration.Methods;
 import com.purpura.app.model.mongo.Adress;
 import com.purpura.app.model.mongo.Residue;
@@ -45,6 +46,8 @@ public class RegisterAdress extends AppCompatActivity {
         EditText zipCode = findViewById(R.id.registerAdressZipCode);
         EditText number = findViewById(R.id.registerAdressNumber);
         EditText complement = findViewById(R.id.registerAdressComplement);
+
+        zipCode.addTextChangedListener(new ZipCodeMask(zipCode));
 
         continueButton.setOnClickListener(v -> {
             if(name != null || zipCode != null || number != null || complement != null){

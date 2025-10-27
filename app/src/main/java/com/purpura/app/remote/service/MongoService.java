@@ -86,23 +86,6 @@ public class MongoService {
     //Create - POST
     public void createAdress(String cnpj, Adress address, RegisterProductInterfaces.AdressCallback callback) {
         Call<Adress> call = mongoAPI.createAddress(cnpj, address);
-        System.out.println(address);
-        System.out.println(address);
-        System.out.println(address);
-        System.out.println(address);
-        System.out.println(address);
-        System.out.println(address);
-        System.out.println(call);
-        System.out.println(call);
-        System.out.println(call);
-        System.out.println(call);
-        System.out.println(call);
-        System.out.println(call);
-        System.out.println(call);
-        System.out.println(call);
-        System.out.println(call);
-        System.out.println(call);
-        System.out.println(call);
         call.enqueue(new Callback<Adress>() {
             @Override
             public void onResponse(Call<Adress> call, Response<Adress> response) {
@@ -242,21 +225,9 @@ public class MongoService {
         });
     }
 
-    public void updateResidue(String cnpj, String id, Residue residue, Context context){
+    public Call<Residue> updateResidue(String cnpj, String id, Residue residue, Context context){
         Call<Residue> call = mongoAPI.updateResidue(cnpj, id, residue);
-
-        call.enqueue(new Callback<Residue>() {
-            @Override
-            public void onResponse(Call<Residue> call, Response<Residue> response) {
-                if (response.isSuccessful()) {
-                    Toast.makeText(context,"Resíduo atualizado com sucesso", Toast.LENGTH_SHORT).show();
-                }
-            }
-            @Override
-            public void onFailure(Call<Residue> call, Throwable t) {
-                Toast.makeText(context, "Erro ao atualizar resíduo", Toast.LENGTH_SHORT).show();
-            }
-        });
+        return call;
     }
 
     // Create - Delete

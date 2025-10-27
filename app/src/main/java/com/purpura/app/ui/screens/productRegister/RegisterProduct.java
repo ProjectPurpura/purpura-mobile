@@ -32,6 +32,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.purpura.app.R;
 import com.purpura.app.configuration.EnvironmentVariables;
 import com.purpura.app.configuration.Methods;
+import com.purpura.app.configuration.PriceMask;
 import com.purpura.app.model.mongo.Residue;
 import com.purpura.app.remote.service.MongoService;
 
@@ -53,10 +54,9 @@ public class RegisterProduct extends AppCompatActivity {
     private ActivityResultLauncher<Intent> galleryLauncher;
     private ActivityResultLauncher<Uri> cameraLauncher;
     private Uri photoUri;
-    private String cloudname = EnvironmentVariables.CLOUD_NAME;
     private String uploadProjeto = "Purpura";
-    private String cnpj;
     private Residue residue;
+    private String cnpj;
     private String uploadedImageUrl;
 
     @Override
@@ -73,6 +73,8 @@ public class RegisterProduct extends AppCompatActivity {
         ImageView imageView = findViewById(R.id.registerProductImage);
         Button continueButton = findViewById(R.id.registerProductAddProductButton);
         ImageView backButton = findViewById(R.id.registerProductBackButton);
+
+        price.addTextChangedListener(new PriceMask(price));
 
         FirebaseFirestore.getInstance()
                 .collection("empresa")

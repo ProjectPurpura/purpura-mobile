@@ -56,8 +56,8 @@ public class RegisterPixKey extends AppCompatActivity {
                 Residue residue = (Residue) received.getSerializable("residue");
                 Adress adress = (Adress) received.getSerializable("address");
                 sent.putSerializable("residue", residue);
-                sent.putSerializable("address", (Serializable) adress);
-                sent.putSerializable("pixKey", (Serializable) pixKey);
+                sent.putSerializable("address", adress);
+                sent.putSerializable("pixKey", pixKey);
                 methods.openScreenActivityWithBundle(this, RegisterProductEndPage.class, sent);
             }
         });

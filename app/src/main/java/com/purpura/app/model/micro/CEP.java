@@ -1,6 +1,6 @@
 package com.purpura.app.model.micro;
 
-public class CepResponse {
+public class CEP {
     private String cep;
     private String logradouro;
     private String complemento;
@@ -12,7 +12,7 @@ public class CepResponse {
     private String ddd;
     private String siafi;
 
-    public CepResponse(String cep, String logradouro, String complemento, String bairro, String localidade, String uf, String ibge, String gia, String ddd, String siafi) {
+    public CEP(String cep, String logradouro, String complemento, String bairro, String localidade, String uf, String ibge, String gia, String ddd, String siafi) {
         this.cep = cep;
         this.logradouro = logradouro;
         this.complemento = complemento;

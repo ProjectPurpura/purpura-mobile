@@ -18,7 +18,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.purpura.app.R;
+import com.purpura.app.configuration.CNPJMask;
 import com.purpura.app.configuration.Methods;
+import com.purpura.app.configuration.PriceMask;
 import com.purpura.app.model.mongo.Company;
 import com.purpura.app.remote.service.MongoService;
 import com.purpura.app.ui.screens.MainActivity;
@@ -64,14 +66,19 @@ public class AddicionalInformacionsRegisterGoogle extends AppCompatActivity {
             return;
         }
 
+        EditText cnpjInput = findViewById(R.id.AddictionalInformationsCnpj);
+        EditText phoneInput = findViewById(R.id.addicionalInformationsPhoneNumber);
+
+        phoneInput.addTextChangedListener(new PriceMask.PhoneMask(phoneInput));
+        cnpjInput.addTextChangedListener(new CNPJMask(cnpjInput));
+
         String nome = user.getDisplayName();
         String email = user.getEmail();
         String foto = user.getPhotoUrl() != null ? user.getPhotoUrl().toString() : "";
 
-        String telefone = ((EditText) findViewById(R.id.addicionalInformationsPhoneNumber))
-                .getText().toString().trim();
-        String cnpj = ((EditText) findViewById(R.id.AddictionalInformationsCnpj))
-                .getText().toString().trim();
+        String telefone = phoneInput.getText().toString().replaceAll("[^\\d]", "").trim();
+        String cnpj = cnpjInput.getText().toString().replaceAll("[^\\d]", "").trim();
+
 
         if (telefone.isEmpty() || cnpj.isEmpty()) {
             Toast.makeText(this, "Preencha todos os campos", Toast.LENGTH_SHORT).show();

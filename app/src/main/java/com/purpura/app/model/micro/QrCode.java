@@ -1,12 +1,12 @@
 package com.purpura.app.model.micro;
 
-public class QrRequest {
+public class QrCode {
     private String key;
     private String foregroundHex;
     private String backgroundHex;
     private Integer size;
 
-    public QrRequest(String key, String foregroundHex, String backgroundHex, Integer size) {
+    public QrCode(String key, String foregroundHex, String backgroundHex, Integer size) {
         this.key = key;
         this.foregroundHex = foregroundHex;
         this.backgroundHex = backgroundHex;
@@ -39,8 +39,8 @@ public class QrRequest {
             return this;
         }
 
-        public QrRequest build() {
-            return new QrRequest(key, foregroundHex, backgroundHex, size);
+        public QrCode build() {
+            return new QrCode(key, foregroundHex, backgroundHex, size);
         }
     }
 }

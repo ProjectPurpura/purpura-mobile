@@ -21,7 +21,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import com.purpura.app.R;
-import com.purpura.app.model.mongo.Company;
+import com.purpura.app.model.micro.QrCode;
 import com.purpura.app.remote.service.MongoService;
 import com.purpura.app.ui.screens.accountFeatures.FirstFragment;
 
@@ -134,6 +134,15 @@ public class Methods implements TextWatcher {
 
             editText.addTextChangedListener(this);
         }
+    }
+
+    public static QrCode generateQR(String key) {
+        return new QrCode.Builder()
+                .key(key)
+                .foregroundHex("#000000")
+                .backgroundHex("#FFFFFF")
+                .size(200)
+                .build();
     }
 
 }

@@ -44,6 +44,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.purpura.app.R;
 import com.purpura.app.configuration.EnvironmentVariables;
 import com.purpura.app.configuration.Methods;
+import com.purpura.app.configuration.PriceMask;
 import com.purpura.app.model.mongo.Company;
 import com.purpura.app.remote.service.MongoService;
 import com.purpura.app.ui.screens.MainActivity;
@@ -128,6 +129,8 @@ public class Register extends AppCompatActivity {
         ImageView image = findViewById(R.id.registerImage);
         SignInButton btnGoogle = findViewById(R.id.loginWithGoogle);
         TextView txtLogin = findViewById(R.id.registerLoginText);
+
+        edtTelefone.addTextChangedListener(new PriceMask(edtTelefone));
 
         initCloudnary();
         setGallery(image);
