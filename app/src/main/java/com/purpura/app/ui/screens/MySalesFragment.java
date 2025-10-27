@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -14,10 +15,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.purpura.app.R;
 import com.purpura.app.adapters.postgres.SalesAdapter;
-import com.purpura.app.configuration.Methods;
 import com.purpura.app.model.postgres.Order;
+import com.purpura.app.remote.service.MongoService;
 import com.purpura.app.remote.service.PostgresService;
-import com.purpura.app.ui.screens.errors.GenericError;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,85 +29,66 @@ import retrofit2.Response;
 public class MySalesFragment extends Fragment {
 
     private RecyclerView recyclerView;
-    private Methods methods = new Methods();
-    private final PostgresService postgresService = new PostgresService();
+    private SalesAdapter adapter;
+    private final PostgresService service = new PostgresService();
+    private final MongoService mongoService = new MongoService();
     private Call<List<Order>> salesCall;
-
-    public MySalesFragment() {}
-
-    public static MySalesFragment newInstance(String param1, String param2) {
-        MySalesFragment fragment = new MySalesFragment();
-        Bundle args = new Bundle();
-        args.putString("param1", param1);
-        args.putString("param2", param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
+    private String cnpj;
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-
-        View view = inflater.inflate(R.layout.fragment_my_sales, container, false);
-
-        recyclerView = view.findViewById(R.id.mySalesRecyclerView);
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.fragment_my_sales, container, false);
+        recyclerView = v.findViewById(R.id.mySalesRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-
-        SalesAdapter adapter = new SalesAdapter(new ArrayList<>());
+        adapter = new SalesAdapter(new ArrayList<>(), service, "", mongoService);
         recyclerView.setAdapter(adapter);
-
         loadSales();
-
-        return view;
+        return v;
     }
 
     private void loadSales() {
-        try {
-            FirebaseFirestore.getInstance()
-                    .collection("empresa")
-                    .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                    .get()
-                    .addOnSuccessListener(document -> {
-                        if (document.exists()) {
-                            String cnpj = document.getString("cnpj");
-                            loadOrders(cnpj);
-                        }
-                    })
-                    .addOnFailureListener(e -> {
-                        methods.openScreenFragments(this, GenericError.class);
-                    });
+        FirebaseFirestore.getInstance()
+                .collection("empresa")
+                .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .get()
+                .addOnSuccessListener(d -> {
+                    cnpj = d.getString("cnpj");
+                    if (cnpj == null || cnpj.isEmpty()) {
+                        Toast.makeText(requireContext(), "CNPJ não encontrado", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
 
-        } catch (Exception e) {
-            methods.openScreenFragments(this, GenericError.class);
-        }
-    }
-
-    private void loadOrders(String cnpj) {
-        salesCall = postgresService.getOrdersBySeller(cnpj);
-        salesCall.enqueue(new Callback<List<Order>>() {
-            @Override
-            public void onResponse(@NonNull Call<List<Order>> call, @NonNull Response<List<Order>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    List<Order> orders = response.body();
-                    SalesAdapter adapter = new SalesAdapter(orders);
+                    adapter = new SalesAdapter(new ArrayList<>(), service, cnpj, mongoService);
                     recyclerView.setAdapter(adapter);
-                } else {
-                    methods.openScreenFragments(MySalesFragment.this, GenericError.class);
-                }
-            }
 
-            @Override
-            public void onFailure(@NonNull Call<List<Order>> call, @NonNull Throwable t) {
-                methods.openScreenFragments(MySalesFragment.this, GenericError.class);
-            }
-        });
+                    salesCall = service.getOrdersBySeller(cnpj);
+                    salesCall.enqueue(new Callback<List<Order>>() {
+                        @Override
+                        public void onResponse(@NonNull Call<List<Order>> call, @NonNull Response<List<Order>> response) {
+                            if (!isAdded()) return;
+                            if (response.isSuccessful() && response.body() != null) {
+                                adapter.updateList(response.body());
+                            } else {
+                                Toast.makeText(requireContext(), "HTTP " + response.code(), Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(@NonNull Call<List<Order>> call, @NonNull Throwable t) {
+                            if (!isAdded()) return;
+                            Toast.makeText(requireContext(), "Erro: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    });
+                })
+                .addOnFailureListener(e -> {
+                    if (!isAdded()) return;
+                    Toast.makeText(requireContext(), "Erro empresa: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        if (salesCall != null && !salesCall.isCanceled()) {
-            salesCall.cancel();
-        }
+        if (salesCall != null && !salesCall.isCanceled()) salesCall.cancel();
     }
 }

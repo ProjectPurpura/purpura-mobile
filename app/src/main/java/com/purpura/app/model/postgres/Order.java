@@ -1,23 +1,23 @@
 package com.purpura.app.model.postgres;
 
-import java.time.LocalDateTime;
-
 public class Order {
 
-    private Long idPedido;
+    private Integer idPedido;
     private String idVendedor;
     private String idComprador;
+    private String data;
+    private String status;
+    private String agendamentoColeta;
     private Double valorTotal;
     private String observacoes;
-    private LocalDateTime data;
-    private String status;
-    private LocalDateTime agendamentoColeta;
 
-    public Long getIdPedido() {
+    public Order() {}
+
+    public Integer getIdPedido() {
         return idPedido;
     }
 
-    public void setIdPedido(Long idPedido) {
+    public void setIdPedido(Integer idPedido) {
         this.idPedido = idPedido;
     }
 
@@ -33,31 +33,15 @@ public class Order {
         return idComprador;
     }
 
-    public Double getValorTotal() {
-        return valorTotal;
-    }
-
-    public void setValorTotal(Double valorTotal) {
-        this.valorTotal = valorTotal;
-    }
-
     public void setIdComprador(String idComprador) {
         this.idComprador = idComprador;
     }
 
-    public String getObservacoes() {
-        return observacoes;
-    }
-
-    public void setObservacoes(String observacoes) {
-        this.observacoes = observacoes;
-    }
-
-    public LocalDateTime getData() {
+    public String getData() {
         return data;
     }
 
-    public void setData(LocalDateTime data) {
+    public void setData(String data) {
         this.data = data;
     }
 
@@ -69,24 +53,27 @@ public class Order {
         this.status = status;
     }
 
-    public LocalDateTime getAgendamentoColeta() {
+    public String getAgendamentoColeta() {
         return agendamentoColeta;
     }
 
-    public void setAgendamentoColeta(LocalDateTime agendamentoColeta) {
+    public void setAgendamentoColeta(String agendamentoColeta) {
         this.agendamentoColeta = agendamentoColeta;
     }
 
-    public Order(Long idPedido, String idVendedor, String idComprador, String observacoes, LocalDateTime data, String status, LocalDateTime agendamentoColeta) {
-        this.idPedido = idPedido;
-        this.idVendedor = idVendedor;
-        this.idComprador = idComprador;
+    public Double getValorTotal() {
+        return valorTotal;
+    }
+
+    public void setValorTotal(Double valorTotal) {
+        this.valorTotal = valorTotal;
+    }
+
+    public String getObservacoes() {
+        return observacoes;
+    }
+
+    public void setObservacoes(String observacoes) {
         this.observacoes = observacoes;
-        this.data = data;
-        this.status = status;
-        this.agendamentoColeta = agendamentoColeta;
-    }
-
-    public Order() {
     }
 }

@@ -55,7 +55,7 @@ public interface MongoAPI {
 
     //PUT
     @PUT("/empresa/{cnpj}")
-    Call<Company> updateCompany(@Path("cnpj") String cnpj, @Body Company company);
+    Call<Void> updateCompany(@Path("cnpj") String cnpj, @Body Company company);
     @PUT("/empresa/{cnpj}/residuo/{id}")
     Call<Residue> updateResidue(@Path("cnpj") String cnpj, @Path("id") String id, @Body Residue residue);
     @PUT("/empresa/{cnpj}/pix/{id}")
