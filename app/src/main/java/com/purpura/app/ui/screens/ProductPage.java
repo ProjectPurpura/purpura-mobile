@@ -1,6 +1,7 @@
 package com.purpura.app.ui.screens;
 
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,7 +18,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.purpura.app.R;
 import com.purpura.app.configuration.Methods;
-import com.purpura.app.model.mongo.Adress;
+import com.purpura.app.model.mongo.Address;
 import com.purpura.app.model.mongo.Company;
 import com.purpura.app.model.mongo.Residue;
 import com.purpura.app.remote.service.MongoService;
@@ -54,10 +55,10 @@ public class ProductPage extends AppCompatActivity {
     private Button goToChat;
 
     @Nullable private Company company;
-    @Nullable private Adress address;
+    @Nullable private Address address;
 
     private Call<Company> companyCall;
-    private Call<Adress> addressCall;
+    private Call<Address> addressCall;
     private boolean probeStarted = false;
 
     @Override
@@ -194,8 +195,8 @@ public class ProductPage extends AppCompatActivity {
             return;
         }
         addressCall = mongoService.getAdressById(cnpj, enderecoId);
-        addressCall.enqueue(new Callback<Adress>() {
-            @Override public void onResponse(Call<Adress> call, Response<Adress> response) {
+        addressCall.enqueue(new Callback<Address>() {
+            @Override public void onResponse(Call<Address> call, Response<Address> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     address = response.body();
                     String nomeEnd = nvl(address.getNome());
@@ -204,7 +205,7 @@ public class ProductPage extends AppCompatActivity {
                     addressName.setText("Endereço não encontrado");
                 }
             }
-            @Override public void onFailure(Call<Adress> call, Throwable t) {
+            @Override public void onFailure(Call<Address> call, Throwable t) {
                 addressName.setText("Endereço não encontrado");
             }
         });
@@ -215,7 +216,7 @@ public class ProductPage extends AppCompatActivity {
         probeStarted = true;
         mongoService.getAllCompanies().enqueue(new Callback<List<Company>>() {
             @Override public void onResponse(Call<List<Company>> call, Response<List<Company>> resp) {
-                if (!resp.isSuccessful() || resp.body() == null || resp.body().isEmpty())
+                if (!resp.isSuccessful() || resp.body() == null || resp.body().isEmpty()) return;
                 tryCompaniesSequentially(resp.body(), 0);
             }
             @Override public void onFailure(Call<List<Company>> call, Throwable t) { }

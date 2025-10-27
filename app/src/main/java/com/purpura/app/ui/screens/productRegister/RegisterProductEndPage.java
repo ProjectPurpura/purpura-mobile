@@ -15,7 +15,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.purpura.app.R;
 import com.purpura.app.configuration.Methods;
-import com.purpura.app.model.mongo.Adress;
+import com.purpura.app.model.mongo.Address;
 import com.purpura.app.model.mongo.PixKey;
 import com.purpura.app.model.mongo.Residue;
 import com.purpura.app.remote.api.RegisterProductInterfaces;
@@ -50,10 +50,10 @@ public class RegisterProductEndPage extends AppCompatActivity {
         }
 
         Residue residue = (Residue) env.getSerializable("residue");
-        Adress adress = (Adress) env.getSerializable("address");
+        Address address = (Address) env.getSerializable("address");
         PixKey pixKey = (PixKey) env.getSerializable("pixKey");
 
-        if (residue == null || adress == null || pixKey == null) {
+        if (residue == null || address == null || pixKey == null) {
             methods.openScreenActivity(this, GenericError.class);
             return;
         }
@@ -69,7 +69,7 @@ public class RegisterProductEndPage extends AppCompatActivity {
                             methods.openScreenActivity(this, GenericError.class);
                             return;
                         }
-                        registerAdress(cnpj, adress, new RegisterProductInterfaces.AdressCallback() {
+                        registerAdress(cnpj, address, new RegisterProductInterfaces.AdressCallback() {
                             @Override
                             public void onSuccess(String adressId) {
                                 registerPixKey(cnpj, pixKey, new RegisterProductInterfaces.PixKeyCallback() {
@@ -109,8 +109,8 @@ public class RegisterProductEndPage extends AppCompatActivity {
         backButton.setOnClickListener(v -> finish());
     }
 
-    public void registerAdress(String cnpj, Adress adress, RegisterProductInterfaces.AdressCallback callback) {
-        mongoService.createAdress(cnpj, adress, callback);
+    public void registerAdress(String cnpj, Address address, RegisterProductInterfaces.AdressCallback callback) {
+        mongoService.createAdress(cnpj, address, callback);
     }
 
     public void registerPixKey(String cnpj, PixKey pixKey, RegisterProductInterfaces.PixKeyCallback callback) {

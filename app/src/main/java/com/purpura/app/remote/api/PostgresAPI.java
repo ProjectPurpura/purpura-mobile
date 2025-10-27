@@ -5,9 +5,9 @@ import retrofit2.Call;
 import retrofit2.http.*;
 
 import com.purpura.app.configuration.EnvironmentVariables;
-import com.purpura.app.model.mongo.Residue;
 import com.purpura.app.model.postgres.News;
 import com.purpura.app.model.postgres.Order;
+import com.purpura.app.model.postgres.OrderItem;
 import com.purpura.app.model.postgres.Payment;
 import com.purpura.app.remote.util.Api;
 
@@ -16,7 +16,6 @@ import java.util.List;
 @Api(value = EnvironmentVariables.POSTGRES_URL)
 public interface PostgresAPI {
 
-    //GET
     @GET("pedido/all")
     Call<ResponseBody> getAllPedidos();
 
@@ -36,7 +35,7 @@ public interface PostgresAPI {
     );
 
     @GET("pedido/{pedidoId}/residuo/all")
-    Call<List<Residue>> getAllResiduos(
+    Call<List<OrderItem>> getOrderItems(
             @Path("pedidoId") Integer pedidoId
     );
 
@@ -53,8 +52,6 @@ public interface PostgresAPI {
     @GET("noticia")
     Call<List<News>> getNoticias();
 
-
-    //POST
     @POST("pedido")
     Call<Order> createPedido(@Body Order order);
 
@@ -66,8 +63,6 @@ public interface PostgresAPI {
     @POST("pagamento")
     Call<Payment> createPagamento(@Body Payment payment);
 
-    //PUT
-
     @PUT("pedido/{id}")
     Call<ResponseBody> updateOrder(
             @Path("id") Integer id,
@@ -78,13 +73,11 @@ public interface PostgresAPI {
     Call<ResponseBody> updateResidue(
             @Path("pedidoId") int pedidoId,
             @Path("residuoId") int residuoId,
-            @Body Residue residue
+            @Body OrderItem residue
     );
 
-    //DELETE
-
     @DELETE("pedido/{id}")
-        Call<ResponseBody> deletePedido(
+    Call<ResponseBody> deletePedido(
             @Path("id") Integer id
     );
 
@@ -93,8 +86,6 @@ public interface PostgresAPI {
             @Path("pedidoId") int pedidoId,
             @Path("residuoId") int residuoId
     );
-
-    //PATCH
 
     @PATCH("pedido/{id}/cancelar")
     Call<ResponseBody> cancelarPedido(
@@ -120,6 +111,4 @@ public interface PostgresAPI {
     Call<ResponseBody> concluirPagamento(
             @Path("pagamentoId") Integer pagamentoId
     );
-
-
 }

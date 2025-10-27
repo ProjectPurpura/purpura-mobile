@@ -13,12 +13,10 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.purpura.app.configuration.Methods;
 import com.purpura.app.R;
-import com.purpura.app.model.mongo.Adress;
+import com.purpura.app.model.mongo.Address;
 import com.purpura.app.model.mongo.PixKey;
 import com.purpura.app.model.mongo.Residue;
 import com.purpura.app.remote.service.MongoService;
-
-import java.io.Serializable;
 
 public class RegisterPixKey extends AppCompatActivity {
 
@@ -54,9 +52,9 @@ public class RegisterPixKey extends AppCompatActivity {
                 );
 
                 Residue residue = (Residue) received.getSerializable("residue");
-                Adress adress = (Adress) received.getSerializable("address");
+                Address address = (Address) received.getSerializable("address");
                 sent.putSerializable("residue", residue);
-                sent.putSerializable("address", adress);
+                sent.putSerializable("address", address);
                 sent.putSerializable("pixKey", pixKey);
                 methods.openScreenActivityWithBundle(this, RegisterProductEndPage.class, sent);
             }
