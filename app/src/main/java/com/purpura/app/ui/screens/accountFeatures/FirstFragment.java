@@ -61,7 +61,7 @@ public class FirstFragment extends Fragment {
                                 public void onResponse(Call<List<Residue>> call, Response<List<Residue>> response) {
                                     if(response.isSuccessful()){
                                         List<Residue> residues = response.body();
-                                        myProductsRecyclerView.setAdapter(new MyResiduesAdapter(residues));
+                                        myProductsRecyclerView.setAdapter(new MyResiduesAdapter(residues, FirstFragment.this.getActivity()));
                                     }
                                 }
                                 @Override

@@ -1,5 +1,9 @@
 package com.purpura.app.adapters.mongo;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +21,8 @@ import com.purpura.app.R;
 import com.purpura.app.configuration.Methods;
 import com.purpura.app.model.mongo.Residue;
 import com.purpura.app.remote.service.MongoService;
+import com.purpura.app.ui.screens.accountFeatures.MyProducts;
+import com.purpura.app.ui.screens.productRegister.UpdateProduct;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,9 +32,11 @@ public class MyResiduesAdapter extends RecyclerView.Adapter<MyResiduesAdapter.Re
 
     private List<Residue> products;
     private final Methods methods = new Methods();
+    Bundle bundle = new Bundle();
     private final MongoService mongoService = new MongoService();
-
-    public MyResiduesAdapter(List<Residue> products) {
+    private Activity activity;
+    public MyResiduesAdapter(List<Residue> products, Activity activity) {
+        this.activity = activity;
         this.products = products != null ? products : new ArrayList<>();
     }
 
@@ -51,7 +59,8 @@ public class MyResiduesAdapter extends RecyclerView.Adapter<MyResiduesAdapter.Re
         holder.residueName.setText(residue.getNome());
 
         holder.editResidueButton.setOnClickListener(v -> {
-
+            bundle.putSerializable("residueId", residue.getId());
+            methods.openScreenActivityWithBundle(activity, UpdateProduct.class, bundle);
         });
 
         holder.deleteResidueButton.setOnClickListener(v -> {

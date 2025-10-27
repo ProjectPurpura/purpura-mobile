@@ -18,7 +18,9 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/constraintLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            tools:layout_editor_absoluteX="-80dp"
+            tools:layout_editor_absoluteY="-1dp">
 
             <!-- Botão de voltar -->
             <ImageView
@@ -43,9 +45,6 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <!-- Nome do produto -->
-
-            <!-- Valor -->
-
             <TextView
                 android:id="@+id/productPageProductName"
                 android:layout_width="wrap_content"
@@ -59,20 +58,26 @@
                 app:layout_constraintTop_toBottomOf="@+id/productPageBackButton" />
 
             <TextView
-                android:id="@+id/productPageProductValue"
+                android:id="@+id/rs"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="265dp"
-                android:text="R$299,99"
+                android:layout_marginTop="264dp"
+                android:text="R$"
                 android:textSize="20sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.52"
-                app:layout_constraintStart_toEndOf="@+id/productPageProductName"
+                app:layout_constraintEnd_toStartOf="@+id/productPageProductValue2"
                 app:layout_constraintTop_toBottomOf="@+id/productPageBackButton" />
 
-            <!-- Foto da empresa -->
+            <TextView
+                android:id="@+id/productPageProductValue2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="264dp"
+                android:layout_marginEnd="44dp"
+                android:text="00,00"
+                android:textSize="20sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/productPageBackButton" />
 
-            <!-- Nome da empresa -->
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/productPageCompanyPhoto"
                 android:layout_width="60sp"
@@ -84,15 +89,15 @@
                 app:layout_constraintTop_toBottomOf="@+id/productPageProductName"
                 app:srcCompat="@drawable/generic_error" />
 
+            <!-- Nome da empresa -->
             <TextView
                 android:id="@+id/productPageCompanyName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
                 android:layout_marginTop="35dp"
                 android:text="Nome da empresa"
                 android:textSize="16sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.074"
                 app:layout_constraintStart_toEndOf="@+id/productPageCompanyPhoto"
                 app:layout_constraintTop_toBottomOf="@+id/productPageProductName" />
 
@@ -131,10 +136,9 @@
                 android:id="@+id/productPageProductWeight"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="28dp"
-                android:text="XX kg"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.083"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="30dp"
+                android:text="XX"
                 app:layout_constraintStart_toEndOf="@+id/imageView20"
                 app:layout_constraintTop_toBottomOf="@+id/productPageDescription" />
 
@@ -144,7 +148,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:layout_marginTop="28dp"
+                android:layout_marginTop="30dp"
                 android:text="Measure"
                 app:layout_constraintStart_toEndOf="@+id/productPageProductWeight"
                 app:layout_constraintTop_toBottomOf="@+id/productPageDescription" />
@@ -155,26 +159,27 @@
                 android:layout_width="35sp"
                 android:layout_height="35sp"
                 android:layout_marginTop="20dp"
-                android:tint="@color/verde_padrao"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.15"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/imageView20"
-                app:srcCompat="@drawable/location_vector" />
+                app:srcCompat="@drawable/location_vector"
+                app:tint="@color/verde_padrao" />
 
             <!-- Localização -->
             <TextView
                 android:id="@+id/productPageProductLocation"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="35dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="40dp"
                 android:text="Carapicuíba, SP"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.113"
                 app:layout_constraintStart_toEndOf="@+id/imageView19"
                 app:layout_constraintTop_toBottomOf="@+id/productPageProductWeight" />
 
             <!-- Botão adicionar ao carrinho -->
+
+            <!-- Botão conversar com vendedor -->
             <Button
                 android:id="@+id/productPageAddToShoppingCart"
                 android:layout_width="320sp"
@@ -184,25 +189,77 @@
                 android:text="Adicionar ao Carrinho"
                 app:cornerRadius="15sp"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.494"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/imageView19" />
+                app:layout_constraintTop_toBottomOf="@+id/view" />
 
-            <!-- Botão conversar com vendedor -->
             <Button
-                android:id="@+id/productPageGoToChat"
+                android:id="@+id/productPageGoToChat2"
                 android:layout_width="320sp"
                 android:layout_height="50sp"
                 android:layout_marginTop="15dp"
-                android:layout_marginBottom="10dp"
                 android:background="@drawable/round_border"
                 android:text="Conversar com o vendedor"
                 android:textColor="@color/roxo_padrao"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.527"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/productPageAddToShoppingCart" />
+
+            <View
+                android:id="@+id/view"
+                android:layout_width="320dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/round_border"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.494"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/productPageAddToShoppingCart"
-                app:layout_constraintVertical_bias="0.0" />
+                app:layout_constraintTop_toBottomOf="@+id/imageView19" />
+
+            <TextView
+                android:id="@+id/textView15"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Selecione a quantidade"
+                android:textColor="@color/roxo_padrao"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="@+id/view"
+                app:layout_constraintEnd_toEndOf="@+id/view"
+                app:layout_constraintHorizontal_bias="0.074"
+                app:layout_constraintStart_toStartOf="@+id/view"
+                app:layout_constraintTop_toTopOf="@+id/view"
+                app:layout_constraintVertical_bias="0.447" />
+
+            <TextView
+                android:id="@+id/productPageQuantity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1"
+                app:layout_constraintBottom_toBottomOf="@+id/view"
+                app:layout_constraintEnd_toStartOf="@+id/addQuantity"
+                app:layout_constraintTop_toTopOf="@+id/view" />
+
+            <ImageView
+                android:id="@+id/addQuantity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="5dp"
+                app:tint="@color/roxo_padrao"
+                app:layout_constraintBottom_toBottomOf="@+id/view"
+                app:layout_constraintEnd_toEndOf="@+id/view"
+                app:layout_constraintTop_toTopOf="@+id/view"
+                app:srcCompat="@drawable/baseline_arrow_right_24" />
+
+            <ImageView
+                android:id="@+id/removeQuantity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:tint="@color/roxo_padrao"
+                app:layout_constraintBottom_toBottomOf="@+id/view"
+                app:layout_constraintEnd_toStartOf="@+id/productPageQuantity"
+                app:layout_constraintTop_toTopOf="@+id/view"
+                app:srcCompat="@drawable/baseline_arrow_left_24" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

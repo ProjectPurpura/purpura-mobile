@@ -29,7 +29,7 @@ public class ChatListFragment extends Fragment {
     private WebView chatListWebView;
     private Methods methods = new Methods();
     private MongoService mongoService = new MongoService();
-    private String baseSiteUrl;
+    private String baseSiteUrl = "https://site-purpura.onrender.com/";
 
     public ChatListFragment() {
         // Required empty public constructor
@@ -79,10 +79,9 @@ public class ChatListFragment extends Fragment {
                         if (document.exists()) {
                             String cnpj = document.getString("cnpj");
 
-                            String url = baseSiteUrl +"#cnpj=" + cnpj;
+                            String url = baseSiteUrl + "#cnpj=" + cnpj;
 
                             WebSettings webSettings = chatListWebView.getSettings();
-
 
                             webSettings.setJavaScriptEnabled(true);
 

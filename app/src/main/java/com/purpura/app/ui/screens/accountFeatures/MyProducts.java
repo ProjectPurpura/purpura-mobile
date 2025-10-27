@@ -58,10 +58,6 @@ public class MyProducts extends AppCompatActivity {
         recyclerView = findViewById(R.id.myProductsRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        binding.addProducts.setOnClickListener(v -> {
-            methods.openScreenActivity(this, RegisterProduct.class);
-        });
-
         try {
             FirebaseFirestore.getInstance()
                     .collection("empresa")
@@ -75,6 +71,9 @@ public class MyProducts extends AppCompatActivity {
                                 public void onResponse(Call<List<Residue>> call, Response<List<Residue>> response) {
                                     if (response.isSuccessful()) {
                                         List<Residue> residues = response.body();
+                                        binding.addProducts.setOnClickListener(v -> {
+                                            methods.openScreenActivity(MyProducts.this, RegisterProduct.class);
+                                        });
                                     } else {
                                         Toast.makeText(MyProducts.this, "Erro ao buscar resíduos", Toast.LENGTH_SHORT).show();
                                         methods.openScreenActivity(MyProducts.this, GenericError.class);
@@ -88,7 +87,7 @@ public class MyProducts extends AppCompatActivity {
                         }
                     });
         } catch (Exception e) {
-            methods.openScreenActivity(MyProducts.this, GenericError.class);
+            methods.openScreenActivity(this, GenericError.class);
             throw new RuntimeException(e);
         }
     }
@@ -99,7 +98,7 @@ public class MyProducts extends AppCompatActivity {
         int numeroDeColunas = 2;
         GridLayoutManager layoutManager = new GridLayoutManager(this, numeroDeColunas);
         recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(new MyResiduesAdapter(new ArrayList<Residue>()));
+        recyclerView.setAdapter(new MyResiduesAdapter(new ArrayList<Residue>(), this));
     }
 
     @Override
