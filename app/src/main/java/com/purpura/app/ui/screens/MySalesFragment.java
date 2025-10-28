@@ -58,10 +58,11 @@ public class MySalesFragment extends Fragment {
                         return;
                     }
 
+
+                    salesCall = service.getOrdersBySeller(cnpj);
                     adapter = new SalesAdapter(new ArrayList<>(), service, cnpj, mongoService);
                     recyclerView.setAdapter(adapter);
 
-                    salesCall = service.getOrdersBySeller(cnpj);
                     salesCall.enqueue(new Callback<List<Order>>() {
                         @Override
                         public void onResponse(@NonNull Call<List<Order>> call, @NonNull Response<List<Order>> response) {

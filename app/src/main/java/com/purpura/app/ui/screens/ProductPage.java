@@ -24,17 +24,14 @@ import com.purpura.app.model.mongo.Residue;
 import com.purpura.app.remote.service.MongoService;
 
 import java.io.Serializable;
-import java.text.NumberFormat;
+import java.text.DecimalFormat;
 import java.util.List;
-import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class ProductPage extends AppCompatActivity {
-
-    private static final Locale PT_BR = new Locale("pt", "BR");
 
     private final Methods methods = new Methods();
     private final MongoService mongoService = new MongoService();
@@ -79,31 +76,26 @@ public class ProductPage extends AppCompatActivity {
             finish();
             return;
         }
-        if (backButton != null) backButton.setOnClickListener(v -> finish());
+        backButton.setOnClickListener(v -> finish());
         setupResidueData(cnpjFromIntent);
 
-        if (addQuantity != null) {
-            addQuantity.setOnClickListener(v -> {
-                int currentQuantity = safeParseInt(productQuantity != null ? productQuantity.getText().toString() : "1", 1);
-                int estoque = (residue != null) ? residue.getEstoque() : Integer.MAX_VALUE;
-                if (productQuantity != null) {
-                    if (currentQuantity + 1 <= estoque) {
-                        productQuantity.setText(String.valueOf(currentQuantity + 1));
-                    } else {
-                        Toast.makeText(ProductPage.this, "Quantidade máxima atingida", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            });
-        }
+        addQuantity.setOnClickListener(v -> {
 
-        if (removeQuantity != null) {
-            removeQuantity.setOnClickListener(v -> {
-                int currentQuantity = safeParseInt(productQuantity != null ? productQuantity.getText().toString() : "1", 1);
-                if (productQuantity != null && currentQuantity > 1) {
-                    productQuantity.setText(String.valueOf(currentQuantity - 1));
-                }
-            });
-        }
+            Integer currentQuantity = Integer.getInteger(productQuantity.getText().toString());
+
+            if(residue.getEstoque() >= currentQuantity + 1){
+                productQuantity.setText(String.valueOf(currentQuantity + 1));
+            } else {
+                Toast.makeText(this, "Quantidade máxima atingida", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        removeQuantity.setOnClickListener(v -> {
+            Integer currentQuantity = Integer.getInteger(productQuantity.getText().toString());
+            if(currentQuantity > 1){
+                productQuantity.setText(String.valueOf(currentQuantity - 1));
+            }
+        });
     }
 
     @Override
@@ -117,34 +109,30 @@ public class ProductPage extends AppCompatActivity {
         backButton         = findViewById(R.id.productPageBackButton);
         residueImage       = findViewById(R.id.productPageImage);
         residueName        = findViewById(R.id.productPageProductName);
-        residuePrice       = findViewById(R.id.productPageProductValue2);
+        residuePrice       = findViewById(R.id.productPageProductValue);
         residueDescription = findViewById(R.id.productPageDescription);
         residueWeight      = findViewById(R.id.productPageProductWeight);
         residueUnitType    = findViewById(R.id.producPageUnitMesure);
-        if (residueUnitType == null) {
-            int altId = getResources().getIdentifier("productPageUnitMeasure", "id", getPackageName());
-            if (altId != 0) residueUnitType = findViewById(altId);
-        }
         companyPhoto       = findViewById(R.id.productPageCompanyPhoto);
         companyName        = findViewById(R.id.productPageCompanyName);
         addressName        = findViewById(R.id.productPageProductLocation);
         addToCart          = findViewById(R.id.productPageAddToShoppingCart);
-        goToChat           = findViewById(R.id.productPageGoToChat2);
+        goToChat           = findViewById(R.id.productPageGoToChat);
         productQuantity    = findViewById(R.id.productPageQuantity);
-        addQuantity        = findViewById(R.id.addQuantity);
-        removeQuantity     = findViewById(R.id.removeQuantity);
+        addQuantity         = findViewById(R.id.addQuantity);
+        removeQuantity      = findViewById(R.id.removeQuantity);
     }
 
     public void setupResidueData(String cnpjFallback) {
-        NumberFormat nf = NumberFormat.getCurrencyInstance(PT_BR);
-        setTextSafe(residueName, nvl(residue.getNome()));
-        setTextSafe(residuePrice, formatPriceBRL(residue.getPreco(), nf));
-        if (residueDescription != null) residueDescription.setText(nvl(residue.getDescricao()));
-        setTextSafe(residueWeight, formatNumber(residue.getPeso()));
-        setTextSafe(residueUnitType, nvl(residue.getTipoUnidade()));
+        DecimalFormat df = new DecimalFormat("#,##0.00");
+        residueName.setText(nvl(residue.getNome()));
+        residuePrice.setText("R$ " + df.format(residue.getPreco()));
+        residueDescription.setText(nvl(residue.getDescricao()));
+        residueWeight.setText(df.format(residue.getPeso()));
+        residueUnitType.setText(nvl(residue.getTipoUnidade()));
         loadResidueImage(residue.getUrlFoto());
-        setTextSafe(companyName, "Carregando empresa...");
-        setTextSafe(addressName, "Carregando endereço...");
+        companyName.setText("Carregando empresa...");
+        addressName.setText("Carregando endereço...");
         String cnpj = effectiveCnpj(nvl(residue.getCnpj()), cnpjFallback);
         Log.d("ProductPage", "ResidueId=" + residue.getId() + ", IdEndereco=" + residue.getIdEndereco() + ", CNPJ=" + cnpj);
         loadCompany(cnpj);
@@ -164,7 +152,7 @@ public class ProductPage extends AppCompatActivity {
 
     private void loadCompany(String cnpj) {
         if (isEmpty(cnpj)) {
-            setTextSafe(companyName, "Empresa não encontrada");
+            companyName.setText("Empresa não encontrada");
             loadCompanyPhoto(null);
             probeOwnerCnpj();
             return;
@@ -175,16 +163,16 @@ public class ProductPage extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     company = response.body();
                     String nome = nvl(company.getNome());
-                    setTextSafe(companyName, notEmpty(nome) ? nome : "—");
+                    companyName.setText(notEmpty(nome) ? nome : "—");
                     loadCompanyPhoto(company.getUrlFoto());
                 } else {
-                    setTextSafe(companyName, "Empresa não encontrada");
+                    companyName.setText("Empresa não encontrada");
                     loadCompanyPhoto(null);
                     probeOwnerCnpj();
                 }
             }
             @Override public void onFailure(Call<Company> call, Throwable t) {
-                setTextSafe(companyName, "Empresa não encontrada");
+                companyName.setText("Empresa não encontrada");
                 loadCompanyPhoto(null);
                 probeOwnerCnpj();
             }
@@ -192,7 +180,6 @@ public class ProductPage extends AppCompatActivity {
     }
 
     private void loadCompanyPhoto(@Nullable String url) {
-        if (companyPhoto == null) return;
         Glide.with(this)
                 .load(url)
                 .circleCrop()
@@ -204,7 +191,7 @@ public class ProductPage extends AppCompatActivity {
 
     private void loadAddress(String cnpj, @Nullable String enderecoId) {
         if (isEmpty(cnpj) || isEmpty(enderecoId)) {
-            setTextSafe(addressName, "Endereço não encontrado");
+            addressName.setText("Endereço não encontrado");
             return;
         }
         addressCall = mongoService.getAdressById(cnpj, enderecoId);
@@ -213,13 +200,13 @@ public class ProductPage extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     address = response.body();
                     String nomeEnd = nvl(address.getNome());
-                    setTextSafe(addressName, notEmpty(nomeEnd) ? nomeEnd : "—");
+                    addressName.setText(notEmpty(nomeEnd) ? nomeEnd : "—");
                 } else {
-                    setTextSafe(addressName, "Endereço não encontrado");
+                    addressName.setText("Endereço não encontrado");
                 }
             }
             @Override public void onFailure(Call<Address> call, Throwable t) {
-                setTextSafe(addressName, "Endereço não encontrado");
+                addressName.setText("Endereço não encontrado");
             }
         });
     }
@@ -262,29 +249,5 @@ public class ProductPage extends AppCompatActivity {
         String c = sanitize(cnpjResidue);
         if (isEmpty(c)) c = sanitize(cnpjFallback);
         return c;
-    }
-    private static void setTextSafe(TextView v, String text) {
-        if (v != null) v.setText(text == null ? "" : text);
-    }
-    private static int safeParseInt(String s, int def) {
-        try { return Integer.parseInt(TextUtils.isEmpty(s) ? String.valueOf(def) : s.trim()); } catch (Exception e) { return def; }
-    }
-    private static String formatPriceBRL(Object price, NumberFormat nf) {
-        if (price == null) return nf.format(0);
-        try {
-            if (price instanceof Number) return nf.format(((Number) price).doubleValue());
-            String s = price.toString().trim().replace(",", ".");
-            return nf.format(Double.parseDouble(s));
-        } catch (Exception e) {
-            return nf.format(0);
-        }
-    }
-    private static String formatNumber(Object n) {
-        try {
-            if (n instanceof Number) return String.format(PT_BR, "%,.2f", ((Number) n).doubleValue());
-            return String.format(PT_BR, "%,.2f", Double.parseDouble(String.valueOf(n).replace(",", ".")));
-        } catch (Exception e) {
-            return "0,00";
-        }
     }
 }

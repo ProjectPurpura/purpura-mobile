@@ -143,10 +143,11 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/myOrdersCardReciclerView"
             android:layout_width="match_parent"
-            android:layout_height="130sp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/view2"
-            tools:layout_editor_absoluteX="63dp"
             tools:listitem="@layout/individual_order_card" />
 
         <TextView
