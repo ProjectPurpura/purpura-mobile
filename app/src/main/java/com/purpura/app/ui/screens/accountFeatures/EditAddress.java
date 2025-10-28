@@ -15,8 +15,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.purpura.app.R;
 import com.purpura.app.adapters.mongo.AddressAdapter;
-import com.purpura.app.model.mongo.Address;
 import com.purpura.app.configuration.Methods;
+import com.purpura.app.model.mongo.Address;
 import com.purpura.app.remote.service.MongoService;
 import com.purpura.app.ui.screens.errors.GenericError;
 
