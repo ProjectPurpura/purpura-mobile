@@ -29,10 +29,8 @@ public class ChatListFragment extends Fragment {
     private WebView chatListWebView;
     private Methods methods = new Methods();
     private MongoService mongoService = new MongoService();
-    private String baseSiteUrl = "https://site-purpura.onrender.com/";
 
     public ChatListFragment() {
-        // Required empty public constructor
     }
 
     public static ChatListFragment newInstance(String param1, String param2) {
@@ -67,8 +65,6 @@ public class ChatListFragment extends Fragment {
         chatListWebView.getSettings().setJavaScriptEnabled(true);
         chatListWebView.setWebViewClient(new WebViewClient());
 
-        baseSiteUrl = EnvironmentVariables.SITE_URL;
-
         try{
 
             FirebaseFirestore.getInstance()
@@ -79,7 +75,7 @@ public class ChatListFragment extends Fragment {
                         if (document.exists()) {
                             String cnpj = document.getString("cnpj");
 
-                            String url = baseSiteUrl + "#cnpj=" + cnpj;
+                            String url = "https://site-purpura.onrender.com/#cnpj=" + cnpj;
 
                             WebSettings webSettings = chatListWebView.getSettings();
 
