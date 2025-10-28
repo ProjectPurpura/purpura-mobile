@@ -1,6 +1,8 @@
 package com.purpura.app.model.mongo;
 
-public class Address {
+import java.io.Serializable;
+
+public class Address implements Serializable {
 
     private String nome;
     private String cep;
@@ -54,6 +56,5 @@ public class Address {
         this.cep = cep;
         this.complement = complement;
         this.number = number;
-
     }
 }

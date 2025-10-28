@@ -54,7 +54,7 @@ import retrofit2.Response;
 public class RegisterProduct extends AppCompatActivity {
 
     MongoService service = new MongoService();
-
+    Methods methods = new Methods();
     private static boolean cloudinaryInitialized = false;
     private ActivityResultLauncher<String[]> requestPermissions;
     private ActivityResultLauncher<Intent> galleryLauncher;
@@ -68,6 +68,8 @@ public class RegisterProduct extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register_product);
+
+        Bundle env = new Bundle();
 
         TextView name = findViewById(R.id.registerProductName);
         TextView description = findViewById(R.id.registerProductDescription);
@@ -89,25 +91,33 @@ public class RegisterProduct extends AppCompatActivity {
                     }
                 });
 
-        Residue residue = new Residue(
-                null,
-                name.getText().toString(),
-                description.getText().toString(),
-                Double.parseDouble(price.getText().toString()),
-                Double.parseDouble(weight.getText().toString()),
-                Integer.parseInt(quantity.getText().toString()),
-                weightType.getText().toString(),
-                null,
-                null,
-                null,
-                cnpj
-        );
-
         imageView.setOnClickListener(v -> {
             try {
                 captureImage(v);
             } catch (IOException e) {
                 throw new RuntimeException(e);
+            }
+        });
+
+        continueButton.setOnClickListener(v -> {
+            if(photoUri != null) {
+
+
+                Residue residue = new Residue(
+                        null,
+                        name.getText().toString(),
+                        description.getText().toString(),
+                        Double.parseDouble(price.getText().toString()),
+                        Double.parseDouble(weight.getText().toString()),
+                        Integer.parseInt(quantity.getText().toString()),
+                        weightType.getText().toString(),
+                        photoUri.toString(),
+                        null,
+                        null,
+                        cnpj
+                );
+                env.putSerializable("residue", residue);
+                methods.openScreenActivityWithBundle(this, RegisterAdress.class, env);
             }
         });
 

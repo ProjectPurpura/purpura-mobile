@@ -83,20 +83,9 @@ public class MongoService {
 
     // CREATE - POST
 
-    public void createAdress(String cnpj, Address address, Context context) {
+    public Call<Address> createAdress(String cnpj, Address address, Context context) {
         Call<Address> call = mongoAPI.createAddress(cnpj, address);
-        call.enqueue(new Callback<Address>() {
-            @Override
-            public void onResponse(Call<Address> call, Response<Address> response) {
-                if (response.isSuccessful()) {
-                    Toast.makeText(context, "Endereço criado com sucesso", Toast.LENGTH_SHORT).show();
-                }
-            }
-            @Override
-            public void onFailure(Call<Address> call, Throwable t) {
-                Toast.makeText(context, "Erro ao criar endereço", Toast.LENGTH_SHORT).show();
-            }
-        });
+        return call;
     }
 
     public void createPixKey(String cnpj, PixKey pixKey, Context context) {

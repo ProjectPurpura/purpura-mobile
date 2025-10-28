@@ -16,13 +16,14 @@
             android:id="@+id/imageView31"
             android:layout_width="96dp"
             android:layout_height="93dp"
+            android:layout_marginStart="10dp"
             android:layout_marginTop="40dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.008"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/location_vector"
-            app:tint="@color/roxo_padrao"/>
+            app:tint="@color/roxo_padrao" />
 
         <TextView
             android:id="@+id/adressCardZipCode"
@@ -32,8 +33,6 @@
             android:layout_marginTop="10dp"
             android:backgroundTint="@color/roxo_padrao"
             android:text="CEP: 00000-000"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.048"
             app:layout_constraintStart_toEndOf="@+id/imageView31"
             app:layout_constraintTop_toBottomOf="@+id/adressCardName" />
 
@@ -43,11 +42,8 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="26dp"
             android:layout_marginTop="30dp"
-            android:layout_marginEnd="124dp"
             android:text="XXX - Av. Paulista"
             android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.24"
             app:layout_constraintStart_toEndOf="@+id/imageView31"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -55,12 +51,11 @@
             android:id="@+id/adressCardButtonEdit"
             android:layout_width="250dp"
             android:layout_height="50dp"
+            android:layout_marginStart="26dp"
             android:layout_marginTop="8dp"
             android:backgroundTint="@color/roxo_padrao"
             android:text="Editar"
             app:cornerRadius="15sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.564"
             app:layout_constraintStart_toEndOf="@+id/imageView31"
             app:layout_constraintTop_toBottomOf="@+id/adressCardZipCode" />
 

@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,13 +17,21 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.purpura.app.R;
 import com.purpura.app.configuration.Methods;
 import com.purpura.app.model.mongo.Address;
+import com.purpura.app.model.mongo.Residue;
 import com.purpura.app.remote.service.MongoService;
 import com.purpura.app.ui.screens.errors.GenericError;
+
+import java.io.Serializable;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class RegisterAdress extends AppCompatActivity {
 
     Methods methods = new Methods();
     MongoService mongoService = new MongoService();
+    private Residue residue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,34 +44,70 @@ public class RegisterAdress extends AppCompatActivity {
             return insets;
         });
 
-        ImageView backButton = findViewById(R.id.registerAdressBackButton);
-        Button continueButton = findViewById(R.id.registerAdressValidateZipCode);
+        Bundle env = getIntent().getExtras();
+        Serializable serResidue = env.getSerializable("residue");
+        residue = (Residue) serResidue;
+
         EditText name = findViewById(R.id.registerAdressName);
         EditText zipCode = findViewById(R.id.registerAdressZipCode);
         EditText number = findViewById(R.id.registerAdressNumber);
         EditText complement = findViewById(R.id.registerAdressComplement);
-        Address address = new Address(null ,name.getText().toString(), zipCode.getText().toString(), complement.getText().toString(), Integer.parseInt(number.getText().toString()));
+        Button continueButton = findViewById(R.id.registerAdressValidateZipCode);
 
-        backButton.setOnClickListener(v -> finish());
         continueButton.setOnClickListener(v -> {
-            try{
-                FirebaseFirestore.getInstance()
-                        .collection("empresa")
-                        .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                        .get()
-                        .addOnSuccessListener(document -> {
-                            if (document.exists()) {
-                                String cnpj = document.getString("cnpj");
-                                mongoService.createAdress(cnpj, address, this);
-                                methods.openScreenActivity(this, RegisterPixKey.class);
-                            }
-                        }).addOnFailureListener(view ->
-                                methods.openScreenActivity(RegisterAdress.this, GenericError.class)
-                        );
+            String nomeValue = name.getText().toString().trim();
+            String cepValue = zipCode.getText().toString().trim();
+            String complementValue = complement.getText().toString().trim();
+            String numberValue = number.getText().toString().trim();
 
-            }catch (Exception e){
-                e.printStackTrace();
+            if (nomeValue.isEmpty() || cepValue.isEmpty() || numberValue.isEmpty()) {
+                Toast.makeText(this, "Preencha todos os campos obrigatórios!", Toast.LENGTH_SHORT).show();
+                return;
             }
+
+            int numberInt;
+            try {
+                numberInt = Integer.parseInt(numberValue);
+            } catch (NumberFormatException ex) {
+                Toast.makeText(this, "Número do endereço inválido!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            Address address = new Address(
+                    null,
+                    nomeValue,
+                    cepValue,
+                    complementValue,
+                    numberInt
+            );
+
+            FirebaseFirestore.getInstance()
+                    .collection("empresa")
+                    .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .get()
+                    .addOnSuccessListener(document -> {
+                        if (document.exists()) {
+                            String cnpj = document.getString("cnpj");
+                            mongoService.createAdress(cnpj, address, this).enqueue(new Callback<Address>() {
+                                @Override
+                                public void onResponse(Call<Address> call, Response<Address> response) {
+                                    if (response.isSuccessful() && response.body() != null) {
+                                        residue.setIdEndereco(response.body().getId());
+                                        methods.openScreenActivityWithBundle(RegisterAdress.this, RegisterPixKey.class, getIntent().getExtras());
+                                    } else {
+                                        Toast.makeText(RegisterAdress.this, response.message(), Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Call<Address> call, Throwable t) {
+                                    Toast.makeText(RegisterAdress.this, "Falha endereço.", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
+                    }).addOnFailureListener(e ->
+                            methods.openScreenActivity(RegisterAdress.this, GenericError.class)
+                    );
         });
     }
 }

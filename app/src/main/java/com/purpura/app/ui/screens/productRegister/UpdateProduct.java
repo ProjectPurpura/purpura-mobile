@@ -76,7 +76,7 @@ public class UpdateProduct extends AppCompatActivity {
 
         Bundle env = getIntent().getExtras();
         String adressId = env.getString("adressId");
-        String cnpj =  env.getString("cnpj");
+        String cnpj =  env.getString("cnpjq");
         String productId = env.getString("residueId");
         String pixKeyId = env.getString("pixKeyId");
 
