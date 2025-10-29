@@ -33,13 +33,13 @@
         </provider>
 
         <activity
-            android:name=".ui.screens.productRegister.UpdateAdress"
+            android:name=".ui.screens.UpdateAddress"
             android:exported="false" />
         <activity
             android:name=".ui.screens.UpdatePixKeys"
             android:exported="false" />
         <activity
-            android:name=".ui.screens.productRegister.UpdateProduct"
+            android:name=".ui.screens.UpdateProduct"
             android:exported="false" />
         <activity
             android:name=".ui.screens.UpdateProfile"

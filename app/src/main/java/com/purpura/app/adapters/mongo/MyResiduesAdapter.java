@@ -1,15 +1,12 @@
 package com.purpura.app.adapters.mongo;
 
 import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -21,8 +18,7 @@ import com.purpura.app.R;
 import com.purpura.app.configuration.Methods;
 import com.purpura.app.model.mongo.Residue;
 import com.purpura.app.remote.service.MongoService;
-import com.purpura.app.ui.screens.accountFeatures.MyProducts;
-import com.purpura.app.ui.screens.productRegister.UpdateProduct;
+import com.purpura.app.ui.screens.UpdateProduct;
 
 import java.util.ArrayList;
 import java.util.List;

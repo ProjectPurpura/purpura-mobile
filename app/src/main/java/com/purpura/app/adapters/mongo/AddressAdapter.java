@@ -1,5 +1,7 @@
 package com.purpura.app.adapters.mongo;
 
+import android.app.Activity;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +18,7 @@ import com.purpura.app.R;
 import com.purpura.app.configuration.Methods;
 import com.purpura.app.model.mongo.Address;
 import com.purpura.app.remote.service.MongoService;
+import com.purpura.app.ui.screens.UpdateAddress;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,9 +28,12 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.AddressV
     private List<Address> address;
     private final Methods methods = new Methods();
     private final MongoService mongoService = new MongoService();
+    private final Activity activity;
+    private final Bundle bundle = new Bundle();
 
-    public AddressAdapter(List<Address> Adresses) {
-        this.address = Adresses != null ? Adresses : new ArrayList<>();
+    public AddressAdapter(List<Address> addresses, Activity activity) {
+        this.address = addresses != null ? addresses : new ArrayList<>();
+        this.activity = activity;
     }
 
     @NonNull
@@ -40,12 +46,15 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.AddressV
 
     @Override
     public void onBindViewHolder(@NonNull AddressViewHolder holder, int position) {
-        Address address1 = address.get(position);
+        Address item = address.get(position);
 
-        holder.addressCardName.setText(address1.getNome());
-        holder.addresCardZipCode.setText(address1.getCep());
+        holder.addressCardName.setText(item.getNome());
+        holder.addresCardZipCode.setText(item.getCep());
 
         holder.addressCardButtonEdit.setOnClickListener(v -> {
+            bundle.clear();
+            bundle.putString("addressId", item.getId());
+            methods.openScreenActivityWithBundle(activity, UpdateAddress.class, bundle);
         });
 
         holder.addressCardDeleteButton.setOnClickListener(v -> {
@@ -57,17 +66,15 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.AddressV
                         .addOnSuccessListener(document -> {
                             if (document.exists()) {
                                 String cnpj = document.getString("cnpj");
-                                mongoService.deleteAddress(cnpj, address1.getId(), v.getContext());
+                                mongoService.deleteAddress(cnpj, item.getId(), v.getContext());
                                 address.remove(position);
                                 notifyItemRemoved(position);
                                 notifyItemRangeChanged(position, address.size());
                             }
                         });
-
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
         });
     }
 
