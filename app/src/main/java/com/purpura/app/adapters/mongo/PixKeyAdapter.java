@@ -1,5 +1,7 @@
 package com.purpura.app.adapters.mongo;
 
+import android.app.Activity;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +17,7 @@ import com.purpura.app.R;
 import com.purpura.app.configuration.Methods;
 import com.purpura.app.model.mongo.PixKey;
 import com.purpura.app.remote.service.MongoService;
+import com.purpura.app.ui.screens.UpdatePixKeys;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,9 +27,12 @@ public class PixKeyAdapter extends RecyclerView.Adapter<PixKeyAdapter.PixKeyView
     private List<PixKey> pixKeys;
     private final Methods methods = new Methods();
     private final MongoService mongoService = new MongoService();
+    private final Activity activity;
+    private final Bundle bundle = new Bundle();
 
-    public PixKeyAdapter(List<PixKey> pixKeys) {
+    public PixKeyAdapter(List<PixKey> pixKeys, Activity activity) {
         this.pixKeys = pixKeys != null ? pixKeys : new ArrayList<>();
+        this.activity = activity;
     }
 
     @NonNull
@@ -45,6 +51,9 @@ public class PixKeyAdapter extends RecyclerView.Adapter<PixKeyAdapter.PixKeyView
         holder.pixKeyCardPixKey.setText(pixKey.getKey());
 
         holder.pixKeyCardButtonEdit.setOnClickListener(v -> {
+            bundle.clear();
+            bundle.putString("pixKeyId", pixKey.getId());
+            methods.openScreenActivityWithBundle(activity, UpdatePixKeys.class, bundle);
         });
 
         holder.pixKeyCardDeleteButton.setOnClickListener(v -> {
@@ -62,11 +71,9 @@ public class PixKeyAdapter extends RecyclerView.Adapter<PixKeyAdapter.PixKeyView
                                 notifyItemRangeChanged(position, pixKeys.size());
                             }
                         });
-
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
         });
     }
 

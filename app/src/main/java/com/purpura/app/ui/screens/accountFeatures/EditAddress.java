@@ -64,7 +64,7 @@ public class EditAddress extends AppCompatActivity {
                                 public void onResponse(Call<List<Address>> call, Response<List<Address>> response) {
                                     if (response.isSuccessful()) {
                                         List<Address> address = response.body();
-                                        AddressAdapter adapter = new AddressAdapter(address);
+                                        AddressAdapter adapter = new AddressAdapter(address, EditAddress.this);
                                         recyclerView.setAdapter(adapter);
                                     }
                                 }

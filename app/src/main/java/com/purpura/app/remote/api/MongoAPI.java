@@ -61,7 +61,7 @@ public interface MongoAPI {
     @PUT("/empresa/{cnpj}/pix/{id}")
     Call<PixKey> updatePixKey(@Path("cnpj") String cnpj, @Path("id") String id, @Body PixKey pixKey);
     @PUT("/empresa/{cnpj}/endereco/{id}")
-    Call<Address> updateAddress(@Path("cnpj") String cnpj, @Path("id") String id, @Body Address address);
+    Call<Void> updateAddress(@Path("cnpj") String cnpj, @Path("id") String id, @Body Address address);
 
     //DELETE
     @DELETE("/empresa/{cnpj}")

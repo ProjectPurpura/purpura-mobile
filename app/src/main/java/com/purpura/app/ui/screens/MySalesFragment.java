@@ -57,9 +57,8 @@ public class MySalesFragment extends Fragment {
                         Toast.makeText(requireContext(), "CNPJ não encontrado", Toast.LENGTH_SHORT).show();
                         return;
                     }
-
-
                     salesCall = service.getOrdersBySeller(cnpj);
+
                     adapter = new SalesAdapter(new ArrayList<>(), service, cnpj, mongoService);
                     recyclerView.setAdapter(adapter);
 

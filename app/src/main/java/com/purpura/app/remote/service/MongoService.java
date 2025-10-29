@@ -171,23 +171,22 @@ public class MongoService {
         });
     }
 
-    // retorna o Call direto (mantido, mas agora Void para combinar com a API)
     public Call<Void> updateCompanyCall(String cnpj, Company company) {
         return mongoAPI.updateCompany(cnpj, company);
     }
 
     public void updateAdress(String cnpj, String id, Address address, Context context) {
-        Call<Address> call = mongoAPI.updateAddress(cnpj, id, address);
-        call.enqueue(new Callback<Address>() {
-            @Override
-            public void onResponse(Call<Address> call, Response<Address> response) {
+        Call<Void> call = mongoAPI.updateAddress(cnpj, id, address);
+        call.enqueue(new Callback<Void>() {
+            @Override public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
                     Toast.makeText(context, "Endereço atualizado com sucesso", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(context, "Erro ao atualizar endereço: " + response.code(), Toast.LENGTH_SHORT).show();
                 }
             }
-            @Override
-            public void onFailure(Call<Address> call, Throwable t) {
-                Toast.makeText(context, "Erro ao atualizar endereço", Toast.LENGTH_SHORT).show();
+            @Override public void onFailure(Call<Void> call, Throwable t) {
+                Toast.makeText(context, "Erro ao atualizar endereço: " + (t.getMessage() == null ? "" : t.getMessage()), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -198,12 +197,10 @@ public class MongoService {
             @Override
             public void onResponse(Call<PixKey> call, Response<PixKey> response) {
                 if (response.isSuccessful()) {
-                    Toast.makeText(context, "Chave atualizada com sucesso", Toast.LENGTH_SHORT).show();
                 }
             }
             @Override
             public void onFailure(Call<PixKey> call, Throwable t) {
-                Toast.makeText(context, "Erro ao atualizar chave", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -214,12 +211,10 @@ public class MongoService {
             @Override
             public void onResponse(Call<Residue> call, Response<Residue> response) {
                 if (response.isSuccessful()) {
-                    Toast.makeText(context, "Resíduo atualizado com sucesso", Toast.LENGTH_SHORT).show();
                 }
             }
             @Override
             public void onFailure(Call<Residue> call, Throwable t) {
-                Toast.makeText(context, "Erro ao atualizar resíduo", Toast.LENGTH_SHORT).show();
             }
         });
     }
