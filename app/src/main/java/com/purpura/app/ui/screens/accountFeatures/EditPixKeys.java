@@ -63,7 +63,7 @@ public class EditPixKeys extends AppCompatActivity {
                                 public void onResponse(Call<List<PixKey>> call, Response<List<PixKey>> response) {
                                     if (response.isSuccessful()) {
                                         List<PixKey> pixKeys = response.body();
-                                        PixKeyAdapter adapter = new PixKeyAdapter(pixKeys);
+                                        PixKeyAdapter adapter = new PixKeyAdapter(pixKeys, EditPixKeys.this);
                                         recyclerView.setAdapter(adapter);
                                     }
                                 }

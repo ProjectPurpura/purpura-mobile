@@ -56,8 +56,9 @@ public interface PostgresAPI {
     Call<Order> createPedido(@Body Order order);
 
     @POST("pedido/{pedidoId}/residuo")
-    Call<ResponseBody> createResiduo(
-            @Path("pedidoId") Integer pedidoId
+    Call<OrderItem> createResiduo(
+            @Path("pedidoId") Integer pedidoId,
+            @Body OrderItem orderItem
     );
 
     @POST("pagamento")

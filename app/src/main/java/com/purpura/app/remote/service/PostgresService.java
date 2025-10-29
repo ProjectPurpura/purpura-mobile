@@ -46,4 +46,8 @@ public class PostgresService {
     public Call<Payment> getPaymentById(Integer id){
         return postgresAPI.getPagamentoById(id);
     }
+
+    //POST
+    public Call<Order> createOrder(Order order) {return postgresAPI.createPedido(order);}
+    public Call<OrderItem> addItemOrder(OrderItem orderItem, Integer orderId) {return postgresAPI.createResiduo(orderId, orderItem);}
 }

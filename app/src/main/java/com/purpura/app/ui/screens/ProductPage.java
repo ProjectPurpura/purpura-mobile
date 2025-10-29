@@ -21,7 +21,9 @@ import com.purpura.app.configuration.Methods;
 import com.purpura.app.model.mongo.Address;
 import com.purpura.app.model.mongo.Company;
 import com.purpura.app.model.mongo.Residue;
+import com.purpura.app.model.postgres.OrderItem;
 import com.purpura.app.remote.service.MongoService;
+import com.purpura.app.ui.shoppingCart.ShoppingCartFragment;
 
 import java.io.Serializable;
 import java.text.NumberFormat;
@@ -40,6 +42,8 @@ public class ProductPage extends AppCompatActivity {
     private final MongoService mongoService = new MongoService();
 
     @Nullable private Residue residue;
+
+    Bundle env = new Bundle();
 
     private ImageView backButton;
     private ImageView residueImage;
@@ -104,6 +108,18 @@ public class ProductPage extends AppCompatActivity {
                 }
             });
         }
+
+        addToCart.setOnClickListener(v -> {
+            OrderItem item = new OrderItem(
+                    residue.getId(),
+                    residue.getPreco(),
+                    Integer.valueOf(productQuantity.getText().toString()),
+                    residueUnitType.getText().toString(),
+                    residue.getPeso()
+            );
+            env.putSerializable("item", item);
+            methods.openScreenActivityWithBundle(this, SplashScreen.class, env);
+        });
     }
 
     @Override
@@ -146,6 +162,7 @@ public class ProductPage extends AppCompatActivity {
         setTextSafe(companyName, "Carregando empresa...");
         setTextSafe(addressName, "Carregando endereço...");
         String cnpj = effectiveCnpj(nvl(residue.getCnpj()), cnpjFallback);
+        env.putString("sellerId", cnpj);
         Log.d("ProductPage", "ResidueId=" + residue.getId() + ", IdEndereco=" + residue.getIdEndereco() + ", CNPJ=" + cnpj);
         loadCompany(cnpj);
         loadAddress(cnpj, residue.getIdEndereco());

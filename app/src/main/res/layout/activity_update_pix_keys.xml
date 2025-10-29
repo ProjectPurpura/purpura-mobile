@@ -23,7 +23,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="80dp"
-        android:text="Atualizando Produto"
+        android:text="Atualizando PixKeys"
         android:textColor="@color/verde_padrao"
         android:textSize="34sp"
         android:textStyle="bold"

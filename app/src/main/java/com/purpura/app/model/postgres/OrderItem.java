@@ -1,6 +1,8 @@
 package com.purpura.app.model.postgres;
 
-public class OrderItem {
+import java.io.Serializable;
+
+public class OrderItem implements Serializable {
 
     private Long id;
     private String idResiduo;
@@ -16,6 +18,15 @@ public class OrderItem {
         this.quantidade = quantidade;
         this.peso = peso;
         this.tipoUnidade = tipoUnidade;
+    }
+
+
+    public OrderItem(String idResiduo, Double preco, Integer quantidade, String tipoUnidade, Double peso) {
+        this.idResiduo = idResiduo;
+        this.preco = preco;
+        this.quantidade = quantidade;
+        this.tipoUnidade = tipoUnidade;
+        this.peso = peso;
     }
 
     public OrderItem() {
@@ -67,5 +78,17 @@ public class OrderItem {
 
     public void setTipoUnidade(String tipoUnidade) {
         this.tipoUnidade = tipoUnidade;
+    }
+
+    @Override
+    public String toString() {
+        return "OrderItem{" +
+                "id=" + id +
+                ", idResiduo='" + idResiduo + '\'' +
+                ", preco=" + preco +
+                ", quantidade=" + quantidade +
+                ", peso=" + peso +
+                ", tipoUnidade='" + tipoUnidade + '\'' +
+                '}';
     }
 }

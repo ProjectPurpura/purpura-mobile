@@ -13,6 +13,35 @@ public class Order {
 
     public Order() {}
 
+    @Override
+    public String toString() {
+        return "Order{" +
+                "idPedido=" + idPedido +
+                ", idVendedor='" + idVendedor + '\'' +
+                ", idComprador='" + idComprador + '\'' +
+                ", data='" + data + '\'' +
+                ", status='" + status + '\'' +
+                ", agendamentoColeta='" + agendamentoColeta + '\'' +
+                ", valorTotal=" + valorTotal +
+                ", observacoes='" + observacoes + '\'' +
+                '}';
+    }
+
+    public Order(String idVendedor, String idComprador, String observacoes){
+        this.idComprador = idComprador;
+        this.observacoes = observacoes;
+        this.idVendedor = idVendedor;
+    }
+    public Order(String idVendedor, String idComprador, String data, String status, String agendamentoColeta, Double valorTotal, String observacoes) {
+        this.idVendedor = idVendedor;
+        this.idComprador = idComprador;
+        this.data = data;
+        this.status = status;
+        this.agendamentoColeta = agendamentoColeta;
+        this.valorTotal = valorTotal;
+        this.observacoes = observacoes;
+    }
+
     public Integer getIdPedido() {
         return idPedido;
     }

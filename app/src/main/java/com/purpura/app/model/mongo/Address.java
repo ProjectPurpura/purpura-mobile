@@ -1,14 +1,26 @@
 package com.purpura.app.model.mongo;
 
-import java.io.Serializable;
+public class Address {
 
 public class Address implements Serializable {
 
+    private String id;
     private String nome;
     private String cep;
+
+    @SerializedName("complemento")
     private String complement;
+
+    @SerializedName("numero")
     private int number;
-    private String id;
+
+    public Address(String id, String nome, String cep, String complement, int number) {
+        this.id = id;
+        this.nome = nome;
+        this.cep = cep;
+        this.complement = complement;
+        this.number = number;
+    }
 
     public String getId() {
         return id;
@@ -56,5 +68,6 @@ public class Address implements Serializable {
         this.cep = cep;
         this.complement = complement;
         this.number = number;
+
     }
 }
