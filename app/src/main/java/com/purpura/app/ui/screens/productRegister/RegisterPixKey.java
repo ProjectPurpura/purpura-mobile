@@ -1,52 +1,59 @@
 package com.purpura.app.ui.screens.productRegister;
 
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.content.Intent;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
-import com.purpura.app.configuration.Methods;
 import com.purpura.app.R;
 import com.purpura.app.model.mongo.PixKey;
-import com.purpura.app.remote.service.MongoService;
 
 public class RegisterPixKey extends AppCompatActivity {
 
-    Methods methods = new Methods();
-    Bundle bundle = new Bundle();
-    MongoService mongoService = new MongoService();
+    private ImageView back;
+    private EditText name;
+    private EditText key;
+    private Button next;
+
+    private Bundle carry;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_register_pix_key);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
+
+        back = findViewById(R.id.registerAdressBackButton);
+        name = findViewById(R.id.registerPixKeyNameInput);
+        key  = findViewById(R.id.registerPixKeyInput);
+        next = findViewById(R.id.registerPixKeyAddPixKeyButton);
+
+        carry = getIntent() != null && getIntent().getExtras() != null ? new Bundle(getIntent().getExtras()) : new Bundle();
+
+        back.setOnClickListener(v -> finish());
+
+        next.setOnClickListener(v -> {
+            String n = s(name);
+            String k = s(key);
+
+            if (TextUtils.isEmpty(n)) { toast("Informe o nome da chave"); return; }
+            if (TextUtils.isEmpty(k)) { toast("Informe a chave Pix"); return; }
+
+            PixKey pixKey = new PixKey(n, k, null);
+            carry.putSerializable("pixKey", pixKey);
+
+            Intent i = new Intent(this, RegisterProductEndPage.class);
+            i.putExtras(carry);
+            startActivity(i);
         });
-
-        ImageView backButton = findViewById(R.id.registerAdressBackButton);
-        Button continueButton = findViewById(R.id.registerPixKeyAddPixKeyButton);
-        EditText pixKeyInput = findViewById(R.id.registerPixKeyInput);
-        EditText pixKeyNameInput = findViewById(R.id.registerPixKeyNameInput);
-        PixKey pixKey = new PixKey(pixKeyNameInput.getText().toString(), pixKeyInput.getText().toString(), null);
-
-
-        backButton.setOnClickListener(v -> finish());
-        continueButton.setOnClickListener(v -> {
-            bundle.putString("pixKeyName", pixKeyNameInput.getText().toString());
-            bundle.putString("pixKey", pixKeyInput.getText().toString());
-            methods.openScreenActivityWithBundle(this, RegisterProductEndPage.class, bundle);
-        });
-
     }
+
+    private static String s(EditText e) { return e.getText() == null ? "" : e.getText().toString().trim(); }
+    private void toast(String m) { Toast.makeText(this, m, Toast.LENGTH_SHORT).show(); }
 }
