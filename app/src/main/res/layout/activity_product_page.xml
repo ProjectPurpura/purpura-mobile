@@ -60,16 +60,6 @@
                 app:layout_constraintTop_toBottomOf="@+id/productPageBackButton" />
 
             <TextView
-                android:id="@+id/rs"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="264dp"
-                android:text="R$"
-                android:textSize="20sp"
-                app:layout_constraintEnd_toStartOf="@+id/productPageProductValue2"
-                app:layout_constraintTop_toBottomOf="@+id/productPageBackButton" />
-
-            <TextView
                 android:id="@+id/productPageProductValue2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -188,7 +178,7 @@
                 android:layout_height="50sp"
                 android:layout_marginTop="20dp"
                 android:backgroundTint="@color/roxo_padrao"
-                android:text="Adicionar ao Carrinho"
+                android:text="Comprar agora"
                 app:cornerRadius="15sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.494"

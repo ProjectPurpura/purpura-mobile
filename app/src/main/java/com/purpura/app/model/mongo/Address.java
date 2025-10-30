@@ -1,6 +1,7 @@
 package com.purpura.app.model.mongo;
 
-public class Address {
+import com.google.gson.annotations.SerializedName;
+import java.io.Serializable;
 
 public class Address implements Serializable {
 
@@ -62,12 +63,4 @@ public class Address implements Serializable {
         this.number = number;
     }
 
-    public Address(String id, String nome, String cep, String complement, int number) {
-        this.id = id;
-        this.nome = nome;
-        this.cep = cep;
-        this.complement = complement;
-        this.number = number;
-
-    }
 }

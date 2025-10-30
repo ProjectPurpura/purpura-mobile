@@ -70,7 +70,6 @@ public class MyResiduesAdapter extends RecyclerView.Adapter<MyResiduesAdapter.Re
                         .addOnSuccessListener(document -> {
                             if (document.exists()) {
                                 String cnpj = document.getString("cnpj");
-                                bundle.putString("cnpj", cnpj);
                                 mongoService.deleteResidue(cnpj, residue.getId(), v.getContext());
                                 products.remove(position);
                                 notifyItemRemoved(position);

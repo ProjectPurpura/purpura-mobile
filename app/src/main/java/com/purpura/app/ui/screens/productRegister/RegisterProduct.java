@@ -102,7 +102,6 @@ public class RegisterProduct extends AppCompatActivity {
         continueButton.setOnClickListener(v -> {
             if(photoUri != null) {
 
-
                 Residue residue = new Residue(
                         null,
                         name.getText().toString(),

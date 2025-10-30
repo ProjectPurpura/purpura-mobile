@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
         BottomNavigationView navView = findViewById(R.id.nav_view);
 
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.homeFragment, R.id.shoppingCartFragment, R.id.chatListFragment,
+                R.id.homeFragment, R.id.chatListFragment,
                 R.id.notificationsFragment, R.id.accountFragment
         ).build();
 
