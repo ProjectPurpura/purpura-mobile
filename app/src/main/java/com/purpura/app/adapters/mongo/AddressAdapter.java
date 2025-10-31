@@ -91,7 +91,7 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.AddressV
     public static class AddressViewHolder extends RecyclerView.ViewHolder {
 
         TextView addressCardName;
-        Button addressCardButtonEdit;
+        ImageView addressCardButtonEdit;
         TextView addresCardZipCode;
         ImageView addressCardDeleteButton;
 
