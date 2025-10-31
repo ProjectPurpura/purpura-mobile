@@ -12,31 +12,28 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
-import androidx.navigation.fragment.NavHostFragment;
+import androidx.navigation.Navigation;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.gson.Gson;
 import com.purpura.app.R;
 import com.purpura.app.configuration.Methods;
-import com.purpura.app.databinding.FragmentShoppingCartBinding;
 import com.purpura.app.model.mongo.Address;
 import com.purpura.app.model.mongo.Company;
 import com.purpura.app.model.mongo.Residue;
-import com.purpura.app.model.postgres.Order;
-import com.purpura.app.model.postgres.OrderItem;
+import com.purpura.app.model.postgres.order.OrderRequest;
+import com.purpura.app.model.postgres.order.OrderResponse;
+import com.purpura.app.model.postgres.order.OrderItem;
 import com.purpura.app.remote.service.MongoService;
 import com.purpura.app.remote.service.PostgresService;
-import com.purpura.app.ui.chat.ChatListFragment;
 import com.purpura.app.ui.screens.errors.GenericError;
 
 import java.io.Serializable;
-import java.sql.SQLOutput;
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
@@ -78,7 +75,8 @@ public class ProductPage extends AppCompatActivity {
     private Call<Company> companyCall;
     private Call<Address> addressCall;
     private boolean probeStarted = false;
-    String cnpj = "";
+    String sellerId;
+    String cnpj;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,11 +84,17 @@ public class ProductPage extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_product_page);
         bindViews();
-
+        addToCart.setEnabled(false);
         Bundle env = getIntent().getExtras();
         String cnpjFromIntent = env != null ? env.getString("cnpj", "") : "";
         Serializable ser = env != null ? env.getSerializable("residue") : null;
         if (ser instanceof Residue) residue = (Residue) ser;
+
+        System.out.println(residue);
+        System.out.println(residue);System.out.println(residue);
+        System.out.println(residue);System.out.println(residue);System.out.println(residue);System.out.println(residue);System.out.println(residue);System.out.println(residue);System.out.println(residue);System.out.println(residue);System.out.println(residue);System.out.println(residue);System.out.println(residue);System.out.println(residue);
+
+
         if (residue == null) {
             methods.openScreenActivity(this, com.purpura.app.ui.screens.errors.InternetError.class);
             finish();
@@ -127,117 +131,37 @@ public class ProductPage extends AppCompatActivity {
                 .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .get()
                 .addOnSuccessListener(document -> {
-                    if (document.exists()) {
-                        String cnpjComprador = document.getString("cnpj");
-                        Log.d("ProductPage", "CNPJ comprador Firestore: " + cnpjComprador);
-                        Log.d("ProductPage", "Residue CNPJ: " + (residue != null ? residue.getCnpj() : "residue is null"));
+                    if(document.exists()){
+                        String cnpj = document.getString("cnpj");
 
-                        Order order = new Order(
-                                cnpjComprador,
-                                residue != null ? residue.getCnpj() : null,
-                                ""
-                        );
-                        System.out.println(order);
-                        System.out.println(order);
-                        System.out.println(order);
-                        System.out.println(order);
-                        System.out.println(order);
-                        System.out.println(order);
-                        System.out.println(order);
-                        System.out.println(order);
-                        System.out.println(order);
-                        System.out.println(order);
-                        System.out.println(order);
-                        System.out.println(order);
+                        addToCart.setOnClickListener(v -> {
 
-                        buyNow.setOnClickListener(v -> {
-                            try {
-                                Log.d("ProductPage", "Tentando criar pedido para cnpj: " + order.getIdComprador() + ", produto residue cnpj: " + order.getIdPedido());
+                            OrderRequest order = new OrderRequest(
+                              residue.getCnpj(),
+                              cnpj,
+                              ""
+                            );
+                            Log.d("ProductPage", "Enviando pedido: " + new Gson().toJson(order));
 
-                                postgresService.createOrder(order).enqueue(new Callback<Order>() {
-                                    @Override
-                                    public void onResponse(Call<Order> call, Response<Order> response) {
-                                        Log.d("ProductPage", "Resposta createOrder recebida. Sucesso? " + response.isSuccessful());
 
-                                        if (response.isSuccessful() && response.body() != null) {
-                                            Order orderResponse = response.body();
-                                            Log.d("ProductPage", "Pedido criado com sucesso. IdPedido: " + orderResponse.getIdPedido());
-
-                                            int quantidade = safeParseInt(productQuantity.getText().toString(), 1);
-                                            Log.d("ProductPage", "Quantidade de produto para adicionar: " + quantidade);
-
-                                            OrderItem item = new OrderItem(
-                                                    residue.getId(),
-                                                    residue.getPreco(),
-                                                    quantidade,
-                                                    residue.getTipoUnidade().toString(),
-                                                    residue.getPeso()
-                                            );
-
-                                            System.out.println(item);
-                                            System.out.println(item);
-                                            System.out.println(item);
-                                            System.out.println(item);
-                                            System.out.println(item);
-                                            System.out.println(item);
-                                            System.out.println(item);
-                                            System.out.println(item);
-                                            System.out.println(item);
-                                            System.out.println(item);
-                                            System.out.println(item);
-                                            System.out.println(item);
-                                            System.out.println(item);
-                                            System.out.println(item);
-                                            System.out.println(item);
-
-                                            postgresService.addItemOrder(item, orderResponse.getIdPedido()).enqueue(new Callback<OrderItem>() {
-                                                @Override
-                                                public void onResponse(Call<OrderItem> call, Response<OrderItem> response) {
-                                                    Log.d("ProductPage", "Resposta addItemOrder recebida. Sucesso? " + response.isSuccessful());
-                                                    if (response.isSuccessful()) {
-                                                        Log.d("ProductPage", "Item adicionado com sucesso ao pedido.");
-                                                        methods.openScreenActivity(ProductPage.this, QrCodePayment.class);
-                                                    } else {
-                                                        Log.e("ProductPage", "Falha ao adicionar item no pedido. Código: " + response.code());
-                                                        Toast.makeText(ProductPage.this, "Erro ao adicionar item no pedido", Toast.LENGTH_SHORT).show();
-                                                    }
-                                                }
-                                                @Override
-                                                public void onFailure(Call<OrderItem> call, Throwable t) {
-                                                    Log.e("ProductPage", "Erro ao chamar addItemOrder: " + t.getMessage());
-                                                    Toast.makeText(ProductPage.this, "Erro de conexão ao adicionar item no pedido", Toast.LENGTH_SHORT).show();
-                                                }
-                                            });
-
-                                        } else {
-                                            Log.e("ProductPage", "Falha ao criar pedido: " + response.code() + " - " + response.message());
-                                            Toast.makeText(ProductPage.this, "Erro ao criar pedido: " + response.message(), Toast.LENGTH_SHORT).show();
-                                        }
+                            postgresService.createOrder(order).enqueue(new Callback<OrderResponse>() {
+                                @Override
+                                public void onResponse(Call<OrderResponse> call, Response<OrderResponse> response) {
+                                    if(response.isSuccessful()){
+                                    }else{
                                     }
+                                }
 
-                                    @Override
-                                    public void onFailure(Call<Order> call, Throwable t) {
-                                        Log.e("ProductPage", "Falha na chamada createOrder: " + t.getMessage());
-                                        Toast.makeText(ProductPage.this, "Erro na criação do pedido: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-                            } catch (Exception e) {
-                                Log.e("ProductPage", "Exceção no clique de buyNow: " + e.getMessage(), e);
-                                methods.openScreenActivity(this, GenericError.class);
-                            }
+                                @Override
+                                public void onFailure(Call<OrderResponse> call, Throwable t) {
+
+                                }
+
+                            });
                         });
-                    } else {
-                        Log.e("ProductPage", "Documento da empresa não encontrado no Firestore");
+
                     }
                 });
-
-        goToChat.setOnClickListener(v -> {
-            ChatListFragment CLFragment = new ChatListFragment();
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.chatListFragment, CLFragment);
-            fragmentTransaction.commit();
-        });
 
     }
 
@@ -281,10 +205,10 @@ public class ProductPage extends AppCompatActivity {
         loadResidueImage(residue.getUrlFoto());
         setTextSafe(companyName, "Carregando empresa...");
         setTextSafe(addressName, "Carregando endereço...");
-        String cnpj = effectiveCnpj(nvl(residue.getCnpj()), cnpjFallback);
+        sellerId = effectiveCnpj(nvl(residue.getCnpj()), cnpjFallback);
         Log.d("ProductPage", "ResidueId=" + residue.getId() + ", IdEndereco=" + residue.getIdEndereco() + ", CNPJ=" + cnpj);
-        loadCompany(cnpj);
-        loadAddress(cnpj, residue.getIdEndereco());
+        loadCompany(sellerId);
+        loadAddress(sellerId, residue.getIdEndereco());
     }
 
     private void loadResidueImage(@Nullable String url) {
@@ -313,6 +237,22 @@ public class ProductPage extends AppCompatActivity {
                     String nome = nvl(company.getNome());
                     setTextSafe(companyName, notEmpty(nome) ? nome : "—");
                     loadCompanyPhoto(company.getUrlFoto());
+
+                    System.out.println(company.getCnpj());
+                    System.out.println(company.getCnpj());
+                    System.out.println(company.getCnpj());
+                    System.out.println(company.getCnpj());
+                    System.out.println(company.getCnpj());
+                    System.out.println(company.getCnpj());
+                    System.out.println(company.getCnpj());
+                    System.out.println(company.getCnpj());
+                    System.out.println(company.getCnpj());
+                    System.out.println(company.getCnpj());
+                    System.out.println(company.getCnpj());
+                    System.out.println(company.getCnpj());
+
+                    sellerId = company.getCnpj();
+                    addToCart.setEnabled(true);
                 } else {
                     setTextSafe(companyName, "Empresa não encontrada");
                     loadCompanyPhoto(null);

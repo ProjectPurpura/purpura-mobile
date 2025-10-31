@@ -1,6 +1,7 @@
 package com.purpura.app.adapters.mongo;
 
 import android.annotation.SuppressLint;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,7 +25,7 @@ import java.util.List;
 public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.HomeViewHolder> {
 
     public interface OnResidueClickListener {
-        void onResidueClick(Residue residue);
+        void onResidueClick(Residue residue, Bundle env);
     }
 
     private List<Residue> products;
@@ -64,7 +65,9 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.HomeViewHolder
 
         holder.itemView.setOnClickListener(v -> {
             if (clickListener != null) {
-                clickListener.onResidueClick(residue);
+                Bundle env = new Bundle();
+                env.putString("sellerId", residue.getCnpj());
+                clickListener.onResidueClick(residue, env);
             }
         });
     }

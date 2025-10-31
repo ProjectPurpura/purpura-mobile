@@ -9,15 +9,15 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.purpura.app.R;
-import com.purpura.app.model.postgres.Order;
+import com.purpura.app.model.postgres.order.OrderResponse;
 
 import java.util.List;
 
 public class IndividualOrderAdapter extends RecyclerView.Adapter<IndividualOrderAdapter.IndividualOrderViewHolder> {
 
-    private final List<Order> orderList;
+    private final List<OrderResponse> orderList;
 
-    public IndividualOrderAdapter(List<Order> orderList) {
+    public IndividualOrderAdapter(List<OrderResponse> orderList) {
         this.orderList = orderList;
     }
 
@@ -31,7 +31,7 @@ public class IndividualOrderAdapter extends RecyclerView.Adapter<IndividualOrder
 
     @Override
     public void onBindViewHolder(@NonNull IndividualOrderViewHolder holder, int position) {
-        Order order = orderList.get(position);
+        OrderResponse order = orderList.get(position);
 
         if (order != null) {
             holder.orderCardId.setText(order.getIdPedido().toString());

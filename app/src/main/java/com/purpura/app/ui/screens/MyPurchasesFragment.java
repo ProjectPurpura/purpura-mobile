@@ -15,8 +15,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.purpura.app.R;
 import com.purpura.app.adapters.postgres.PurchaseAdapter;
-import com.purpura.app.adapters.postgres.SalesAdapter;
-import com.purpura.app.model.postgres.Order;
+import com.purpura.app.model.postgres.order.OrderResponse;
 import com.purpura.app.remote.service.MongoService;
 import com.purpura.app.remote.service.PostgresService;
 
@@ -33,7 +32,7 @@ public class MyPurchasesFragment extends Fragment {
     private PurchaseAdapter adapter;
     private final PostgresService service = new PostgresService();
     private final MongoService mongoService = new MongoService();
-    private Call<List<Order>> salesCall;
+    private Call<List<OrderResponse>> salesCall;
     private String cnpj;
 
     @Override
@@ -64,9 +63,9 @@ public class MyPurchasesFragment extends Fragment {
                     adapter = new PurchaseAdapter(new ArrayList<>(), service, cnpj, mongoService);
                     recyclerView.setAdapter(adapter);
 
-                    salesCall.enqueue(new Callback<List<Order>>() {
+                    salesCall.enqueue(new Callback<List<OrderResponse>>() {
                         @Override
-                        public void onResponse(@NonNull Call<List<Order>> call, @NonNull Response<List<Order>> response) {
+                        public void onResponse(@NonNull Call<List<OrderResponse>> call, @NonNull Response<List<OrderResponse>> response) {
                             if (!isAdded()) return;
                             if (response.isSuccessful() && response.body() != null) {
                                 adapter.updateList(response.body());
@@ -76,7 +75,7 @@ public class MyPurchasesFragment extends Fragment {
                         }
 
                         @Override
-                        public void onFailure(@NonNull Call<List<Order>> call, @NonNull Throwable t) {
+                        public void onFailure(@NonNull Call<List<OrderResponse>> call, @NonNull Throwable t) {
                             if (!isAdded()) return;
                             Toast.makeText(requireContext(), "Erro: " + t.getMessage(), Toast.LENGTH_LONG).show();
                         }

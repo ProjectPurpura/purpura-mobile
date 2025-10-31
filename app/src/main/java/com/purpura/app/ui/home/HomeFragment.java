@@ -25,7 +25,6 @@ import com.purpura.app.model.mongo.Residue;
 import com.purpura.app.remote.service.MongoService;
 import com.purpura.app.ui.screens.ProductPage;
 import com.purpura.app.ui.screens.errors.GenericError;
-import com.purpura.app.ui.screens.errors.InternetError;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,7 +65,7 @@ public class HomeFragment extends Fragment {
         recyclerView = view.findViewById(R.id.homeRecyclerView);
         recyclerView.setLayoutManager(new GridLayoutManager(requireContext(), 2));
 
-        adapter = new HomeAdapter(new ArrayList<>(), residue -> {
+        adapter = new HomeAdapter(new ArrayList<>(), (residue, env) -> {
             Intent rota = new Intent(requireContext(), ProductPage.class);
             rota.putExtra("residue", residue);
             String cnpjFromResidue = residue.getCnpj();

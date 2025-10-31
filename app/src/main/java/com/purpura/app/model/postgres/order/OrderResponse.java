@@ -1,6 +1,6 @@
-package com.purpura.app.model.postgres;
+package com.purpura.app.model.postgres.order;
 
-public class Order {
+public class OrderResponse {
 
     private Integer idPedido;
     private String idVendedor;
@@ -11,7 +11,7 @@ public class Order {
     private Double valorTotal;
     private String observacoes;
 
-    public Order() {}
+    public OrderResponse() {}
 
     @Override
     public String toString() {
@@ -27,12 +27,12 @@ public class Order {
                 '}';
     }
 
-    public Order(String idVendedor, String idComprador, String observacoes){
+    public OrderResponse(String idVendedor, String idComprador, String observacoes){
         this.idComprador = idComprador;
         this.observacoes = observacoes;
         this.idVendedor = idVendedor;
     }
-    public Order(String idVendedor, String idComprador, String data, String status, String agendamentoColeta, Double valorTotal, String observacoes) {
+    public OrderResponse(String idVendedor, String idComprador, String data, String status, String agendamentoColeta, Double valorTotal, String observacoes) {
         this.idVendedor = idVendedor;
         this.idComprador = idComprador;
         this.data = data;

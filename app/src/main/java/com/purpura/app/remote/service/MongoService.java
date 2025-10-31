@@ -142,6 +142,27 @@ public class MongoService {
         });
     }
 
+    // CREATE - CALL Retornando call.enqueue
+    public Call<Company> createCompanyCall(Company company) {
+        return mongoAPI.createCompany(company);
+    }
+
+    public Call<Residue> createResidueCall(String cnpj, Residue residue) {
+        return mongoAPI.createResidue(cnpj, residue);
+    }
+
+    public Call<Address> createAddressCall(String cnpj, Address address) {
+        return mongoAPI.createAddress(cnpj, address);
+    }
+
+    public Call<PixKey> createPixKeyCall(String cnpj, PixKey pixKey) {
+        return mongoAPI.createPixKey(cnpj, pixKey);
+    }
+
+
+
+
+
     // UPDATE - PUT
 
     public void updateCompany(String cnpj, Company company, Context context) {
@@ -169,13 +190,10 @@ public class MongoService {
         call.enqueue(new Callback<Void>() {
             @Override public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
-                    Toast.makeText(context, "Endereço atualizado com sucesso", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(context, "Erro ao atualizar endereço: " + response.code(), Toast.LENGTH_SHORT).show();
                 }
             }
             @Override public void onFailure(Call<Void> call, Throwable t) {
-                Toast.makeText(context, "Erro ao atualizar endereço: " + (t.getMessage() == null ? "" : t.getMessage()), Toast.LENGTH_SHORT).show();
             }
         });
     }

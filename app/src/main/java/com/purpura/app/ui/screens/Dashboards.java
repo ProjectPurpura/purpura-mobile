@@ -37,7 +37,7 @@ public class Dashboards extends AppCompatActivity {
 
         WebView webView = findViewById(R.id.dasboardWebView);
         webView.setWebViewClient(new WebViewClient());
-        webView.loadUrl("https://app.powerbi.com/view?r=eyJrIjoiYjIxY2ZmZDEtN2Y3ZS00YzFjLWE3NGYtMGQ1MmZhNTUyMDUzIiwidCI6ImIxNDhmMTRjLTIzOTctNDAyYy1hYjZhLTFiNDcxMTE3N2FjMCJ9");
+        webView.loadUrl("https://app.powerbi.com/view?r=eyJrIjoiMDA5NjFlZGMtYzZjZS00NzY4LWJlM2MtNDRmZmJlNzA1YjA5IiwidCI6ImIxNDhmMTRjLTIzOTctNDAyYy1hYjZhLTFiNDcxMTE3N2FjMCJ9");
 
         ImageView backButton = findViewById(R.id.dashboardsBackButton);
 

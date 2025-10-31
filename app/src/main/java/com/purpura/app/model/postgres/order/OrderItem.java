@@ -1,4 +1,4 @@
-package com.purpura.app.model.postgres;
+package com.purpura.app.model.postgres.order;
 
 import java.io.Serializable;
 
