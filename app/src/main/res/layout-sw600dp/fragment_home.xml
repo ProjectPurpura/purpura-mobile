@@ -43,49 +43,41 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/homeRecyclerView"
-        android:layout_width="383dp"
-        android:layout_height="652dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="60sp"
-        app:layout_constraintBottom_toTopOf="@+id/text_home"
+        android:layout_width="493dp"
+        android:layout_height="649dp"
+        android:layout_marginTop="30dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView6"
-        app:layout_constraintVertical_bias="0.0"
         tools:listitem="@layout/product_card" />
 
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/textInputEditText2"
         android:layout_width="350sp"
         android:layout_height="60sp"
-        android:layout_marginStart="30dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="28dp"
+        android:layout_marginEnd="10dp"
         android:background="@drawable/round_border"
         android:backgroundTint="#724B9B"
         android:hint="Pesquise"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.412"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/imageView21"
         app:layout_constraintTop_toBottomOf="@+id/toolbar3" />
 
     <ImageView
         android:id="@+id/imageView21"
         android:layout_width="60sp"
         android:layout_height="60sp"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="40dp"
-        android:layout_marginEnd="40dp"
+        android:layout_marginStart="80dp"
+        android:layout_marginTop="28dp"
         android:src="@drawable/search_icon"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.008"
-        app:layout_constraintStart_toEndOf="@+id/textInputEditText2"
+        app:layout_constraintStart_toEndOf="@+id/textView6"
         app:layout_constraintTop_toBottomOf="@+id/toolbar3" />
 
     <TextView
         android:id="@+id/textView6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="20dp"
         android:text="Produtos"
         android:textColor="@color/verde_padrao"
         android:textSize="34sp"

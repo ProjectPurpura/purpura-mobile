@@ -36,10 +36,6 @@ import java.io.Serializable;
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;

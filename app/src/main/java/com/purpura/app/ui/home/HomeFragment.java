@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -71,7 +72,17 @@ public class HomeFragment extends Fragment {
         });
 
         recyclerView = view.findViewById(R.id.homeRecyclerView);
-        recyclerView.setLayoutManager(new GridLayoutManager(requireContext(), 2));
+        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+        float screenWidthDp = displayMetrics.widthPixels / displayMetrics.density;
+
+        int spanCount;
+
+        if (screenWidthDp >= 600) {
+            spanCount = 3;
+        } else {
+            spanCount = 2;
+        }
+        recyclerView.setLayoutManager(new GridLayoutManager(requireContext(), spanCount));
 
         adapter = new HomeAdapter(new ArrayList<>(), (residue, env) -> {
             Intent rota = new Intent(requireContext(), ProductPage.class);

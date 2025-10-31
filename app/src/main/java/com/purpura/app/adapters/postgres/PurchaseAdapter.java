@@ -78,7 +78,7 @@ public class PurchaseAdapter extends RecyclerView.Adapter<PurchaseAdapter.VH> {
         }
 
         h.date.setText(dataBr);
-        h.status.setText(o.getStatus().toUpperCase() != null ? o.getStatus() : "");
+        h.status.setText(o.getStatus().toUpperCase());
         h.total.setText(String.valueOf(o.getValorTotal()));
 
         if (h.items.getLayoutManager() == null) {
