@@ -32,8 +32,6 @@
             android:layout_marginTop="10dp"
             android:backgroundTint="@color/roxo_padrao"
             android:text="CEP: 00000-000"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.048"
             app:layout_constraintStart_toEndOf="@+id/imageView31"
             app:layout_constraintTop_toBottomOf="@+id/adressCardName" />
 
@@ -43,11 +41,8 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="26dp"
             android:layout_marginTop="30dp"
-            android:layout_marginEnd="124dp"
             android:text="XXX - Av. Paulista"
             android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.24"
             app:layout_constraintStart_toEndOf="@+id/imageView31"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -66,7 +61,7 @@
             android:id="@+id/adressCardButtonEdit"
             android:layout_width="124dp"
             android:layout_height="38dp"
-            android:layout_marginStart="36dp"
+            android:layout_marginStart="26dp"
             android:layout_marginTop="12dp"
             app:layout_constraintStart_toEndOf="@+id/imageView31"
             app:layout_constraintTop_toBottomOf="@+id/adressCardZipCode"

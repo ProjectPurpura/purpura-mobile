@@ -6,8 +6,9 @@ import retrofit2.http.*;
 
 import com.purpura.app.configuration.EnvironmentVariables;
 import com.purpura.app.model.postgres.News;
-import com.purpura.app.model.postgres.Order;
-import com.purpura.app.model.postgres.OrderItem;
+import com.purpura.app.model.postgres.order.OrderRequest;
+import com.purpura.app.model.postgres.order.OrderResponse;
+import com.purpura.app.model.postgres.order.OrderItem;
 import com.purpura.app.model.postgres.Payment;
 import com.purpura.app.remote.util.Api;
 
@@ -20,17 +21,17 @@ public interface PostgresAPI {
     Call<ResponseBody> getAllPedidos();
 
     @GET("pedido/compras/{compradorId}")
-    Call<List<Order>> getComprasByComprador(
+    Call<List<OrderResponse>> getComprasByComprador(
             @Path("compradorId") String compradorId
     );
 
     @GET("pedido/vendas/{vendedorId}")
-    Call<List<Order>> getVendasByVendedor(
+    Call<List<OrderResponse>> getVendasByVendedor(
             @Path("vendedorId") String vendedorId
     );
 
     @GET("pedido/{id}")
-    Call<Order> getPedidoById(
+    Call<OrderResponse> getPedidoById(
             @Path("id") Integer id
     );
 
@@ -53,11 +54,12 @@ public interface PostgresAPI {
     Call<List<News>> getNoticias();
 
     @POST("pedido")
-    Call<Order> createPedido(@Body Order order);
+    Call<OrderResponse> createPedido(@Body OrderRequest order);
 
     @POST("pedido/{pedidoId}/residuo")
-    Call<ResponseBody> createResiduo(
-            @Path("pedidoId") Integer pedidoId
+    Call<OrderItem> createResiduo(
+            @Path("pedidoId") Integer pedidoId,
+            @Body OrderItem orderItem
     );
 
     @POST("pagamento")
@@ -66,7 +68,7 @@ public interface PostgresAPI {
     @PUT("pedido/{id}")
     Call<ResponseBody> updateOrder(
             @Path("id") Integer id,
-            @Body Order order
+            @Body OrderResponse order
     );
 
     @PUT("pedido/{pedidoId}/residuo/{residuoId}")
@@ -77,7 +79,7 @@ public interface PostgresAPI {
     );
 
     @DELETE("pedido/{id}")
-    Call<ResponseBody> deletePedido(
+    void deletePedido(
             @Path("id") Integer id
     );
 

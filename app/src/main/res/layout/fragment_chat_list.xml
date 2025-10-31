@@ -6,39 +6,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.chat.ChatListFragment">
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar3"
-        android:layout_width="match_parent"
-        android:layout_height="70sp"
-        android:background="@color/roxo_padrao"
-        android:minHeight="?attr/actionBarSize"
-        android:theme="?attr/actionBarTheme"
-        app:layout_constraintBottom_toBottomOf="@+id/imageView15"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <ImageView
-        android:id="@+id/imageView15"
-        android:layout_width="205sp"
-        android:layout_height="40sp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/toolbar3"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/white_name" />
-
 
 
     <WebView
         android:id="@+id/chatListWebView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="70sp"
+        android:layout_marginBottom="60dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        app:layout_marginBaseline="90px" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

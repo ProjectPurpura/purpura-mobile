@@ -42,10 +42,10 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
     public void onBindViewHolder(@NonNull NewsViewHolder holder, int position) {
         News news2 = news.get(position);
 
-        Glide.with(holder.newsImage.getContext())
+        holder.newsImage.post(() -> Glide.with(holder.newsImage.getContext())
                 .load(news2.getUrlImagem())
-                .into(holder.newsImage);
-
+                .placeholder(R.drawable.background_logo)
+                .into(holder.newsImage));
         holder.newsTitle.setText(news2.getTitulo());
 
         holder.newsButton.setOnClickListener(v -> {

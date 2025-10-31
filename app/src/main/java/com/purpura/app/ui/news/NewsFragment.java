@@ -51,18 +51,17 @@ public class NewsFragment extends Fragment {
         adapter = new NewsAdapter(new ArrayList<>());
         recyclerView.setAdapter(adapter);
 
-        loadResidues(this);
+        loadNews(this);
     }
 
-    private void loadResidues(Fragment fragment) {
+    private void loadNews(Fragment fragment) {
         try {
-            postgresService.getAllNotifications().enqueue(new Callback<List<News>>() {
+            postgresService.getAllNotifications().enqueue(new Callback<>() {
                 @Override
                 public void onResponse(Call<List<News>> call, Response<List<News>> response) {
                     if (!isAdded()) return;
                     if (response.isSuccessful() && response.body() != null) {
                         adapter.updateList(response.body());
-                    } else {
                     }
                 }
 

@@ -1,8 +1,9 @@
 package com.purpura.app.remote.service;
 
 import com.purpura.app.model.postgres.News;
-import com.purpura.app.model.postgres.Order;
-import com.purpura.app.model.postgres.OrderItem;
+import com.purpura.app.model.postgres.order.OrderRequest;
+import com.purpura.app.model.postgres.order.OrderResponse;
+import com.purpura.app.model.postgres.order.OrderItem;
 import com.purpura.app.model.postgres.Payment;
 import com.purpura.app.remote.api.PostgresAPI;
 import com.purpura.app.remote.util.RetrofitService;
@@ -23,15 +24,15 @@ public class PostgresService {
         return postgresAPI.getNoticias();
     }
 
-    public Call<List<Order>> getOrdersByClient(String id){
+    public Call<List<OrderResponse>> getOrdersByClient(String id){
         return postgresAPI.getComprasByComprador(id);
     }
 
-    public Call<List<Order>> getOrdersBySeller(String id){
+    public Call<List<OrderResponse>> getOrdersBySeller(String id){
         return postgresAPI.getVendasByVendedor(id);
     }
 
-    public Call<Order> getOrderById(int id){
+    public Call<OrderResponse> getOrderById(int id){
         return postgresAPI.getPedidoById(id);
     }
 
@@ -39,11 +40,19 @@ public class PostgresService {
         return postgresAPI.getOrderItems(orderId);
     }
 
-    public Call<List<Order>> getOrdersByClientAndSeller(String id){
+    public Call<List<OrderResponse>> getOrdersByClientAndSeller(String id){
         return postgresAPI.getComprasByComprador(id);
+    }
+
+    public void deleteOrderByOrderId(Integer id){
+        postgresAPI.deletePedido(id);
     }
 
     public Call<Payment> getPaymentById(Integer id){
         return postgresAPI.getPagamentoById(id);
     }
+
+    //POST
+    public Call<OrderResponse> createOrder(OrderRequest order) {return postgresAPI.createPedido(order);}
+    public Call<OrderItem> addItemOrder(OrderItem orderItem, Integer orderId) {return postgresAPI.createResiduo(orderId, orderItem);}
 }

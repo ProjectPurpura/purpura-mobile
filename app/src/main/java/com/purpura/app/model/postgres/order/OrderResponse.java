@@ -1,6 +1,6 @@
-package com.purpura.app.model.postgres;
+package com.purpura.app.model.postgres.order;
 
-public class Order {
+public class OrderResponse {
 
     private Integer idPedido;
     private String idVendedor;
@@ -11,7 +11,36 @@ public class Order {
     private Double valorTotal;
     private String observacoes;
 
-    public Order() {}
+    public OrderResponse() {}
+
+    @Override
+    public String toString() {
+        return "Order{" +
+                "idPedido=" + idPedido +
+                ", idVendedor='" + idVendedor + '\'' +
+                ", idComprador='" + idComprador + '\'' +
+                ", data='" + data + '\'' +
+                ", status='" + status + '\'' +
+                ", agendamentoColeta='" + agendamentoColeta + '\'' +
+                ", valorTotal=" + valorTotal +
+                ", observacoes='" + observacoes + '\'' +
+                '}';
+    }
+
+    public OrderResponse(String idVendedor, String idComprador, String observacoes){
+        this.idComprador = idComprador;
+        this.observacoes = observacoes;
+        this.idVendedor = idVendedor;
+    }
+    public OrderResponse(String idVendedor, String idComprador, String data, String status, String agendamentoColeta, Double valorTotal, String observacoes) {
+        this.idVendedor = idVendedor;
+        this.idComprador = idComprador;
+        this.data = data;
+        this.status = status;
+        this.agendamentoColeta = agendamentoColeta;
+        this.valorTotal = valorTotal;
+        this.observacoes = observacoes;
+    }
 
     public Integer getIdPedido() {
         return idPedido;

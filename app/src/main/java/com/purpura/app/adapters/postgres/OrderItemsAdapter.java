@@ -13,7 +13,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.purpura.app.R;
 import com.purpura.app.model.mongo.Residue;
-import com.purpura.app.model.postgres.OrderItem;
+import com.purpura.app.model.postgres.order.OrderItem;
 import com.purpura.app.remote.service.MongoService;
 
 import java.text.DecimalFormat;

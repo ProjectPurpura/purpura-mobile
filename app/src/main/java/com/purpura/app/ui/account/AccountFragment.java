@@ -5,7 +5,9 @@ import static android.view.View.VISIBLE;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,12 +19,14 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.purpura.app.configuration.Notifications;
 import com.purpura.app.model.mongo.Company;
 import com.purpura.app.remote.service.MongoService;
 
@@ -45,8 +49,10 @@ import retrofit2.Response;
 
 public class AccountFragment extends Fragment {
 
+    public static final int NOTIFICATION_ID = 1;
     FirebaseAuth objAutenticar = FirebaseAuth.getInstance();
     Methods methods = new Methods();
+    private static final int REQUEST_CODE_NOTIFICATION = 1001;
     FirebaseMethods firebaseMethods = new FirebaseMethods();
     MongoService mongoService = new MongoService();
     private FragmentAccountBinding binding;
@@ -56,6 +62,8 @@ public class AccountFragment extends Fragment {
 
         binding = FragmentAccountBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+
+        solicitarPermissaoNotificacoes();
 
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 
@@ -166,6 +174,15 @@ public class AccountFragment extends Fragment {
         return root;
     }
 
+    private void solicitarPermissaoNotificacoes() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            if (getContext() != null &&
+                    ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, REQUEST_CODE_NOTIFICATION);
+            }
+        }
+    }
+
     private void logOut() {
         firebaseMethods.logout();
         methods.openScreenFragments(this, RegisterOrLogin.class);
@@ -177,14 +194,31 @@ public class AccountFragment extends Fragment {
         alert.setMessage("Entre com seu email para redefinir sua senha");
 
         EditText editTextEmail = new EditText(this.getContext());
+        editTextEmail.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
         alert.setView(editTextEmail);
 
         alert.setPositiveButton("Enviar", (dialog, which) -> {
-            objAutenticar.sendPasswordResetEmail(editTextEmail.getText().toString());
-            Toast.makeText(this.getContext(), "Email Enviado", Toast.LENGTH_LONG).show();
+            String email = editTextEmail.getText().toString().trim();
+            if (email.isEmpty()) {
+                Toast.makeText(this.getContext(), "Por favor, insira um e-mail válido.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            FirebaseAuth.getInstance().sendPasswordResetEmail(email)
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            new Notifications().chamar(this.getActivity(), this.getContext());
+                        } else {
+                            Toast.makeText(this.getContext(), "Erro ao enviar e-mail: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    });
         });
+
+        alert.setNegativeButton("Cancelar", (dialog, which) -> dialog.dismiss());
+
         alert.show();
     }
+
 
     @Override
     public void onDestroyView() {

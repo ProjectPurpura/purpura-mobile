@@ -3,23 +3,22 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="300sp"
+    android:layout_height="wrap_content"
     android:layout_marginBottom="20sp"
     android:focusable="auto"
     app:cardCornerRadius="8dp"
     app:cardElevation="4dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:background="@drawable/round_border">
 
         <ImageView
             android:id="@+id/notificationCardImage"
-            android:layout_width="match_parent"
-            android:layout_height="130dp"
+            android:layout_width="500px"
+            android:layout_height="300px"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/background_logo" />
