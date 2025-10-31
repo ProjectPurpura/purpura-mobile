@@ -2,6 +2,8 @@ package com.purpura.app.ui.home;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +18,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.purpura.app.R;
@@ -25,10 +28,11 @@ import com.purpura.app.model.mongo.Residue;
 import com.purpura.app.remote.service.MongoService;
 import com.purpura.app.ui.screens.ProductPage;
 import com.purpura.app.ui.screens.errors.GenericError;
-import com.purpura.app.ui.screens.errors.InternetError;
 
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -38,6 +42,9 @@ public class HomeFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private HomeAdapter adapter;
+    private TextInputEditText searchInput;
+
+    private final List<Residue> allResidues = new ArrayList<>();
 
     Methods methods = new Methods();
     private final MongoService mongoService = new MongoService();
@@ -73,10 +80,44 @@ public class HomeFragment extends Fragment {
             rota.putExtra("cnpj", sanitizeCnpj(cnpjFromResidue));
             startActivity(rota);
         });
-
         recyclerView.setAdapter(adapter);
 
+        searchInput = view.findViewById(R.id.textInputEditText2);
+        if (searchInput != null) {
+            searchInput.addTextChangedListener(new TextWatcher() {
+                @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+                @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    filterAndDisplay(s == null ? "" : s.toString());
+                }
+                @Override public void afterTextChanged(Editable s) {}
+            });
+        }
+
         loadResidues(this);
+    }
+
+    private void filterAndDisplay(String query) {
+        String q = normalize(query);
+        if (q.isEmpty()) {
+            adapter.updateList(new ArrayList<>(allResidues));
+            return;
+        }
+        List<Residue> filtered = new ArrayList<>();
+        for (Residue r : allResidues) {
+            String nome = normalize(r.getNome());
+            String desc = normalize(r.getDescricao());
+            if (nome.contains(q) || desc.contains(q)) {
+                filtered.add(r);
+            }
+        }
+        adapter.updateList(filtered);
+    }
+
+    private static String normalize(String s) {
+        if (s == null) return "";
+        String n = Normalizer.normalize(s, Normalizer.Form.NFD)
+                .replaceAll("\\p{M}", "");
+        return n.toLowerCase(Locale.ROOT).trim();
     }
 
     private void loadResidues(Fragment fragment) {
@@ -109,7 +150,12 @@ public class HomeFragment extends Fragment {
                                 public void onResponse(Call<List<Residue>> call, Response<List<Residue>> response) {
                                     if (!isAdded()) return;
                                     if (response.isSuccessful() && response.body() != null) {
-                                        adapter.updateList(response.body());
+                                        allResidues.clear();
+                                        allResidues.addAll(response.body());
+                                        adapter.updateList(new ArrayList<>(allResidues));
+                                        if (searchInput != null) {
+                                            filterAndDisplay(String.valueOf(searchInput.getText()));
+                                        }
                                     } else {
                                         methods.openScreenFragments(fragment, GenericError.class);
                                     }

@@ -51,19 +51,6 @@
             app:layout_constraintStart_toEndOf="@+id/imageView31"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <Button
-            android:id="@+id/adressCardButtonEdit"
-            android:layout_width="250dp"
-            android:layout_height="50dp"
-            android:layout_marginTop="8dp"
-            android:backgroundTint="@color/roxo_padrao"
-            android:text="Editar"
-            app:cornerRadius="15sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.564"
-            app:layout_constraintStart_toEndOf="@+id/imageView31"
-            app:layout_constraintTop_toBottomOf="@+id/adressCardZipCode" />
-
         <ImageView
             android:id="@+id/adressCardDeleteAdress"
             android:layout_width="35sp"
@@ -74,6 +61,16 @@
             app:layout_constraintStart_toEndOf="@+id/adressCardName"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/delete_icon" />
+
+        <ImageView
+            android:id="@+id/adressCardButtonEdit"
+            android:layout_width="124dp"
+            android:layout_height="38dp"
+            android:layout_marginStart="36dp"
+            android:layout_marginTop="12dp"
+            app:layout_constraintStart_toEndOf="@+id/imageView31"
+            app:layout_constraintTop_toBottomOf="@+id/adressCardZipCode"
+            app:srcCompat="@drawable/edit_button" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
