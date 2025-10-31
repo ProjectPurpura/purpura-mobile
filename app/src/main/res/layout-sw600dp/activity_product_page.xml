@@ -38,7 +38,7 @@
             <!-- ViewPager2 (imagens do produto) -->
             <ImageView
                 android:id="@+id/productPageImage"
-                android:layout_width="357dp"
+                android:layout_width="420sp"
                 android:layout_height="322dp"
                 android:layout_marginTop="88dp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -54,11 +54,11 @@
                 android:id="@+id/productPageProductValue2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:layout_marginEnd="228dp"
+                android:layout_marginTop="20dp"
                 android:text="00,00"
                 android:textSize="20sp"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/productPageProductName"
                 app:layout_constraintTop_toBottomOf="@+id/productPageImage" />
 
             <TextView
@@ -66,7 +66,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:layout_marginTop="35dp"
+                android:layout_marginTop="55dp"
                 android:text="Nome da empresa"
                 android:textSize="16sp"
                 app:layout_constraintStart_toEndOf="@+id/productPageCompanyPhoto"
@@ -80,16 +80,15 @@
 
             <EditText
                 android:id="@+id/productPageDescription"
-                android:layout_width="320sp"
+                android:layout_width="420sp"
                 android:layout_height="70sp"
-                android:layout_marginTop="40dp"
+                android:layout_marginTop="20dp"
                 android:ems="10"
                 android:focusable="true"
                 android:gravity="start|top"
                 android:hint="Descrição do produto"
                 android:inputType="textMultiLine"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.326"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/productPageCompanyPhoto" />
 
@@ -99,18 +98,24 @@
                 android:layout_height="60sp"
                 android:layout_marginTop="36dp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.233"
+                app:layout_constraintHorizontal_bias="0.208"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/productPageProductName"
                 app:srcCompat="@drawable/generic_error" />
+
+            <!-- Unidade de medida -->
+
+            <!-- Ícone localização -->
+
+            <!-- Localização -->
 
             <ImageView
                 android:id="@+id/imageView20"
                 android:layout_width="35sp"
                 android:layout_height="35sp"
-                android:layout_marginTop="40dp"
+                android:layout_marginTop="20dp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.245"
+                app:layout_constraintHorizontal_bias="0.202"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/productPageDescription"
                 app:srcCompat="@drawable/weight_vector"
@@ -120,9 +125,9 @@
                 android:id="@+id/imageView19"
                 android:layout_width="35sp"
                 android:layout_height="35sp"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="16dp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.246"
+                app:layout_constraintHorizontal_bias="0.202"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/imageView20"
                 app:srcCompat="@drawable/location_vector"
@@ -132,11 +137,11 @@
                 android:id="@+id/productPageProductName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="20dp"
                 android:text="Nome do produto"
                 android:textSize="20sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.262"
+                app:layout_constraintEnd_toStartOf="@+id/productPageProductValue2"
+                app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/productPageImage" />
 
@@ -144,41 +149,36 @@
                 android:id="@+id/productPageProductWeight"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="44dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="28dp"
                 android:text="XX"
                 app:layout_constraintStart_toEndOf="@+id/imageView20"
                 app:layout_constraintTop_toBottomOf="@+id/productPageDescription" />
-
-            <!-- Unidade de medida -->
-
-            <!-- Ícone localização -->
-
-            <!-- Localização -->
 
             <TextView
                 android:id="@+id/producPageUnitMesure"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="44dp"
+                android:layout_marginTop="28dp"
                 android:text="Measure"
                 app:layout_constraintStart_toEndOf="@+id/productPageProductWeight"
                 app:layout_constraintTop_toBottomOf="@+id/productPageDescription" />
+
+            <!-- Botão adicionar ao carrinho -->
+
+            <!-- Botão conversar com vendedor -->
 
             <TextView
                 android:id="@+id/productPageProductLocation"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="32dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="28dp"
                 android:text="Carapicuíba, SP"
                 app:layout_constraintStart_toEndOf="@+id/imageView19"
                 app:layout_constraintTop_toBottomOf="@+id/productPageProductWeight" />
 
-            <!-- Botão adicionar ao carrinho -->
-
-            <!-- Botão conversar com vendedor -->
             <Button
                 android:id="@+id/productPageAddToShoppingCart"
                 android:layout_width="420sp"
@@ -212,10 +212,9 @@
                 android:id="@+id/view"
                 android:layout_width="420dp"
                 android:layout_height="50dp"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="20dp"
                 android:background="@drawable/round_border"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.494"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/imageView19" />
 

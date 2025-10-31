@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -193,15 +194,31 @@ public class AccountFragment extends Fragment {
         alert.setMessage("Entre com seu email para redefinir sua senha");
 
         EditText editTextEmail = new EditText(this.getContext());
+        editTextEmail.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
         alert.setView(editTextEmail);
 
         alert.setPositiveButton("Enviar", (dialog, which) -> {
-            objAutenticar.sendPasswordResetEmail(editTextEmail.getText().toString());
-            new Notifications().chamar(getActivity(), requireContext());
+            String email = editTextEmail.getText().toString().trim();
+            if (email.isEmpty()) {
+                Toast.makeText(this.getContext(), "Por favor, insira um e-mail válido.", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
+            FirebaseAuth.getInstance().sendPasswordResetEmail(email)
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            new Notifications().chamar(this.getActivity(), this.getContext());
+                        } else {
+                            Toast.makeText(this.getContext(), "Erro ao enviar e-mail: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    });
         });
+
+        alert.setNegativeButton("Cancelar", (dialog, which) -> dialog.dismiss());
+
         alert.show();
     }
+
 
     @Override
     public void onDestroyView() {

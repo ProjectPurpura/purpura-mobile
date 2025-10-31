@@ -1,5 +1,7 @@
 package com.purpura.app.ui.screens;
 
+import android.app.Activity;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -12,8 +14,6 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -31,12 +31,14 @@ import com.purpura.app.model.postgres.order.OrderResponse;
 import com.purpura.app.model.postgres.order.OrderItem;
 import com.purpura.app.remote.service.MongoService;
 import com.purpura.app.remote.service.PostgresService;
-import com.purpura.app.ui.screens.errors.GenericError;
 
 import java.io.Serializable;
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -132,36 +134,23 @@ public class ProductPage extends AppCompatActivity {
                 .get()
                 .addOnSuccessListener(document -> {
                     if(document.exists()){
-                        String cnpj = document.getString("cnpj");
-
-                        addToCart.setOnClickListener(v -> {
-
-                            OrderRequest order = new OrderRequest(
-                              residue.getCnpj(),
-                              cnpj,
-                              ""
-                            );
-                            Log.d("ProductPage", "Enviando pedido: " + new Gson().toJson(order));
-
-
-                            postgresService.createOrder(order).enqueue(new Callback<OrderResponse>() {
-                                @Override
-                                public void onResponse(Call<OrderResponse> call, Response<OrderResponse> response) {
-                                    if(response.isSuccessful()){
-                                    }else{
-                                    }
-                                }
-
-                                @Override
-                                public void onFailure(Call<OrderResponse> call, Throwable t) {
-
-                                }
-
-                            });
-                        });
-
+                        cnpj = document.getString("cnpj");
                     }
                 });
+
+        addToCart.setOnClickListener(v -> {
+            System.out.println("AAAAAAAAAAAAAAAAAAAAA");
+            System.out.println("AAAAAAAAAAAAAAAAAAAAA");
+            System.out.println("AAAAAAAAAAAAAAAAAAAAA");
+            System.out.println("AAAAAAAAAAAAAAAAAAAAA");
+            System.out.println("AAAAAAAAAAAAAAAAAAAAA");
+            System.out.println("AAAAAAAAAAAAAAAAAAAAA");
+            System.out.println("AAAAAAAAAAAAAAAAAAAAA");
+            System.out.println("AAAAAAAAAAAAAAAAAAAAA");
+            System.out.println("AAAAAAAAAAAAAAAAAAAAA");
+            Integer orderId = verifyUserOrders();
+            addResidueIntoOrder(orderId);
+        });
 
     }
 
@@ -172,6 +161,101 @@ public class ProductPage extends AppCompatActivity {
         if (addressCall != null) addressCall.cancel();
     }
 
+    public Integer createOrder(){
+
+        final Integer[] orderId = {0};
+
+        OrderRequest order = new OrderRequest(
+                sellerId,
+                cnpj,
+                ""
+        );
+
+        postgresService.createOrder(order).enqueue(new Callback<OrderResponse>() {
+            @Override
+            public void onResponse(Call<OrderResponse> call, Response<OrderResponse> response) {
+                if(response.isSuccessful()){
+                    try {
+                        orderId[0] = response.body().getIdPedido();
+                    } catch(Exception e){
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<OrderResponse> call, Throwable t) {
+            }
+        });
+
+        return orderId[0];
+    }
+
+    public void addResidueIntoOrder(Integer id){
+        OrderItem item = new OrderItem(
+                residue.getId(),
+                residue.getPreco(),
+                Integer.parseInt(productQuantity.getText().toString()),
+                residue.getTipoUnidade(),
+                residue.getPeso()
+        );
+
+        postgresService.addItemOrder(item, id)
+                .enqueue(new Callback<OrderItem>() {
+                    @Override
+                    public void onResponse(Call<OrderItem> call, Response<OrderItem> response) {
+                        removeStockQuantity();
+                    }
+
+                    @Override
+                    public void onFailure(Call<OrderItem> call, Throwable t) {
+                    }
+                });
+    }
+
+    public void removeStockQuantity(){
+        try{
+            residue.setEstoque(residue.getEstoque() - (residue.getEstoque() - Integer.parseInt(productQuantity.getText().toString())));
+
+            mongoService.updateResidue(
+                    cnpj,
+                    residue.getId(),
+                    residue,
+                    this.getApplicationContext()
+            );
+        }catch(Exception e){
+
+        }
+    }
+
+    public Integer verifyUserOrders(){
+
+        final Integer[] orderId = {0};
+
+        postgresService.getOrdersByClient(cnpj).enqueue(new Callback<List<OrderResponse>>() {
+
+            @Override
+            public void onResponse(Call<List<OrderResponse>> call, Response<List<OrderResponse>> response) {
+                List<OrderResponse> orders = response.body();
+
+                orders.forEach(order -> {
+                    if (order.getStatus().equals("aberto")) {
+                        orderId[0] = order.getIdPedido();
+                    }
+                });
+
+                if (orderId[0] == 0) {
+                    orderId[0] = createOrder();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<OrderResponse>> call, Throwable t) {
+
+            }
+        });
+
+        return orderId[0];
+    }
     private void bindViews() {
         buyNow = findViewById(R.id.productPageAddToShoppingCart);
         backButton         = findViewById(R.id.productPageBackButton);
@@ -238,19 +322,6 @@ public class ProductPage extends AppCompatActivity {
                     setTextSafe(companyName, notEmpty(nome) ? nome : "—");
                     loadCompanyPhoto(company.getUrlFoto());
 
-                    System.out.println(company.getCnpj());
-                    System.out.println(company.getCnpj());
-                    System.out.println(company.getCnpj());
-                    System.out.println(company.getCnpj());
-                    System.out.println(company.getCnpj());
-                    System.out.println(company.getCnpj());
-                    System.out.println(company.getCnpj());
-                    System.out.println(company.getCnpj());
-                    System.out.println(company.getCnpj());
-                    System.out.println(company.getCnpj());
-                    System.out.println(company.getCnpj());
-                    System.out.println(company.getCnpj());
-
                     sellerId = company.getCnpj();
                     addToCart.setEnabled(true);
                 } else {
@@ -312,11 +383,30 @@ public class ProductPage extends AppCompatActivity {
         });
     }
 
-    private void tryCompaniesSequentially(List<Company> companies, int idx) {
+    private void additemIntoOrder(OrderItem item, Integer id, Activity activity) {
+        try {
+            postgresService.addItemOrder(item, id).enqueue(new Callback<OrderItem>() {
+                @Override
+                public void onResponse(Call<OrderItem> call, Response<OrderItem> response) {
+                    methods.openScreenActivity(activity, QrCodePayment.class);
+                }
+
+                @Override
+                public void onFailure(Call<OrderItem> call, Throwable t) {
+
+                }
+            });
+        } catch (Exception e) {
+
+        }
+    }
+
+    private void tryCompaniesSequentially (List < Company > companies,int idx){
         if (idx >= companies.size()) return;
         String cnpjTry = sanitize(nvl(companies.get(idx).getCnpj()));
         mongoService.getResidueById(cnpjTry, residue.getId()).enqueue(new Callback<Residue>() {
-            @Override public void onResponse(Call<Residue> call, Response<Residue> resp) {
+            @Override
+            public void onResponse(Call<Residue> call, Response<Residue> resp) {
                 if (resp.isSuccessful() && resp.body() != null) {
                     loadCompany(cnpjTry);
                     loadAddress(cnpjTry, residue.getIdEndereco());
@@ -324,28 +414,42 @@ public class ProductPage extends AppCompatActivity {
                     tryCompaniesSequentially(companies, idx + 1);
                 }
             }
-            @Override public void onFailure(Call<Residue> call, Throwable t) {
+
+            @Override
+            public void onFailure(Call<Residue> call, Throwable t) {
                 tryCompaniesSequentially(companies, idx + 1);
             }
         });
     }
 
-    private static String nvl(String s) { return s == null ? "" : s; }
-    private static boolean isEmpty(String s) { return s == null || s.trim().isEmpty(); }
-    private static boolean notEmpty(String s) { return !isEmpty(s); }
-    private static String sanitize(String s) { return s == null ? "" : s.replaceAll("\\D+", ""); }
-    private String effectiveCnpj(String cnpjResidue, String cnpjFallback) {
+    private static String nvl (String s){
+        return s == null ? "" : s;
+    }
+    private static boolean isEmpty (String s){
+        return s == null || s.trim().isEmpty();
+    }
+    private static boolean notEmpty (String s){
+        return !isEmpty(s);
+    }
+    private static String sanitize (String s){
+        return s == null ? "" : s.replaceAll("\\D+", "");
+    }
+    private String effectiveCnpj (String cnpjResidue, String cnpjFallback){
         String c = sanitize(cnpjResidue);
         if (isEmpty(c)) c = sanitize(cnpjFallback);
         return c;
     }
-    private static void setTextSafe(TextView v, String text) {
+    private static void setTextSafe (TextView v, String text){
         if (v != null) v.setText(text == null ? "" : text);
     }
-    private static int safeParseInt(String s, int def) {
-        try { return Integer.parseInt(TextUtils.isEmpty(s) ? String.valueOf(def) : s.trim()); } catch (Exception e) { return def; }
+    private static int safeParseInt (String s,int def){
+        try {
+            return Integer.parseInt(TextUtils.isEmpty(s) ? String.valueOf(def) : s.trim());
+        } catch (Exception e) {
+            return def;
+        }
     }
-    private static String formatPriceBRL(Object price, NumberFormat nf) {
+    private static String formatPriceBRL (Object price, NumberFormat nf){
         if (price == null) return nf.format(0);
         try {
             if (price instanceof Number) return nf.format(((Number) price).doubleValue());
@@ -355,9 +459,10 @@ public class ProductPage extends AppCompatActivity {
             return nf.format(0);
         }
     }
-    private static String formatNumber(Object n) {
+    private static String formatNumber (Object n){
         try {
-            if (n instanceof Number) return String.format(PT_BR, "%,.2f", ((Number) n).doubleValue());
+            if (n instanceof Number)
+                return String.format(PT_BR, "%,.2f", ((Number) n).doubleValue());
             return String.format(PT_BR, "%,.2f", Double.parseDouble(String.valueOf(n).replace(",", ".")));
         } catch (Exception e) {
             return "0,00";

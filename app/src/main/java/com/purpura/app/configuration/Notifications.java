@@ -22,7 +22,6 @@ import com.purpura.app.ui.screens.MainActivity;
         private static final String CHANNEL_ID = "canal_id";
 
         public void chamar(Activity activity, Context context) {
-            // Criar canal de notificação para Android 8+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 NotificationChannel channel = new NotificationChannel(
                         CHANNEL_ID,
@@ -37,21 +36,11 @@ import com.purpura.app.ui.screens.MainActivity;
                 }
             }
 
-            // Intent que abre a MainActivity ao clicar na notificação
-            Intent intent = new Intent(context, MainActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            PendingIntent contentIntent = PendingIntent.getActivity(
-                    context,
-                    0,
-                    intent,
-                    PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-
             NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                     .setSmallIcon(R.drawable.ic_launcher_foreground)
                     .setContentTitle("Recuperação de senha")
                     .setContentText("O e-mail de recuperação da sua senha foi enviado!")
                     .setPriority(NotificationCompat.PRIORITY_HIGH)
-                    .setContentIntent(contentIntent)
                     .setAutoCancel(true)
                     .setDefaults(NotificationCompat.DEFAULT_ALL)
                     .setVisibility(NotificationCompat.VISIBILITY_PUBLIC);

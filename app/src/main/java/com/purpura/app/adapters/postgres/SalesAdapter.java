@@ -78,9 +78,8 @@ public class SalesAdapter extends RecyclerView.Adapter<SalesAdapter.VH> {
         }
 
         h.date.setText(dataBr);
-        h.status.setText(o.getStatus());
+        h.status.setText(o.getStatus().toUpperCase());
         h.total.setText(String.valueOf(o.getValorTotal()));
-        h.obs.setText(o.getObservacoes());
 
         if (h.items.getLayoutManager() == null) {
             h.items.setLayoutManager(new LinearLayoutManager(h.itemView.getContext()));
@@ -115,7 +114,7 @@ public class SalesAdapter extends RecyclerView.Adapter<SalesAdapter.VH> {
 
     static class VH extends RecyclerView.ViewHolder {
         RecyclerView items;
-        TextView id, total, status, date, obs;
+        TextView id, total, status, date;
 
         VH(@NonNull View itemView) {
             super(itemView);
@@ -124,7 +123,6 @@ public class SalesAdapter extends RecyclerView.Adapter<SalesAdapter.VH> {
             total = itemView.findViewById(R.id.myOrdersCardTotal);
             status = itemView.findViewById(R.id.myOrderCardPaymentStatus);
             date = itemView.findViewById(R.id.myOrderCardDate);
-            obs = itemView.findViewById(R.id.myOrderCardObservations);
         }
     }
 }

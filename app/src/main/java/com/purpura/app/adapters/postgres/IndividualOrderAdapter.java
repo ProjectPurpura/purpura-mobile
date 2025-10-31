@@ -38,7 +38,6 @@ public class IndividualOrderAdapter extends RecyclerView.Adapter<IndividualOrder
             holder.orderCardTotal.setText(order.getValorTotal().toString());
             holder.orderCardPaymentStatus.setText(order.getStatus());
             holder.orderCardDate.setText(order.getData() != null ? order.getData().toString() : "Sem data");
-            holder.orderCardObservations.setText(order.getObservacoes() != null ? order.getObservacoes() : "-");
         }
     }
 
@@ -58,7 +57,6 @@ public class IndividualOrderAdapter extends RecyclerView.Adapter<IndividualOrder
             orderCardTotal = itemView.findViewById(R.id.myOrdersCardTotal);
             orderCardPaymentStatus = itemView.findViewById(R.id.myOrderCardPaymentStatus);
             orderCardDate = itemView.findViewById(R.id.myOrderCardDate);
-            orderCardObservations = itemView.findViewById(R.id.myOrderCardObservations);
         }
     }
 }

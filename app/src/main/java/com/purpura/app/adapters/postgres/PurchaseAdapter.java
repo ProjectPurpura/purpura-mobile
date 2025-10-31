@@ -78,9 +78,8 @@ public class PurchaseAdapter extends RecyclerView.Adapter<PurchaseAdapter.VH> {
         }
 
         h.date.setText(dataBr);
-        h.status.setText(o.getStatus() != null ? o.getStatus() : "");
+        h.status.setText(o.getStatus().toUpperCase() != null ? o.getStatus() : "");
         h.total.setText(String.valueOf(o.getValorTotal()));
-        h.obs.setText(o.getObservacoes() != null ? o.getObservacoes() : "");
 
         if (h.items.getLayoutManager() == null) {
             h.items.setLayoutManager(new LinearLayoutManager(h.itemView.getContext()));
@@ -124,7 +123,6 @@ public class PurchaseAdapter extends RecyclerView.Adapter<PurchaseAdapter.VH> {
             total = itemView.findViewById(R.id.myOrdersCardTotal);
             status = itemView.findViewById(R.id.myOrderCardPaymentStatus);
             date = itemView.findViewById(R.id.myOrderCardDate);
-            obs = itemView.findViewById(R.id.myOrderCardObservations);
         }
     }
 }
