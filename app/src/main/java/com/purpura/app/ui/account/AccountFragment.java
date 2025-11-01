@@ -4,7 +4,6 @@ import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.InputType;
@@ -207,7 +206,7 @@ public class AccountFragment extends Fragment {
             FirebaseAuth.getInstance().sendPasswordResetEmail(email)
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
-                            new Notifications().chamar(this.getActivity(), this.getContext());
+                            new Notifications().changePasswordNotification(this.getActivity(), this.getContext());
                         } else {
                             Toast.makeText(this.getContext(), "Erro ao enviar e-mail: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
                         }
