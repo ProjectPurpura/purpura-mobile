@@ -15,6 +15,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
@@ -27,6 +28,8 @@ import com.purpura.app.ui.screens.errors.InternetError;
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
+    private NavController navController;
+
     Methods methods = new Methods();
 
     @Override
@@ -40,9 +43,21 @@ public class MainActivity extends AppCompatActivity {
         BottomNavigationView navView = findViewById(R.id.nav_view);
 
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.homeFragment, R.id.shoppingCartFragment, R.id.chatListFragment,
-                R.id.notificationsFragment, R.id.accountFragment
+                R.id.homeFragment,
+                R.id.chatListFragment,
+                R.id.notificationsFragment,
+                R.id.accountFragment
         ).build();
+
+        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.nav_host_fragment_activity_main);
+        navController = navHostFragment.getNavController();
+
+        navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
+            if (destination.getId() == R.id.chatListFragment) {
+                navView.getMenu().findItem(R.id.chatListFragment).setChecked(true);
+            }
+        });
 
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         NavigationUI.setupWithNavController(binding.navView, navController);

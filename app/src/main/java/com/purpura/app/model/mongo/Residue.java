@@ -116,4 +116,21 @@ public class Residue implements Serializable {
     public void setCnpj(String cnpj) {
         this.cnpj = cnpj;
     }
+
+    @Override
+    public String toString() {
+        return "Residue{" +
+                "id='" + id + '\'' +
+                ", nome='" + nome + '\'' +
+                ", descricao='" + descricao + '\'' +
+                ", preco=" + preco +
+                ", peso=" + peso +
+                ", tipoUnidade='" + tipoUnidade + '\'' +
+                ", estoque=" + estoque +
+                ", urlFoto='" + urlFoto + '\'' +
+                ", idChavePix='" + idChavePix + '\'' +
+                ", idEndereco='" + idEndereco + '\'' +
+                ", cnpj='" + cnpj + '\'' +
+                '}';
+    }
 }

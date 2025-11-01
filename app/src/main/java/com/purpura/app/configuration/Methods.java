@@ -10,6 +10,7 @@ import android.net.Network;
 import android.net.NetworkCapabilities;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +21,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.purpura.app.R;
 import com.purpura.app.model.mongo.Company;
 import com.purpura.app.remote.service.MongoService;
@@ -135,5 +138,4 @@ public class Methods implements TextWatcher {
             editText.addTextChangedListener(this);
         }
     }
-
 }

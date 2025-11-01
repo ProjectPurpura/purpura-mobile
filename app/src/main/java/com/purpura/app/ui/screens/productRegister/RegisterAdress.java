@@ -68,7 +68,6 @@ public class RegisterAdress extends AppCompatActivity {
             String cFormatted = cDigits.substring(0, 5) + "-" + cDigits.substring(5);
 
             cep_valid = microService.callCepIsValid(cFormatted);
-            System.out.println(cep_valid);
             cep_valid.enqueue(new Callback<Boolean>() {
                 @Override
                 public void onResponse(Call<Boolean> call, Response<Boolean> response) {

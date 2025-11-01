@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:theme="@style/Theme.PurpuraApp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.screens.errors.ContentToPay">
+
+    <TextView
+        android:id="@+id/InternetErrorText"
+        android:layout_width="314dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:text="Você tem um pedido em aberto! Para comprar um produto de outra empresa, finalize o pedido."
+        android:textAlignment="center"
+        android:textColor="@color/roxo_padrao"
+        android:textSize="26sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.494"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView5" />
+
+    <Button
+        android:id="@+id/cancelOrdersButton"
+        android:layout_width="320dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/round_border"
+        android:backgroundTint="@color/white"
+        android:text="Cancelar pedido"
+        android:textColor="@color/roxo_padrao"
+        app:cornerRadius="15sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.527"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/payNowButton" />
+
+    <Button
+        android:id="@+id/payNowButton"
+        android:layout_width="320dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="25dp"
+        android:backgroundTint="@color/roxo_padrao"
+        android:text="Ir para pagamento"
+        app:cornerRadius="15sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.527"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/InternetErrorText" />
+
+    <ImageView
+        android:id="@+id/imageView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="130dp"
+        android:src="@drawable/internet_error"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

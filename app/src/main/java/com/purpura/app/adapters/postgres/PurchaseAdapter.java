@@ -10,8 +10,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.purpura.app.R;
-import com.purpura.app.model.postgres.Order;
-import com.purpura.app.model.postgres.OrderItem;
+import com.purpura.app.model.postgres.order.OrderResponse;
+import com.purpura.app.model.postgres.order.OrderItem;
 import com.purpura.app.remote.service.MongoService;
 import com.purpura.app.remote.service.PostgresService;
 
@@ -29,12 +29,12 @@ import retrofit2.Response;
 
 public class PurchaseAdapter extends RecyclerView.Adapter<PurchaseAdapter.VH> {
 
-    private List<Order> orders;
+    private List<OrderResponse> orders;
     private final PostgresService service;
     private final String cnpj;
     private final MongoService mongoService;
 
-    public PurchaseAdapter(List<Order> orders, PostgresService service, String cnpj, MongoService mongoService) {
+    public PurchaseAdapter(List<OrderResponse> orders, PostgresService service, String cnpj, MongoService mongoService) {
         this.orders = orders != null ? orders : new ArrayList<>();
         this.service = service;
         this.cnpj = cnpj;
@@ -50,7 +50,7 @@ public class PurchaseAdapter extends RecyclerView.Adapter<PurchaseAdapter.VH> {
 
     @Override
     public void onBindViewHolder(@NonNull VH h, int position) {
-        Order o = orders.get(position);
+        OrderResponse o = orders.get(position);
         h.id.setText(String.valueOf(o.getIdPedido()));
 
         String dataBr;
@@ -78,9 +78,8 @@ public class PurchaseAdapter extends RecyclerView.Adapter<PurchaseAdapter.VH> {
         }
 
         h.date.setText(dataBr);
-        h.status.setText(o.getStatus() != null ? o.getStatus() : "");
+        h.status.setText(o.getStatus().toUpperCase());
         h.total.setText(String.valueOf(o.getValorTotal()));
-        h.obs.setText(o.getObservacoes() != null ? o.getObservacoes() : "");
 
         if (h.items.getLayoutManager() == null) {
             h.items.setLayoutManager(new LinearLayoutManager(h.itemView.getContext()));
@@ -108,7 +107,7 @@ public class PurchaseAdapter extends RecyclerView.Adapter<PurchaseAdapter.VH> {
         return orders != null ? orders.size() : 0;
     }
 
-    public void updateList(List<Order> list) {
+    public void updateList(List<OrderResponse> list) {
         this.orders = list != null ? list : new ArrayList<>();
         notifyDataSetChanged();
     }
@@ -124,7 +123,6 @@ public class PurchaseAdapter extends RecyclerView.Adapter<PurchaseAdapter.VH> {
             total = itemView.findViewById(R.id.myOrdersCardTotal);
             status = itemView.findViewById(R.id.myOrderCardPaymentStatus);
             date = itemView.findViewById(R.id.myOrderCardDate);
-            obs = itemView.findViewById(R.id.myOrderCardObservations);
         }
     }
 }

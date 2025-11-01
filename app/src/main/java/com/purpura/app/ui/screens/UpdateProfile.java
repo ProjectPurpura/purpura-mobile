@@ -106,7 +106,7 @@ public class UpdateProfile extends AppCompatActivity {
         if (!TextUtils.isEmpty(cnpj)) {
             fetchCompany(cnpj);
         } else {
-            fetchCnpjFromFirestoreAndLoad();
+            getCNPJ();
         }
 
         back.setOnClickListener(v -> finish());
@@ -184,7 +184,7 @@ public class UpdateProfile extends AppCompatActivity {
         if (fetchCall != null) fetchCall.cancel();
     }
 
-    private void fetchCnpjFromFirestoreAndLoad() {
+    private void getCNPJ() {
         FirebaseAuth auth = FirebaseAuth.getInstance();
         if (auth.getCurrentUser() == null) return;
         FirebaseFirestore.getInstance()

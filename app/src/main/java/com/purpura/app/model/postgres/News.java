@@ -32,7 +32,7 @@ public class News {
     }
 
     public String getUrlImagem() {
-        return urlImagem;
+        return this.urlImagem;
     }
 
     public void setUrlImagem(String urlImagem) {
