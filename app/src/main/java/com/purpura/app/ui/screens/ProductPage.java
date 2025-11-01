@@ -23,6 +23,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.gson.Gson;
 import com.purpura.app.R;
 import com.purpura.app.configuration.Methods;
+import com.purpura.app.configuration.Notifications;
 import com.purpura.app.model.mongo.Address;
 import com.purpura.app.model.mongo.Company;
 import com.purpura.app.model.mongo.Residue;
@@ -36,6 +37,8 @@ import java.io.Serializable;
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
+
+import io.grpc.internal.JsonUtil;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -49,6 +52,7 @@ public class ProductPage extends AppCompatActivity {
     private final PostgresService postgresService = new PostgresService();
 
     @Nullable private Residue residue;
+    Activity activity = ProductPage.this;
 
     private ImageView backButton;
     private ImageView residueImage;
@@ -135,17 +139,7 @@ public class ProductPage extends AppCompatActivity {
                 });
 
         addToCart.setOnClickListener(v -> {
-            System.out.println("AAAAAAAAAAAAAAAAAAAAA");
-            System.out.println("AAAAAAAAAAAAAAAAAAAAA");
-            System.out.println("AAAAAAAAAAAAAAAAAAAAA");
-            System.out.println("AAAAAAAAAAAAAAAAAAAAA");
-            System.out.println("AAAAAAAAAAAAAAAAAAAAA");
-            System.out.println("AAAAAAAAAAAAAAAAAAAAA");
-            System.out.println("AAAAAAAAAAAAAAAAAAAAA");
-            System.out.println("AAAAAAAAAAAAAAAAAAAAA");
-            System.out.println("AAAAAAAAAAAAAAAAAAAAA");
-            Integer orderId = verifyUserOrders();
-            addResidueIntoOrder(orderId);
+            addResidueIntoOrder(createOrder());
         });
 
     }
@@ -199,28 +193,16 @@ public class ProductPage extends AppCompatActivity {
                 .enqueue(new Callback<OrderItem>() {
                     @Override
                     public void onResponse(Call<OrderItem> call, Response<OrderItem> response) {
-                        removeStockQuantity();
+                        if(response.isSuccessful()){
+                            new Notifications().orderNotification(activity, ProductPage.this);
+                        }
                     }
 
                     @Override
                     public void onFailure(Call<OrderItem> call, Throwable t) {
+
                     }
                 });
-    }
-
-    public void removeStockQuantity(){
-        try{
-            residue.setEstoque(residue.getEstoque() - (residue.getEstoque() - Integer.parseInt(productQuantity.getText().toString())));
-
-            mongoService.updateResidue(
-                    cnpj,
-                    residue.getId(),
-                    residue,
-                    this.getApplicationContext()
-            );
-        }catch(Exception e){
-
-        }
     }
 
     public Integer verifyUserOrders(){
@@ -377,24 +359,6 @@ public class ProductPage extends AppCompatActivity {
             }
             @Override public void onFailure(Call<List<Company>> call, Throwable t) { }
         });
-    }
-
-    private void additemIntoOrder(OrderItem item, Integer id, Activity activity) {
-        try {
-            postgresService.addItemOrder(item, id).enqueue(new Callback<OrderItem>() {
-                @Override
-                public void onResponse(Call<OrderItem> call, Response<OrderItem> response) {
-                    methods.openScreenActivity(activity, QrCodePayment.class);
-                }
-
-                @Override
-                public void onFailure(Call<OrderItem> call, Throwable t) {
-
-                }
-            });
-        } catch (Exception e) {
-
-        }
     }
 
     private void tryCompaniesSequentially (List < Company > companies,int idx){
