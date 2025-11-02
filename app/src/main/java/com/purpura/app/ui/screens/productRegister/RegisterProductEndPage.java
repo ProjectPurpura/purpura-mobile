@@ -114,39 +114,6 @@ public class RegisterProductEndPage extends AppCompatActivity {
     }
 
     private void createResidue(String addressId, String pixKeyId) {
-
-        System.out.println(residue);
-        System.out.println(residue);
-        System.out.println(residue);
-        System.out.println(residue);
-        System.out.println(residue);
-        System.out.println(residue);
-        System.out.println(residue);
-        System.out.println(residue);
-        System.out.println(residue);
-        System.out.println(residue);
-        System.out.println(residue);
-        System.out.println(residue);
-        System.out.println(residue);
-        System.out.println(residue);
-        System.out.println(residue);
-        System.out.println(residue);
-        System.out.println(residue);
-        System.out.println(residue);
-        System.out.println(residue);
-        System.out.println(residue);
-        System.out.println(residue);
-        System.out.println(residue);
-        System.out.println(residue);
-        System.out.println(residue);
-        System.out.println(residue);
-        System.out.println(residue);
-        System.out.println(residue);
-        System.out.println(residue);
-        System.out.println(residue);
-        System.out.println(residue);
-        System.out.println(residue);
-        System.out.println(residue);
         residue.setIdEndereco(addressId);
         residue.setIdChavePix(pixKeyId);
         residue.setCnpj(null);

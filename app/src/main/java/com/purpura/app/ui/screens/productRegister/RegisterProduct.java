@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.text.InputFilter;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -49,15 +50,12 @@ public class RegisterProduct extends AppCompatActivity {
 
     private Methods methods = new Methods();
     private static boolean cloudinaryInitialized = false;
-
     private ActivityResultLauncher<String[]> requestPermissions;
     private ActivityResultLauncher<Uri> cameraLauncher;
-
     private Uri photoUri;
     private String imageUrl = "";
     private String uploadPreset = "Purpura";
     private String cnpj;
-
     private EditText name;
     private EditText description;
     private EditText quantity;
@@ -72,14 +70,18 @@ public class RegisterProduct extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register_product);
 
-        name        = findViewById(R.id.registerProductName);
+        name = findViewById(R.id.registerProductName);
         description = findViewById(R.id.registerProductDescription);
-        quantity    = findViewById(R.id.registerProductQuantity);
-        price       = findViewById(R.id.registerProductPrice);
-        weight      = findViewById(R.id.registerProductWeight);
-        weightType  = findViewById(R.id.registerProductWeightType);
-        imageView   = findViewById(R.id.registerProductImage);
+        quantity = findViewById(R.id.registerProductQuantity);
+        price = findViewById(R.id.registerProductPrice);
+        weight = findViewById(R.id.registerProductWeight);
+        weightType = findViewById(R.id.registerProductWeightType);
+        imageView = findViewById(R.id.registerProductImage);
         continueButton = findViewById(R.id.registerProductAddProductButton);
+
+        price.setInputType(android.text.InputType.TYPE_CLASS_NUMBER | android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        price.setKeyListener(android.text.method.DigitsKeyListener.getInstance("0123456789,."));
+        price.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(8, 2, ',')});
 
         FirebaseFirestore.getInstance()
                 .collection("empresa")
@@ -105,24 +107,24 @@ public class RegisterProduct extends AppCompatActivity {
                 return;
             }
 
-            String n  = tx(name);
-            String d  = tx(description);
+            String n = tx(name);
+            String d = tx(description);
             String qS = tx(quantity);
             String pS = tx(price);
             String wS = tx(weight);
-            String u  = tx(weightType);
+            String u = tx(weightType);
 
-            if (TextUtils.isEmpty(n))  { toast("Informe o nome"); return; }
-            if (TextUtils.isEmpty(d))  { toast("Informe a descrição"); return; }
+            if (TextUtils.isEmpty(n)) { toast("Informe o nome"); return; }
+            if (TextUtils.isEmpty(d)) { toast("Informe a descrição"); return; }
             if (TextUtils.isEmpty(pS)) { toast("Informe o preço"); return; }
             if (TextUtils.isEmpty(wS)) { toast("Informe o peso"); return; }
-            if (TextUtils.isEmpty(u))  { toast("Informe a unidade"); return; }
+            if (TextUtils.isEmpty(u)) { toast("Informe a unidade"); return; }
             if (TextUtils.isEmpty(qS)) { toast("Informe o estoque"); return; }
             if (TextUtils.isEmpty(cnpj)) { toast("Aguarde o carregamento do CNPJ"); return; }
 
-            double preco  = parseDouble(pS, 0d);
-            double pesoV  = parseDouble(wS, 0d);
-            int est       = parseInt(qS, 0);
+            double preco = parseDouble(pS, 0d);
+            double pesoV = parseDouble(wS, 0d);
+            int est = parseInt(qS, 0);
             String unidade = u.toUpperCase();
 
             Residue residue = new Residue(
@@ -243,6 +245,48 @@ public class RegisterProduct extends AppCompatActivity {
 
     private static String tx(EditText e) { return e.getText() == null ? "" : e.getText().toString().trim(); }
     private static int parseInt(String s, int def) { try { return Integer.parseInt(s.trim()); } catch (Exception e) { return def; } }
-    private static double parseDouble(String s, double def) { try { return Double.parseDouble(s.replace(",", ".")); } catch (Exception e) { return def; } }
+    private static double parseDouble(String s, double def) {
+        try {
+            if (s == null) return def;
+            s = s.replace(" ", "")
+                    .replace(".", "")
+                    .replace(",", ".");
+            return Double.parseDouble(s);
+        } catch (Exception e) {
+            return def;
+        }
+    }
     private void toast(String s) { Toast.makeText(this, s, Toast.LENGTH_SHORT).show(); }
+
+    private static class DecimalDigitsInputFilter implements InputFilter {
+        private final int maxInt;
+        private final int maxFrac;
+        private final char sep;
+        private final java.util.regex.Pattern pattern;
+
+        DecimalDigitsInputFilter(int maxInt, int maxFrac, char sep) {
+            this.maxInt = maxInt;
+            this.maxFrac = maxFrac;
+            this.sep = sep;
+            String esc = java.util.regex.Pattern.quote(String.valueOf(sep));
+            this.pattern = java.util.regex.Pattern.compile("^\\d{0," + maxInt + "}" + "(" + esc + "\\d{0," + maxFrac + "})?$");
+        }
+
+        @Override
+        public CharSequence filter(CharSequence source, int start, int end,
+                                   android.text.Spanned dest, int dstart, int dend) {
+            String incoming = source.toString().replace('.', sep);
+            String before = dest.subSequence(0, dstart).toString();
+            String after = dest.subSequence(dend, dest.length()).toString();
+            String candidate = before + incoming + after;
+            if (candidate.isEmpty()) return null;
+            int countSep = 0;
+            for (int i = 0; i < candidate.length(); i++) {
+                if (candidate.charAt(i) == sep) countSep++;
+            }
+            if (countSep > 1) return "";
+            if (!pattern.matcher(candidate).matches()) return "";
+            return incoming.equals(source.toString()) ? null : incoming;
+        }
+    }
 }

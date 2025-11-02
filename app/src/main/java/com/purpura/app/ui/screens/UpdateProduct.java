@@ -6,7 +6,10 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.InputFilter;
 import android.text.TextUtils;
+import android.text.method.DigitsKeyListener;
+import android.text.InputType;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -32,7 +35,6 @@ import com.purpura.app.remote.service.MongoService;
 
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import retrofit2.Call;
@@ -85,13 +87,17 @@ public class UpdateProduct extends AppCompatActivity {
         exportIcon = findViewById(R.id.updateProductExportImageIcon);
         update = findViewById(R.id.updateProductAddProductButton);
 
+        price.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        price.setKeyListener(DigitsKeyListener.getInstance("0123456789,."));
+        price.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(8, 2, ',')});
+
         initCloudinary();
         setupGallery(image);
         checkPermissions();
 
         Serializable ser = getIntent() != null ? getIntent().getSerializableExtra("residue") : null;
         String extraCnpj = getIntent() != null ? getIntent().getStringExtra("cnpj") : "";
-        String extraId   = getIntent() != null ? getIntent().getStringExtra("residueId") : "";
+        String extraId = getIntent() != null ? getIntent().getStringExtra("residueId") : "";
         cnpj = sanitize(extraCnpj);
         residueId = n(extraId);
 
@@ -329,5 +335,37 @@ public class UpdateProduct extends AppCompatActivity {
     interface ImageUploadCallback {
         void onUploadSuccess(String imageUrl);
         void onUploadFailure(String error);
+    }
+
+    private static class DecimalDigitsInputFilter implements InputFilter {
+        private final int maxInt;
+        private final int maxFrac;
+        private final char sep;
+        private final java.util.regex.Pattern pattern;
+
+        DecimalDigitsInputFilter(int maxInt, int maxFrac, char sep) {
+            this.maxInt = maxInt;
+            this.maxFrac = maxFrac;
+            this.sep = sep;
+            String esc = java.util.regex.Pattern.quote(String.valueOf(sep));
+            this.pattern = java.util.regex.Pattern.compile("^\\d{0," + maxInt + "}" + "(" + esc + "\\d{0," + maxFrac + "})?$");
+        }
+
+        @Override
+        public CharSequence filter(CharSequence source, int start, int end,
+                                   android.text.Spanned dest, int dstart, int dend) {
+            String incoming = source.toString().replace('.', sep);
+            String before = dest.subSequence(0, dstart).toString();
+            String after = dest.subSequence(dend, dest.length()).toString();
+            String candidate = before + incoming + after;
+            if (candidate.isEmpty()) return null;
+            int countSep = 0;
+            for (int i = 0; i < candidate.length(); i++) {
+                if (candidate.charAt(i) == sep) countSep++;
+            }
+            if (countSep > 1) return "";
+            if (!pattern.matcher(candidate).matches()) return "";
+            return incoming.equals(source.toString()) ? null : incoming;
+        }
     }
 }
