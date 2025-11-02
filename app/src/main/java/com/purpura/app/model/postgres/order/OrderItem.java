@@ -5,14 +5,18 @@ import java.io.Serializable;
 public class OrderItem implements Serializable {
 
     private Long id;
+    private String nome;
+    private String urlFoto;
     private String idResiduo;
     private Double preco;
     private Integer quantidade;
     private Double peso;
     private String tipoUnidade;
 
-    public OrderItem(Long id, String idResiduo, Double preco, Integer quantidade, Double peso, String tipoUnidade) {
+    public OrderItem(Long id, String nome, String urlFoto, String idResiduo, Double preco, Integer quantidade, Double peso, String tipoUnidade) {
         this.id = id;
+        this.nome = nome;
+        this.urlFoto = urlFoto;
         this.idResiduo = idResiduo;
         this.preco = preco;
         this.quantidade = quantidade;
@@ -21,8 +25,10 @@ public class OrderItem implements Serializable {
     }
 
 
-    public OrderItem(String idResiduo, Double preco, Integer quantidade, String tipoUnidade, Double peso) {
+    public OrderItem(String idResiduo, String urlFoto, String nome, Double preco, Integer quantidade, String tipoUnidade, Double peso) {
         this.idResiduo = idResiduo;
+        this.urlFoto = urlFoto;
+        this.nome = nome;
         this.preco = preco;
         this.quantidade = quantidade;
         this.tipoUnidade = tipoUnidade;
@@ -80,10 +86,28 @@ public class OrderItem implements Serializable {
         this.tipoUnidade = tipoUnidade;
     }
 
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public String getUrlFoto() {
+        return urlFoto;
+    }
+
+    public void setUrlFoto(String urlFoto) {
+        this.urlFoto = urlFoto;
+    }
+
     @Override
     public String toString() {
         return "OrderItem{" +
                 "id=" + id +
+                ", nome='" + nome + '\'' +
+                ", urlFoto='" + urlFoto + '\'' +
                 ", idResiduo='" + idResiduo + '\'' +
                 ", preco=" + preco +
                 ", quantidade=" + quantidade +

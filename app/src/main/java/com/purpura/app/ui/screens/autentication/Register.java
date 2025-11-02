@@ -181,7 +181,6 @@ public class Register extends AppCompatActivity {
                                         runOnUiThread(() -> {
 
                                             mongoService.createCompany(company, this);
-                                            Toast.makeText(this, "Cadastro finalizado!", Toast.LENGTH_SHORT).show();
                                             methods.openScreenActivity(this, MainActivity.class);
                                         });
                                     } catch (Exception e) {

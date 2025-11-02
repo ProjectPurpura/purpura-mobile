@@ -132,6 +132,7 @@ public class PurchaseAdapter extends RecyclerView.Adapter<PurchaseAdapter.VH> {
     static class VH extends RecyclerView.ViewHolder {
         RecyclerView items;
         TextView id, total, status, date;
+
         Button payOrderButton;
         ImageView deleteButton;
 

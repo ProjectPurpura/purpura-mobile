@@ -36,6 +36,10 @@ public class Dashboards extends AppCompatActivity {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 
         WebView webView = findViewById(R.id.dasboardWebView);
+
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.getSettings().setDomStorageEnabled(true);
+
         webView.setWebViewClient(new WebViewClient());
         webView.loadUrl("https://app.powerbi.com/view?r=eyJrIjoiMDA5NjFlZGMtYzZjZS00NzY4LWJlM2MtNDRmZmJlNzA1YjA5IiwidCI6ImIxNDhmMTRjLTIzOTctNDAyYy1hYjZhLTFiNDcxMTE3N2FjMCJ9");
 

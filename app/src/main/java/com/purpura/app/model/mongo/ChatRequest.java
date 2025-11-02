@@ -19,4 +19,10 @@ public class ChatRequest {
 
     public ChatRequest(){}
 
+    @Override
+    public String toString() {
+        return "ChatRequest{" +
+                "participants=" + participants +
+                '}';
+    }
 }
