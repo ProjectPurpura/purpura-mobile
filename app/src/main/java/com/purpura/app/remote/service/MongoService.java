@@ -6,6 +6,8 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.purpura.app.configuration.Methods;
+import com.purpura.app.model.mongo.ChatRequest;
+import com.purpura.app.model.mongo.ChatResponse;
 import com.purpura.app.model.mongo.Company;
 import com.purpura.app.model.mongo.PixKey;
 import com.purpura.app.model.mongo.Address;
@@ -83,6 +85,10 @@ public class MongoService {
 
     // CREATE - POST
 
+    public Call<ChatResponse> createChat(ChatRequest request){
+        Call<ChatResponse> call = mongoAPI.createChat(request);
+        return call;
+    }
     public Call<Address> createAdress(String cnpj, Address address, Context context) {
         Call<Address> call = mongoAPI.createAddress(cnpj, address);
         return call;

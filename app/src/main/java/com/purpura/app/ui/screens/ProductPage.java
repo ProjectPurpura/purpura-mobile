@@ -138,9 +138,7 @@ public class ProductPage extends AppCompatActivity {
                     }
                 });
 
-        addToCart.setOnClickListener(v -> {
-            addResidueIntoOrder(createOrder());
-        });
+        addToCart.setOnClickListener(v -> createOrder());
 
     }
 
@@ -151,9 +149,7 @@ public class ProductPage extends AppCompatActivity {
         if (addressCall != null) addressCall.cancel();
     }
 
-    public Integer createOrder(){
-
-        final Integer[] orderId = {0};
+    public void createOrder(){
 
         OrderRequest order = new OrderRequest(
                 sellerId,
@@ -166,7 +162,7 @@ public class ProductPage extends AppCompatActivity {
             public void onResponse(Call<OrderResponse> call, Response<OrderResponse> response) {
                 if(response.isSuccessful()){
                     try {
-                        orderId[0] = response.body().getIdPedido();
+                        addResidueIntoOrder(response.body().getIdPedido());
                     } catch(Exception e){
                     }
                 }
@@ -176,11 +172,10 @@ public class ProductPage extends AppCompatActivity {
             public void onFailure(Call<OrderResponse> call, Throwable t) {
             }
         });
-
-        return orderId[0];
     }
 
     public void addResidueIntoOrder(Integer id){
+
         OrderItem item = new OrderItem(
                 residue.getId(),
                 residue.getPreco(),
@@ -188,7 +183,6 @@ public class ProductPage extends AppCompatActivity {
                 residue.getTipoUnidade(),
                 residue.getPeso()
         );
-
         postgresService.addItemOrder(item, id)
                 .enqueue(new Callback<OrderItem>() {
                     @Override
@@ -203,36 +197,6 @@ public class ProductPage extends AppCompatActivity {
 
                     }
                 });
-    }
-
-    public Integer verifyUserOrders(){
-
-        final Integer[] orderId = {0};
-
-        postgresService.getOrdersByClient(cnpj).enqueue(new Callback<List<OrderResponse>>() {
-
-            @Override
-            public void onResponse(Call<List<OrderResponse>> call, Response<List<OrderResponse>> response) {
-                List<OrderResponse> orders = response.body();
-
-                orders.forEach(order -> {
-                    if (order.getStatus().equals("aberto")) {
-                        orderId[0] = order.getIdPedido();
-                    }
-                });
-
-                if (orderId[0] == 0) {
-                    orderId[0] = createOrder();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<OrderResponse>> call, Throwable t) {
-
-            }
-        });
-
-        return orderId[0];
     }
     private void bindViews() {
         buyNow = findViewById(R.id.productPageAddToShoppingCart);
