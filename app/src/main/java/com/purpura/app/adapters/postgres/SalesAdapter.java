@@ -3,7 +3,10 @@ package com.purpura.app.adapters.postgres;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -52,7 +55,7 @@ public class SalesAdapter extends RecyclerView.Adapter<SalesAdapter.VH> {
     public void onBindViewHolder(@NonNull VH h, int position) {
         OrderResponse o = orders.get(position);
         h.id.setText(String.valueOf(o.getIdPedido()));
-
+        h.approveOrderButton.setEnabled(false);
         String dataBr;
         Object raw = o.getData();
         try {
@@ -80,7 +83,39 @@ public class SalesAdapter extends RecyclerView.Adapter<SalesAdapter.VH> {
         h.date.setText(dataBr);
         h.status.setText(o.getStatus().toUpperCase());
         h.total.setText(String.valueOf(o.getValorTotal()));
+        boolean delete = "ABERTO".equals(h.status.getText().toString())
+                || "EM APROVAÇÃO".equals(h.status.getText().toString());
+        h.deleteSale.setEnabled(delete);
+        h.approveOrderButton.setEnabled(delete);
+        h.approveOrderButton.setOnClickListener(v -> {
+            service.approveOrder(Integer.valueOf(h.id.getText().toString())).enqueue(new Callback<OrderResponse>() {
+                @Override
+                public void onResponse(Call<OrderResponse> call, Response<OrderResponse> response) {
+                    h.status.setText("EM APROVAÇÃO");
+                }
 
+                @Override
+                public void onFailure(Call<OrderResponse> call, Throwable t) {
+                }
+            });
+        });
+        h.deleteSale.setOnClickListener(v -> {
+            Call<Void> del = service.deleteOrderByOrderId(o.getIdPedido());
+            del.enqueue(new Callback<Void>() {
+                @Override
+                public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> resp) {
+                    if (resp.isSuccessful()) {
+                        int pos = h.getBindingAdapterPosition();
+                        if (pos != RecyclerView.NO_POSITION) {
+                            orders.remove(pos);
+                            notifyItemRemoved(pos);
+                        }
+                    }
+                }
+                @Override
+                public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) { }
+            });
+        });
         if (h.items.getLayoutManager() == null) {
             h.items.setLayoutManager(new LinearLayoutManager(h.itemView.getContext()));
         }
@@ -115,6 +150,8 @@ public class SalesAdapter extends RecyclerView.Adapter<SalesAdapter.VH> {
     static class VH extends RecyclerView.ViewHolder {
         RecyclerView items;
         TextView id, total, status, date;
+        ImageView deleteSale;
+        Button approveOrderButton;
 
         VH(@NonNull View itemView) {
             super(itemView);
@@ -123,6 +160,8 @@ public class SalesAdapter extends RecyclerView.Adapter<SalesAdapter.VH> {
             total = itemView.findViewById(R.id.mySalesCardTotal);
             status = itemView.findViewById(R.id.mySalesCardPaymentStatus);
             date = itemView.findViewById(R.id.mySalesCardDate);
+            deleteSale = itemView.findViewById(R.id.deleteSale);
+            approveOrderButton = itemView.findViewById(R.id.approveOrderButton);
         }
     }
 }

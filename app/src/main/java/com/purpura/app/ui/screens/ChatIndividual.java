@@ -78,7 +78,6 @@ public class ChatIndividual extends AppCompatActivity {
 
                 @Override
                 public void onFailure(Call<ChatResponse> call, Throwable t) {
-
                 }
             });
         } catch (Exception e) {
