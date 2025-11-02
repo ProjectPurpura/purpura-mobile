@@ -22,8 +22,6 @@ public class QrCodePayment extends AppCompatActivity {
     Methods methods = new Methods();
     MicroService microService = new MicroService();
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,7 +39,6 @@ public class QrCodePayment extends AppCompatActivity {
         ImageView copyButton = findViewById(R.id.qrCodePaymentCopyPasteButton);
         TextView qrCodeTextView = findViewById(R.id.qrCodePaymentPixURL);
 
-
         //----- Bundle -----------------//
         String pixKey = null;
         Bundle extras = getIntent().getExtras();
@@ -54,7 +51,6 @@ public class QrCodePayment extends AppCompatActivity {
         qrCodeTextView.setText(pixKey);
 
         loadQr(pixKey);
-
 
         //----- SetOnClickListener -----//
 

@@ -40,7 +40,7 @@ public class MyPurchasesFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_my_purchases, container, false);
         recyclerView = v.findViewById(R.id.myPurchasesRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-        adapter = new PurchaseAdapter(new ArrayList<>(), service, "", mongoService);
+        adapter = new PurchaseAdapter(new ArrayList<>(), this.getActivity(), service, "", mongoService);
         recyclerView.setAdapter(adapter);
         loadSales();
         return v;
@@ -60,7 +60,7 @@ public class MyPurchasesFragment extends Fragment {
 
                     salesCall = service.getOrdersByClient(cnpj);
 
-                    adapter = new PurchaseAdapter(new ArrayList<>(), service, cnpj, mongoService);
+                    adapter = new PurchaseAdapter(new ArrayList<>(), this.getActivity(), service, cnpj, mongoService);
                     recyclerView.setAdapter(adapter);
 
                     salesCall.enqueue(new Callback<List<OrderResponse>>() {
