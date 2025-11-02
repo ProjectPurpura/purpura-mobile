@@ -50,7 +50,7 @@ public class ChatIndividual extends AppCompatActivity {
         mongoService.createChat(request).enqueue(new Callback<ChatResponse>() {
             @Override
             public void onResponse(Call<ChatResponse> call, Response<ChatResponse> response) {
-                webView.
+                
             }
 
             @Override

@@ -79,7 +79,7 @@ public interface PostgresAPI {
     );
 
     @DELETE("pedido/{id}")
-    void deletePedido(
+    Call<Void> deletePedido(
             @Path("id") Integer id
     );
 
