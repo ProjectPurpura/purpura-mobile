@@ -47,26 +47,13 @@ public class ChatIndividual extends AppCompatActivity {
         WebView webView = findViewById(R.id.individualChatWebView);
 
         Bundle env = getIntent().getExtras();
-        String part1 = env.getString("sellerId");
+        String part1 = env.getString("SellerId");
         String part2 = env.getString("buyerId");
 
         List<String> participants = new ArrayList<>();
         participants.add(part1);
         participants.add(part2);
         ChatRequest request = new ChatRequest(participants);
-        System.out.println(request);
-        System.out.println(request);
-        System.out.println(request);
-        System.out.println(request);
-        System.out.println(request);
-        System.out.println(request);
-        System.out.println(request);
-        System.out.println(request);
-        System.out.println(request);
-        System.out.println(request);
-        System.out.println(request);
-        System.out.println(request);
-        System.out.println(request);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.setWebViewClient(new WebViewClient());
 
@@ -74,17 +61,6 @@ public class ChatIndividual extends AppCompatActivity {
             mongoService.createChat(request).enqueue(new Callback<ChatResponse>() {
                 @Override
                 public void onResponse(Call<ChatResponse> call, Response<ChatResponse> response) {
-                    System.out.println(response);
-                    System.out.println(response);
-                    System.out.println(response);
-                    System.out.println(response);
-                    System.out.println(response);
-                    System.out.println(response);
-                    System.out.println(response);
-                    System.out.println(response);
-                    System.out.println(response);
-                    System.out.println(response);
-                    System.out.println(response);
                     if(response.isSuccessful()){
                         String url =  "https://purpura-react-site.vercel.app/chat/" + response.body().getId() + "/#cnpj=" + part2;
 

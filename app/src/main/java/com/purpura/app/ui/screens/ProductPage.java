@@ -129,15 +129,86 @@ public class ProductPage extends AppCompatActivity {
                 .addOnSuccessListener(document -> {
                     if (document.exists()) {
                         cnpj = document.getString("cnpj");
-                        addToCart.setEnabled(true);
-                        goToChat.setEnabled(true);
-                        goToChat.setOnClickListener(v -> {
-                            chat.putString("buyerId", cnpj);
-                            methods.openScreenActivityWithBundle(this, ChatIndividual.class, chat);
-                        });
+                        Log.d("ProductPage", "Firestore cnpj encontrado: " + cnpj);
+                        if (!isEmpty(cnpj)) {
+                            addToCart.setEnabled(true);
+                            goToChat.setEnabled(true);
+                            goToChat.setOnClickListener(v -> {
+                                chat.putString("buyerId", cnpj);
+                                methods.openScreenActivityWithBundle(this, ChatIndividual.class, chat);
+                            });
+                        } else {
+                            Toast.makeText(this, "CNPJ do usuário não encontrado, operação não permitida.", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Log.d("ProductPage", "Documento Firestore empresa não existe");
                     }
                 });
+
+        buyNow.setOnClickListener(v -> {
+            if (isEmpty(sellerId)) {
+                Toast.makeText(this, "Erro: vendedor não identificado, por favor tente novamente.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            createOrder();
+        });
     }
+
+    public void setupResidueData(String cnpjFallback) {
+        NumberFormat nf = NumberFormat.getCurrencyInstance(PT_BR);
+        setTextSafe(residueName, nvl(residue.getNome()));
+        setTextSafe(residuePrice, formatPriceBRL(residue.getPreco(), nf));
+        if (residueDescription != null) residueDescription.setText(nvl(residue.getDescricao()));
+        setTextSafe(residueWeight, formatNumber(residue.getPeso()));
+        setTextSafe(residueUnitType, nvl(residue.getTipoUnidade()));
+        loadResidueImage(residue.getUrlFoto());
+        setTextSafe(companyName, "Carregando empresa...");
+        setTextSafe(addressName, "Carregando endereço...");
+
+        sellerId = effectiveCnpj(nvl(residue.getCnpj()), cnpjFallback);
+        Log.d("ProductPage", "CNPJ efetivo para sellerId: " + sellerId);
+
+        loadCompany(sellerId);
+        loadAddress(sellerId, residue.getIdEndereco());
+    }
+
+    private void loadCompany(String cnpj) {
+        if (isEmpty(cnpj)) {
+            setTextSafe(companyName, "Empresa não encontrada");
+            loadCompanyPhoto(null);
+            probeOwnerCnpj();
+            return;
+        }
+        companyCall = mongoService.getCompanyByCnpj(cnpj);
+        companyCall.enqueue(new Callback<Company>() {
+            @Override
+            public void onResponse(Call<Company> call, Response<Company> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    company = response.body();
+                    chat.putString("SellerId", company.getCnpj());
+                    String nome = nvl(company.getNome());
+                    setTextSafe(companyName, notEmpty(nome) ? nome : "—");
+                    loadCompanyPhoto(company.getUrlFoto());
+
+                    sellerId = company.getCnpj();
+                    Log.d("ProductPage", "SellerId definido em loadCompany: " + sellerId);
+                    addToCart.setEnabled(true);
+                } else {
+                    setTextSafe(companyName, "Empresa não encontrada");
+                    loadCompanyPhoto(null);
+                    probeOwnerCnpj();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Company> call, Throwable t) {
+                setTextSafe(companyName, "Empresa não encontrada");
+                loadCompanyPhoto(null);
+                probeOwnerCnpj();
+            }
+        });
+    }
+
 
     @Override
     protected void onDestroy() {
@@ -218,21 +289,6 @@ public class ProductPage extends AppCompatActivity {
         removeQuantity     = findViewById(R.id.removeQuantity);
     }
 
-    public void setupResidueData(String cnpjFallback) {
-        NumberFormat nf = NumberFormat.getCurrencyInstance(PT_BR);
-        setTextSafe(residueName, nvl(residue.getNome()));
-        setTextSafe(residuePrice, formatPriceBRL(residue.getPreco(), nf));
-        if (residueDescription != null) residueDescription.setText(nvl(residue.getDescricao()));
-        setTextSafe(residueWeight, formatNumber(residue.getPeso()));
-        setTextSafe(residueUnitType, nvl(residue.getTipoUnidade()));
-        loadResidueImage(residue.getUrlFoto());
-        setTextSafe(companyName, "Carregando empresa...");
-        setTextSafe(addressName, "Carregando endereço...");
-        sellerId = effectiveCnpj(nvl(residue.getCnpj()), cnpjFallback);
-        loadCompany(sellerId);
-        loadAddress(sellerId, residue.getIdEndereco());
-    }
-
     private void loadResidueImage(@Nullable String url) {
         if (residueImage == null) return;
         Glide.with(residueImage.getContext())
@@ -243,40 +299,6 @@ public class ProductPage extends AppCompatActivity {
                 .error(R.drawable.ic_image_placeholder)
                 .into(residueImage);
     }
-
-    private void loadCompany(String cnpj) {
-        if (isEmpty(cnpj)) {
-            setTextSafe(companyName, "Empresa não encontrada");
-            loadCompanyPhoto(null);
-            probeOwnerCnpj();
-            return;
-        }
-        companyCall = mongoService.getCompanyByCnpj(cnpj);
-        companyCall.enqueue(new Callback<Company>() {
-            @Override public void onResponse(Call<Company> call, Response<Company> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    company = response.body();
-                    chat.putString("sellerId", residue.getCnpj());
-                    String nome = nvl(company.getNome());
-                    setTextSafe(companyName, notEmpty(nome) ? nome : "—");
-                    loadCompanyPhoto(company.getUrlFoto());
-
-                    sellerId = company.getCnpj();
-                    addToCart.setEnabled(true);
-                } else {
-                    setTextSafe(companyName, "Empresa não encontrada");
-                    loadCompanyPhoto(null);
-                    probeOwnerCnpj();
-                }
-            }
-            @Override public void onFailure(Call<Company> call, Throwable t) {
-                setTextSafe(companyName, "Empresa não encontrada");
-                loadCompanyPhoto(null);
-                probeOwnerCnpj();
-            }
-        });
-    }
-
     private void loadCompanyPhoto(@Nullable String url) {
         if (companyPhoto == null) return;
         Glide.with(this)

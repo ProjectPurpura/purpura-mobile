@@ -12,8 +12,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.purpura.app.R;
-import com.purpura.app.model.postgres.order.OrderResponse;
 import com.purpura.app.model.postgres.order.OrderItem;
+import com.purpura.app.model.postgres.order.OrderResponse;
 import com.purpura.app.remote.service.MongoService;
 import com.purpura.app.remote.service.PostgresService;
 
@@ -24,6 +24,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -36,11 +37,16 @@ public class PurchaseAdapter extends RecyclerView.Adapter<PurchaseAdapter.VH> {
     private final String cnpj;
     private final MongoService mongoService;
 
+    private final DateTimeFormatter dateFmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    private final java.text.NumberFormat brlFmt =
+            java.text.NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
+
     public PurchaseAdapter(List<OrderResponse> orders, PostgresService service, String cnpj, MongoService mongoService) {
         this.orders = orders != null ? orders : new ArrayList<>();
         this.service = service;
         this.cnpj = cnpj;
         this.mongoService = mongoService;
+        setHasStableIds(true);
     }
 
     @NonNull
@@ -52,23 +58,11 @@ public class PurchaseAdapter extends RecyclerView.Adapter<PurchaseAdapter.VH> {
 
     @Override
     public void onBindViewHolder(@NonNull VH h, int position) {
-
-        h.deleteButton.setEnabled(false);
-
-        if(h.status.getText().toString() == "ABERTO" || h.status.getText().toString() == "EM APROVAÇÃO"){
-            h.deleteButton.setEnabled(true);
-        }
-
-        h.deleteButton.setOnClickListener( v -> {
-            try{
-                service.deleteOrderByOrderId(h.id.getId());
-            }catch(Exception e){
-
-            }
-        });
-
         OrderResponse o = orders.get(position);
+
         h.id.setText(String.valueOf(o.getIdPedido()));
+        h.status.setText(o.getStatus() == null ? "-" : o.getStatus().toUpperCase());
+        h.total.setText(o.getValorTotal() == null ? "-" : brlFmt.format(o.getValorTotal()));
 
         String dataBr;
         Object raw = o.getData();
@@ -76,52 +70,75 @@ public class PurchaseAdapter extends RecyclerView.Adapter<PurchaseAdapter.VH> {
             if (raw instanceof Number) {
                 long v = ((Number) raw).longValue();
                 Instant inst = (v < 10_000_000_000L) ? Instant.ofEpochSecond(v) : Instant.ofEpochMilli(v);
-                dataBr = inst.atZone(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+                dataBr = inst.atZone(ZoneId.systemDefault()).format(dateFmt);
             } else {
                 String s = String.valueOf(raw).trim();
                 try {
-                    dataBr = Instant.parse(s).atZone(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+                    dataBr = Instant.parse(s).atZone(ZoneId.systemDefault()).format(dateFmt);
                 } catch (Exception e1) {
                     try {
-                        dataBr = OffsetDateTime.parse(s).atZoneSameInstant(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+                        dataBr = OffsetDateTime.parse(s).atZoneSameInstant(ZoneId.systemDefault()).format(dateFmt);
                     } catch (Exception e2) {
                         LocalDateTime ldt = LocalDateTime.parse(s);
-                        dataBr = ldt.atZone(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+                        dataBr = ldt.atZone(ZoneId.systemDefault()).format(dateFmt);
                     }
                 }
             }
         } catch (Exception e) {
             dataBr = "-";
         }
-
         h.date.setText(dataBr);
-        h.status.setText(o.getStatus().toUpperCase());
-        h.total.setText(String.valueOf(o.getValorTotal()));
 
-        if (h.items.getLayoutManager() == null) {
+        boolean podeExcluir = "ABERTO".equals(h.status.getText().toString())
+                || "EM APROVAÇÃO".equals(h.status.getText().toString());
+        h.deleteButton.setEnabled(podeExcluir);
+
+        h.deleteButton.setOnClickListener(v -> {
+            Call<Void> del = service.deleteOrderByOrderId(o.getIdPedido());
+            del.enqueue(new Callback<Void>() {
+                @Override
+                public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> resp) {
+                    if (resp.isSuccessful()) {
+                        int pos = h.getBindingAdapterPosition();
+                        if (pos != RecyclerView.NO_POSITION) {
+                            orders.remove(pos);
+                            notifyItemRemoved(pos);
+                        }
+                    }
+                }
+                @Override
+                public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) { }
+            });
+        });
+
+        if (h.items.getAdapter() == null) {
             h.items.setLayoutManager(new LinearLayoutManager(h.itemView.getContext()));
+            h.items.setNestedScrollingEnabled(false);
+            h.items.setAdapter(new OrderItemsAdapter(new ArrayList<>(), cnpj, mongoService));
         }
-
-        OrderItemsAdapter a = new OrderItemsAdapter(new ArrayList<>(), cnpj, mongoService);
-        h.items.setAdapter(a);
+        OrderItemsAdapter a = (OrderItemsAdapter) h.items.getAdapter();
 
         Call<List<OrderItem>> c = service.getOrderItems(o.getIdPedido());
         c.enqueue(new Callback<List<OrderItem>>() {
             @Override
             public void onResponse(@NonNull Call<List<OrderItem>> call, @NonNull Response<List<OrderItem>> response) {
-                if (response.isSuccessful() && response.body() != null) {
+                if (response.isSuccessful() && response.body() != null && a != null) {
                     a.updateList(response.body());
                 }
             }
-
             @Override
-            public void onFailure(@NonNull Call<List<OrderItem>> call, @NonNull Throwable t) {}
+            public void onFailure(@NonNull Call<List<OrderItem>> call, @NonNull Throwable t) { }
         });
     }
 
     @Override
     public int getItemCount() {
         return orders != null ? orders.size() : 0;
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return orders.get(position).getIdPedido();
     }
 
     public void updateList(List<OrderResponse> list) {
@@ -145,6 +162,8 @@ public class PurchaseAdapter extends RecyclerView.Adapter<PurchaseAdapter.VH> {
             date = itemView.findViewById(R.id.myOrderCardDate);
             payOrderButton = itemView.findViewById(R.id.payOrderButton);
             deleteButton = itemView.findViewById(R.id.deleteMyOrder);
+            items.setLayoutManager(new LinearLayoutManager(itemView.getContext()));
+            items.setNestedScrollingEnabled(false);
         }
     }
 }
