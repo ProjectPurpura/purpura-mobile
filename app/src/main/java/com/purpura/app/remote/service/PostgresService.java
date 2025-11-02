@@ -44,8 +44,8 @@ public class PostgresService {
         return postgresAPI.getComprasByComprador(id);
     }
 
-    public void deleteOrderByOrderId(Integer id){
-        postgresAPI.deletePedido(id);
+    public Call<Void> deleteOrderByOrderId(Integer id){
+        return postgresAPI.deletePedido(id);
     }
 
     public Call<Payment> getPaymentById(Integer id){

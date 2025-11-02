@@ -1,6 +1,5 @@
 package com.purpura.app.remote.service;
 
-import com.purpura.app.model.micro.CepResponse;
 import com.purpura.app.model.micro.PurpuraQrRequest;
 import com.purpura.app.remote.api.MicroApi;
 
@@ -15,25 +14,8 @@ public class MicroService extends BaseService<MicroApi> {
         super(MicroApi.class);
     }
 
-    public void getCepDetails(String cep, Consumer<CepResponse> cepResponseConsumer, Consumer<Integer> onError) {
-        this.api
-                .getCep(cep)
-                .enqueue(new Callback<>() {
-
-                    @Override
-                    public void onResponse(Call<CepResponse> call, Response<CepResponse> response) {
-                        if (response.isSuccessful()) {
-                            cepResponseConsumer.accept(response.body());
-                        } else {
-                            onError.accept(response.code());
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<CepResponse> call, Throwable t) {
-                        onError.accept(-1);
-                    }
-                });
+    public Call<Boolean> callCepIsValid(String cep){
+        return this.api.cep_is_valid(cep);
     }
 
 
