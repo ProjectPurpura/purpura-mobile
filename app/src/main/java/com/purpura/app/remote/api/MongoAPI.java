@@ -2,6 +2,8 @@ package com.purpura.app.remote.api;
 
 import com.purpura.app.configuration.EnvironmentVariables;
 import com.purpura.app.model.mongo.Address;
+import com.purpura.app.model.mongo.ChatRequest;
+import com.purpura.app.model.mongo.ChatResponse;
 import com.purpura.app.model.mongo.Company;
 import com.purpura.app.model.mongo.PixKey;
 import com.purpura.app.model.mongo.Residue;
@@ -52,6 +54,8 @@ public interface MongoAPI {
     Call<PixKey> createPixKey(@Path("cnpj") String cnpj, @Body PixKey pixKey);
     @POST("/empresa/{cnpj}/endereco")
     Call<Address> createAddress(@Path("cnpj") String cnpj, @Body Address address);
+    @POST("/chat/new")
+    Call<ChatResponse> createChat(@Body ChatRequest participants);
 
     //PUT
     @PUT("/empresa/{cnpj}")

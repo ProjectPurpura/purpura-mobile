@@ -58,7 +58,17 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.HomeViewHolder
 
         DecimalFormat df = new DecimalFormat("#,##0.00");
 
-        holder.residueName.setText(residue.getNome());
+        // Truncate the title to 14 characters plus "..." if longer
+        String originalName = residue.getNome();
+        String truncatedName;
+
+        if (originalName.length() > 14) {
+            truncatedName = originalName.substring(0, 14) + "...";
+        } else {
+            truncatedName = originalName;
+        }
+
+        holder.residueName.setText(truncatedName);
         holder.residueWeight.setText(df.format(residue.getPeso()) + " kg");
         holder.residuePrice.setText("R$ " + df.format(residue.getPreco()));
         holder.residueUnitType.setText(residue.getTipoUnidade());
