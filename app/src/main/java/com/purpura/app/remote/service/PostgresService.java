@@ -24,6 +24,10 @@ public class PostgresService {
         return postgresAPI.getNoticias();
     }
 
+    public Call<OrderResponse> approveOrder(Integer id){
+        return postgresAPI.aprovarPedido(id);
+    }
+
     public Call<List<OrderResponse>> getOrdersByClient(String id){
         return postgresAPI.getComprasByComprador(id);
     }

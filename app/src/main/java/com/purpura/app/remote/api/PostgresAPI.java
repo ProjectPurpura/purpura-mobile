@@ -4,6 +4,7 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.*;
 
+import com.google.firestore.admin.v1.Index;
 import com.purpura.app.configuration.EnvironmentVariables;
 import com.purpura.app.model.postgres.News;
 import com.purpura.app.model.postgres.order.OrderRequest;
@@ -95,7 +96,7 @@ public interface PostgresAPI {
     );
 
     @PATCH("pedido/{id}/aprovar")
-    Call<ResponseBody> aprovarPedido(
+    Call<OrderResponse> aprovarPedido(
             @Path("id") Integer id
     );
 
