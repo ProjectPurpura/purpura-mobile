@@ -1,4 +1,4 @@
-# 📱 Purpura App
+# 📱 PurPura App
 
 ![Java](https://img.shields.io/badge/Language-Java-orange?style=for-the-badge&logo=android)
 ![Android](https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white)
@@ -27,8 +27,7 @@ O aplicativo foi desenvolvido com um fluxo completo de e-commerce, desde o cadas
     * Nome, preço e descrição do produto
     * Dados da empresa vendedora
     * Peso e localização do produto
-    * Botões para adicionar ao carrinho e conversar com vendedor
-* 🛒 Carrinho de Compras: Funcionalidade para gerenciar produtos selecionados.
+    * Botão para comprar agora
 * 💬 Chat com Vendedor: Comunicação direta entre comprador e vendedor.
 
 #### 💰 Sistema de Pagamento
