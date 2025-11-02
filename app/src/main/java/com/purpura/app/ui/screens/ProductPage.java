@@ -1,7 +1,6 @@
 package com.purpura.app.ui.screens;
 
 import android.app.Activity;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -20,7 +19,6 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.gson.Gson;
 import com.purpura.app.R;
 import com.purpura.app.configuration.Methods;
 import com.purpura.app.configuration.Notifications;
@@ -38,7 +36,6 @@ import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
 
-import io.grpc.internal.JsonUtil;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -79,6 +76,7 @@ public class ProductPage extends AppCompatActivity {
     private boolean probeStarted = false;
     String sellerId;
     String cnpj;
+    Bundle chat = new Bundle();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,15 +85,11 @@ public class ProductPage extends AppCompatActivity {
         setContentView(R.layout.activity_product_page);
         bindViews();
         addToCart.setEnabled(false);
+        goToChat.setEnabled(false);
         Bundle env = getIntent().getExtras();
         String cnpjFromIntent = env != null ? env.getString("cnpj", "") : "";
         Serializable ser = env != null ? env.getSerializable("residue") : null;
         if (ser instanceof Residue) residue = (Residue) ser;
-
-        System.out.println(residue);
-        System.out.println(residue);System.out.println(residue);
-        System.out.println(residue);System.out.println(residue);System.out.println(residue);System.out.println(residue);System.out.println(residue);System.out.println(residue);System.out.println(residue);System.out.println(residue);System.out.println(residue);System.out.println(residue);System.out.println(residue);System.out.println(residue);
-
 
         if (residue == null) {
             methods.openScreenActivity(this, com.purpura.app.ui.screens.errors.InternetError.class);
@@ -133,14 +127,88 @@ public class ProductPage extends AppCompatActivity {
                 .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .get()
                 .addOnSuccessListener(document -> {
-                    if(document.exists()){
+                    if (document.exists()) {
                         cnpj = document.getString("cnpj");
+                        Log.d("ProductPage", "Firestore cnpj encontrado: " + cnpj);
+                        if (!isEmpty(cnpj)) {
+                            addToCart.setEnabled(true);
+                            goToChat.setEnabled(true);
+                            goToChat.setOnClickListener(v -> {
+                                chat.putString("buyerId", cnpj);
+                                methods.openScreenActivityWithBundle(this, ChatIndividual.class, chat);
+                            });
+                        } else {
+                            Toast.makeText(this, "CNPJ do usuário não encontrado, operação não permitida.", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Log.d("ProductPage", "Documento Firestore empresa não existe");
                     }
                 });
 
-        addToCart.setOnClickListener(v -> createOrder());
-
+        buyNow.setOnClickListener(v -> {
+            if (isEmpty(sellerId)) {
+                Toast.makeText(this, "Erro: vendedor não identificado, por favor tente novamente.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            createOrder();
+        });
     }
+
+    public void setupResidueData(String cnpjFallback) {
+        NumberFormat nf = NumberFormat.getCurrencyInstance(PT_BR);
+        setTextSafe(residueName, nvl(residue.getNome()));
+        setTextSafe(residuePrice, formatPriceBRL(residue.getPreco(), nf));
+        if (residueDescription != null) residueDescription.setText(nvl(residue.getDescricao()));
+        setTextSafe(residueWeight, formatNumber(residue.getPeso()));
+        setTextSafe(residueUnitType, nvl(residue.getTipoUnidade()));
+        loadResidueImage(residue.getUrlFoto());
+        setTextSafe(companyName, "Carregando empresa...");
+        setTextSafe(addressName, "Carregando endereço...");
+
+        sellerId = effectiveCnpj(nvl(residue.getCnpj()), cnpjFallback);
+        Log.d("ProductPage", "CNPJ efetivo para sellerId: " + sellerId);
+
+        loadCompany(sellerId);
+        loadAddress(sellerId, residue.getIdEndereco());
+    }
+
+    private void loadCompany(String cnpj) {
+        if (isEmpty(cnpj)) {
+            setTextSafe(companyName, "Empresa não encontrada");
+            loadCompanyPhoto(null);
+            probeOwnerCnpj();
+            return;
+        }
+        companyCall = mongoService.getCompanyByCnpj(cnpj);
+        companyCall.enqueue(new Callback<Company>() {
+            @Override
+            public void onResponse(Call<Company> call, Response<Company> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    company = response.body();
+                    chat.putString("SellerId", company.getCnpj());
+                    String nome = nvl(company.getNome());
+                    setTextSafe(companyName, notEmpty(nome) ? nome : "—");
+                    loadCompanyPhoto(company.getUrlFoto());
+
+                    sellerId = company.getCnpj();
+                    Log.d("ProductPage", "SellerId definido em loadCompany: " + sellerId);
+                    addToCart.setEnabled(true);
+                } else {
+                    setTextSafe(companyName, "Empresa não encontrada");
+                    loadCompanyPhoto(null);
+                    probeOwnerCnpj();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Company> call, Throwable t) {
+                setTextSafe(companyName, "Empresa não encontrada");
+                loadCompanyPhoto(null);
+                probeOwnerCnpj();
+            }
+        });
+    }
+
 
     @Override
     protected void onDestroy() {
@@ -150,7 +218,6 @@ public class ProductPage extends AppCompatActivity {
     }
 
     public void createOrder(){
-
         OrderRequest order = new OrderRequest(
                 sellerId,
                 cnpj,
@@ -175,9 +242,10 @@ public class ProductPage extends AppCompatActivity {
     }
 
     public void addResidueIntoOrder(Integer id){
-
         OrderItem item = new OrderItem(
                 residue.getId(),
+                residue.getUrlFoto(),
+                residue.getNome(),
                 residue.getPreco(),
                 Integer.parseInt(productQuantity.getText().toString()),
                 residue.getTipoUnidade(),
@@ -221,22 +289,6 @@ public class ProductPage extends AppCompatActivity {
         removeQuantity     = findViewById(R.id.removeQuantity);
     }
 
-    public void setupResidueData(String cnpjFallback) {
-        NumberFormat nf = NumberFormat.getCurrencyInstance(PT_BR);
-        setTextSafe(residueName, nvl(residue.getNome()));
-        setTextSafe(residuePrice, formatPriceBRL(residue.getPreco(), nf));
-        if (residueDescription != null) residueDescription.setText(nvl(residue.getDescricao()));
-        setTextSafe(residueWeight, formatNumber(residue.getPeso()));
-        setTextSafe(residueUnitType, nvl(residue.getTipoUnidade()));
-        loadResidueImage(residue.getUrlFoto());
-        setTextSafe(companyName, "Carregando empresa...");
-        setTextSafe(addressName, "Carregando endereço...");
-        sellerId = effectiveCnpj(nvl(residue.getCnpj()), cnpjFallback);
-        Log.d("ProductPage", "ResidueId=" + residue.getId() + ", IdEndereco=" + residue.getIdEndereco() + ", CNPJ=" + cnpj);
-        loadCompany(sellerId);
-        loadAddress(sellerId, residue.getIdEndereco());
-    }
-
     private void loadResidueImage(@Nullable String url) {
         if (residueImage == null) return;
         Glide.with(residueImage.getContext())
@@ -247,39 +299,6 @@ public class ProductPage extends AppCompatActivity {
                 .error(R.drawable.ic_image_placeholder)
                 .into(residueImage);
     }
-
-    private void loadCompany(String cnpj) {
-        if (isEmpty(cnpj)) {
-            setTextSafe(companyName, "Empresa não encontrada");
-            loadCompanyPhoto(null);
-            probeOwnerCnpj();
-            return;
-        }
-        companyCall = mongoService.getCompanyByCnpj(cnpj);
-        companyCall.enqueue(new Callback<Company>() {
-            @Override public void onResponse(Call<Company> call, Response<Company> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    company = response.body();
-                    String nome = nvl(company.getNome());
-                    setTextSafe(companyName, notEmpty(nome) ? nome : "—");
-                    loadCompanyPhoto(company.getUrlFoto());
-
-                    sellerId = company.getCnpj();
-                    addToCart.setEnabled(true);
-                } else {
-                    setTextSafe(companyName, "Empresa não encontrada");
-                    loadCompanyPhoto(null);
-                    probeOwnerCnpj();
-                }
-            }
-            @Override public void onFailure(Call<Company> call, Throwable t) {
-                setTextSafe(companyName, "Empresa não encontrada");
-                loadCompanyPhoto(null);
-                probeOwnerCnpj();
-            }
-        });
-    }
-
     private void loadCompanyPhoto(@Nullable String url) {
         if (companyPhoto == null) return;
         Glide.with(this)

@@ -111,17 +111,14 @@ public class MongoService {
     }
 
     public void createCompany(Company company, Context context) {
-        Log.e("Entrou antes da requisição MongoService", "Entrou antes da requisição MongoService");
         Call<Company> call = mongoAPI.createCompany(company);
         call.enqueue(new Callback<Company>() {
             @Override
             public void onResponse(Call<Company> call, Response<Company> response) {
                 if (response.isSuccessful()) {
-                    Log.d("API", "Empresa criada: " + new Gson().toJson(response.body()));
                     Toast.makeText(context, "Empresa criada com sucesso", Toast.LENGTH_SHORT).show();
                     methods.openActivityToMongoService(context, MainActivity.class);
                 } else {
-                    Log.e("API", "Erro: " + response.code() + " - " + response.message());
                     Toast.makeText(context, "Erro ao criar empresa: " + response.message(), Toast.LENGTH_SHORT).show();
                 }
             }
