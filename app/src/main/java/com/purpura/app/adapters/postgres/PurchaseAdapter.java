@@ -3,6 +3,8 @@ package com.purpura.app.adapters.postgres;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -50,6 +52,21 @@ public class PurchaseAdapter extends RecyclerView.Adapter<PurchaseAdapter.VH> {
 
     @Override
     public void onBindViewHolder(@NonNull VH h, int position) {
+
+        h.deleteButton.setEnabled(false);
+
+        if(h.status.getText().toString() == "ABERTO" || h.status.getText().toString() == "EM APROVAÇÃO"){
+            h.deleteButton.setEnabled(true);
+        }
+
+        h.deleteButton.setOnClickListener( v -> {
+            try{
+                service.deleteOrderByOrderId(h.id.getId());
+            }catch(Exception e){
+
+            }
+        });
+
         OrderResponse o = orders.get(position);
         h.id.setText(String.valueOf(o.getIdPedido()));
 
@@ -114,7 +131,9 @@ public class PurchaseAdapter extends RecyclerView.Adapter<PurchaseAdapter.VH> {
 
     static class VH extends RecyclerView.ViewHolder {
         RecyclerView items;
-        TextView id, total, status, date, obs;
+        TextView id, total, status, date;
+        Button payOrderButton;
+        ImageView deleteButton;
 
         VH(@NonNull View itemView) {
             super(itemView);
@@ -123,6 +142,8 @@ public class PurchaseAdapter extends RecyclerView.Adapter<PurchaseAdapter.VH> {
             total = itemView.findViewById(R.id.myOrdersCardTotal);
             status = itemView.findViewById(R.id.myOrderCardPaymentStatus);
             date = itemView.findViewById(R.id.myOrderCardDate);
+            payOrderButton = itemView.findViewById(R.id.payOrderButton);
+            deleteButton = itemView.findViewById(R.id.deleteMyOrder);
         }
     }
 }

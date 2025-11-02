@@ -65,16 +65,14 @@ public class RegisterAdress extends AppCompatActivity {
             String cDigits = c.replaceAll("\\D", "");
             if (cDigits.length() != 8) { toast("CEP inválido"); return; }
 
-            String cFormatted = cDigits.substring(0, 5) + "-" + cDigits.substring(5);
-
-            cep_valid = microService.callCepIsValid(cFormatted);
+            cep_valid = microService.callCepIsValid(c);
             cep_valid.enqueue(new Callback<Boolean>() {
                 @Override
                 public void onResponse(Call<Boolean> call, Response<Boolean> response) {
                     if (response.isSuccessful() && Boolean.TRUE.equals(response.body())) {
                         int number = 0;
                         try { number = Integer.parseInt(nu.trim()); } catch (Exception ignored) {}
-                        Address address = new Address(null, n, cFormatted, co, number);
+                        Address address = new Address(null, n, c, co, number);
                         carry.putSerializable("address", address);
                         Intent i = new Intent(RegisterAdress.this, RegisterPixKey.class);
                         i.putExtras(carry);

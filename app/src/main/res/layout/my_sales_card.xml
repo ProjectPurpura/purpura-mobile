@@ -31,7 +31,7 @@
             app:layout_constraintVertical_bias="0.062" />
 
         <TextView
-            android:id="@+id/myOrdersCardTotal"
+            android:id="@+id/mySalesCardTotal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
@@ -46,7 +46,7 @@
             app:layout_constraintVertical_bias="0.0" />
 
         <TextView
-            android:id="@+id/myOrderCardDate"
+            android:id="@+id/mySalesCardDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
@@ -62,7 +62,7 @@
             app:layout_constraintVertical_bias="0.0" />
 
         <TextView
-            android:id="@+id/myOrdersCardId"
+            android:id="@+id/mySalesCardId"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
@@ -94,7 +94,7 @@
             android:background="#D7D7D7"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/myOrdersCardReciclerView" />
+            app:layout_constraintTop_toBottomOf="@+id/mySalesCardReciclerView" />
 
         <TextView
             android:id="@+id/textView18"
@@ -107,7 +107,7 @@
             app:layout_constraintTop_toBottomOf="@+id/view3" />
 
         <TextView
-            android:id="@+id/myOrderCardPaymentStatus"
+            android:id="@+id/mySalesCardPaymentStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
@@ -126,12 +126,12 @@
             android:textColor="@color/roxo_padrao"
             android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/myOrdersCardTotal"
+            app:layout_constraintEnd_toStartOf="@+id/mySalesCardTotal"
             app:layout_constraintTop_toBottomOf="@+id/view3"
             app:layout_constraintVertical_bias="0.0" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/myOrdersCardReciclerView"
+            android:id="@+id/mySalesCardReciclerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
@@ -141,24 +141,14 @@
             tools:listitem="@layout/individual_order_card" />
 
         <Button
-            android:id="@+id/payOrderButton"
+            android:id="@+id/approveOrderButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="15dp"
             android:layout_marginTop="10dp"
-            android:text="Pagar Pedido"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/myOrderCardPaymentStatus" />
-
-        <ImageView
-            android:id="@+id/deleteMyOrder"
-            android:layout_width="40sp"
-            android:layout_height="35sp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="16dp"
+            android:text="Aprovar pedido"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/myOrdersCardTotal"
-            app:srcCompat="@drawable/delete_icon" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/mySalesCardPaymentStatus" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

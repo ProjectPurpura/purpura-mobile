@@ -44,7 +44,7 @@ public class SalesAdapter extends RecyclerView.Adapter<SalesAdapter.VH> {
     @NonNull
     @Override
     public VH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.my_orders_card, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.my_sales_card, parent, false);
         return new VH(v);
     }
 
@@ -118,11 +118,11 @@ public class SalesAdapter extends RecyclerView.Adapter<SalesAdapter.VH> {
 
         VH(@NonNull View itemView) {
             super(itemView);
-            items = itemView.findViewById(R.id.myOrdersCardReciclerView);
-            id = itemView.findViewById(R.id.myOrdersCardId);
-            total = itemView.findViewById(R.id.myOrdersCardTotal);
-            status = itemView.findViewById(R.id.myOrderCardPaymentStatus);
-            date = itemView.findViewById(R.id.myOrderCardDate);
+            items = itemView.findViewById(R.id.mySalesCardReciclerView);
+            id = itemView.findViewById(R.id.mySalesCardId);
+            total = itemView.findViewById(R.id.mySalesCardTotal);
+            status = itemView.findViewById(R.id.mySalesCardPaymentStatus);
+            date = itemView.findViewById(R.id.mySalesCardDate);
         }
     }
 }

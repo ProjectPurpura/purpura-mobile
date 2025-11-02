@@ -23,6 +23,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.gson.Gson;
 import com.purpura.app.R;
 import com.purpura.app.configuration.Methods;
+import com.purpura.app.configuration.Notifications;
 import com.purpura.app.model.mongo.Address;
 import com.purpura.app.model.mongo.Company;
 import com.purpura.app.model.mongo.Residue;
@@ -36,6 +37,8 @@ import java.io.Serializable;
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
+
+import io.grpc.internal.JsonUtil;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -49,6 +52,7 @@ public class ProductPage extends AppCompatActivity {
     private final PostgresService postgresService = new PostgresService();
 
     @Nullable private Residue residue;
+    Activity activity = ProductPage.this;
 
     private ImageView backButton;
     private ImageView residueImage;
@@ -135,8 +139,7 @@ public class ProductPage extends AppCompatActivity {
                 });
 
         addToCart.setOnClickListener(v -> {
-            Integer orderId = verifyUserOrders();
-            addResidueIntoOrder(orderId);
+            addResidueIntoOrder(createOrder());
         });
 
     }
@@ -185,19 +188,22 @@ public class ProductPage extends AppCompatActivity {
                 residue.getTipoUnidade(),
                 residue.getPeso()
         );
+
         postgresService.addItemOrder(item, id)
                 .enqueue(new Callback<OrderItem>() {
                     @Override
                     public void onResponse(Call<OrderItem> call, Response<OrderItem> response) {
-
+                        if(response.isSuccessful()){
+                            new Notifications().orderNotification(activity, ProductPage.this);
+                        }
                     }
 
                     @Override
                     public void onFailure(Call<OrderItem> call, Throwable t) {
+
                     }
                 });
     }
-
 
     public Integer verifyUserOrders(){
 
@@ -230,13 +236,13 @@ public class ProductPage extends AppCompatActivity {
     }
     private void bindViews() {
         buyNow = findViewById(R.id.productPageAddToShoppingCart);
-        backButton = findViewById(R.id.productPageBackButton);
-        residueImage = findViewById(R.id.productPageImage);
-        residueName = findViewById(R.id.productPageProductName);
-        residuePrice = findViewById(R.id.productPageProductValue2);
+        backButton         = findViewById(R.id.productPageBackButton);
+        residueImage       = findViewById(R.id.productPageImage);
+        residueName        = findViewById(R.id.productPageProductName);
+        residuePrice       = findViewById(R.id.productPageProductValue2);
         residueDescription = findViewById(R.id.productPageDescription);
-        residueWeight = findViewById(R.id.productPageProductWeight);
-        residueUnitType = findViewById(R.id.producPageUnitMesure);
+        residueWeight      = findViewById(R.id.productPageProductWeight);
+        residueUnitType    = findViewById(R.id.producPageUnitMesure);
         if (residueUnitType == null) {
             int altId = getResources().getIdentifier("productPageUnitMeasure", "id", getPackageName());
             if (altId != 0) residueUnitType = findViewById(altId);
