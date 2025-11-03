@@ -39,7 +39,6 @@ public class QrCodePayment extends AppCompatActivity {
         ImageView copyButton = findViewById(R.id.qrCodePaymentCopyPasteButton);
         TextView qrCodeTextView = findViewById(R.id.qrCodePaymentPixURL);
 
-        //----- Bundle -----------------//
         String pixKey = null;
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
@@ -51,8 +50,6 @@ public class QrCodePayment extends AppCompatActivity {
         qrCodeTextView.setText(pixKey);
 
         loadQr(pixKey);
-
-        //----- SetOnClickListener -----//
 
         backButton.setOnClickListener(v -> finish());
 

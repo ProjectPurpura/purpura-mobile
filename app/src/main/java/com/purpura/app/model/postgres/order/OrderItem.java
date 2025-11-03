@@ -13,7 +13,7 @@ public class OrderItem implements Serializable {
     private Double peso;
     private String tipoUnidade;
 
-    public OrderItem(Long id, String nome, String urlFoto, String idResiduo, Double preco, Integer quantidade, Double peso, String tipoUnidade) {
+    public OrderItem(Long id, String idResiduo, String nome, String urlFoto, Double preco, Integer quantidade, Double peso, String tipoUnidade) {
         this.id = id;
         this.nome = nome;
         this.urlFoto = urlFoto;
