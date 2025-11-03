@@ -75,7 +75,7 @@ public class ChatListFragment extends Fragment {
                         if (document.exists()) {
                             String cnpj = document.getString("cnpj");
 
-                            String url = "https://purpura-react-site.vercel.app/#cnpj=" + cnpj;
+                            String url = "https://site-purpura.onrender.com/#cnpj=" + cnpj;
 
                             WebSettings webSettings = chatListWebView.getSettings();
 

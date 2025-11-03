@@ -62,7 +62,9 @@ public class ChatIndividual extends AppCompatActivity {
                 @Override
                 public void onResponse(Call<ChatResponse> call, Response<ChatResponse> response) {
                     if(response.isSuccessful()){
-                        String url =  "https://purpura-react-site.vercel.app/chat/" + response.body().getId() + "/#cnpj=" + part2;
+
+                        //Devido ao site estar hospedado no Render, demora para carregar, mas funciona! Só um pouquinho de paciência :)
+                        String url =  "https://site-purpura.onrender.com/chat/" + response.body().getId() + "/#cnpj=" + part2;
 
                         WebSettings webSettings = webView.getSettings();
 
@@ -73,6 +75,7 @@ public class ChatIndividual extends AppCompatActivity {
                         webView.setWebViewClient(new WebViewClient());
 
                         webView.loadUrl(url);
+
                     }
                 }
 
