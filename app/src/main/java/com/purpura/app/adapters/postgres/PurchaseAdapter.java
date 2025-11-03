@@ -88,7 +88,7 @@ public class PurchaseAdapter extends RecyclerView.Adapter<PurchaseAdapter.VH> {
                 public void onResponse(Call<List<OrderItem>> call, Response<List<OrderItem>> response) {
                     if(response.isSuccessful()){
                         List<OrderItem> orders = response.body();
-                        getPixKey(activity, String.valueOf(orders.get(0).getId()), orders.get(0).g);
+                        getPixKey(activity, String.valueOf(orders.get(0).getId()), "");
                     }
                 }
 
