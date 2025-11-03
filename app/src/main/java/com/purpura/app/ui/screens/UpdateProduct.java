@@ -30,8 +30,10 @@ import com.cloudinary.android.callback.UploadCallback;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.purpura.app.R;
+import com.purpura.app.configuration.Methods;
 import com.purpura.app.model.mongo.Residue;
 import com.purpura.app.remote.service.MongoService;
+import com.purpura.app.ui.screens.accountFeatures.MyProducts;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -246,6 +248,10 @@ public class UpdateProduct extends AppCompatActivity {
 
         mongoService.updateResidue(c, id, body, this);
         Toast.makeText(this, "Atualizando...", Toast.LENGTH_SHORT).show();
+        Methods methods = new Methods();
+        Toast.makeText(this, "Produto Atualizado", Toast.LENGTH_SHORT).show();
+        methods.openScreenActivity(this, MyProducts.class);
+
     }
 
     private void initCloudinary() {

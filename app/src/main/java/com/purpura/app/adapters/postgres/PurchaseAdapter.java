@@ -25,6 +25,7 @@ import com.purpura.app.remote.service.MongoService;
 import com.purpura.app.remote.service.PostgresService;
 import com.purpura.app.ui.screens.QrCodePayment;
 
+import java.text.DecimalFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
@@ -48,8 +49,7 @@ public class PurchaseAdapter extends RecyclerView.Adapter<PurchaseAdapter.VH> {
     Methods methods = new Methods();
 
     private final DateTimeFormatter dateFmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-    private final java.text.NumberFormat brlFmt =
-            java.text.NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
+    private final DecimalFormat numberFmt = (DecimalFormat) DecimalFormat.getNumberInstance(new Locale("pt", "BR"));
 
     public PurchaseAdapter(List<OrderResponse> orders, Activity activity, PostgresService service, String cnpj, MongoService mongoService) {
         this.orders = orders != null ? orders : new ArrayList<>();
@@ -57,6 +57,7 @@ public class PurchaseAdapter extends RecyclerView.Adapter<PurchaseAdapter.VH> {
         this.activity = activity;
         this.cnpj = cnpj;
         this.mongoService = mongoService;
+        numberFmt.applyPattern("#,##0.00");
         setHasStableIds(true);
     }
 
@@ -74,7 +75,7 @@ public class PurchaseAdapter extends RecyclerView.Adapter<PurchaseAdapter.VH> {
 
         h.id.setText(String.valueOf(o.getIdPedido()));
         h.status.setText(o.getStatus() == null ? "-" : o.getStatus().toUpperCase());
-        h.total.setText(o.getValorTotal() == null ? "-" : brlFmt.format(o.getValorTotal()));
+        h.total.setText(o.getValorTotal() == null ? "-" : numberFmt.format(o.getValorTotal()));
 
         boolean pay = "APROVADO".equals(h.status.getText().toString());
 
@@ -116,18 +117,22 @@ public class PurchaseAdapter extends RecyclerView.Adapter<PurchaseAdapter.VH> {
             });
         });
 
-        if (h.items.getAdapter() == null) {
-            h.items.setLayoutManager(new LinearLayoutManager(h.itemView.getContext()));
-            h.items.setNestedScrollingEnabled(false);
-            h.items.setAdapter(new OrderItemsAdapter(new ArrayList<>(), cnpj, mongoService));
+        h.items.setLayoutManager(new LinearLayoutManager(h.itemView.getContext()));
+        h.items.setNestedScrollingEnabled(false);
+
+        String sellerCnpj = o.getIdVendedor();
+        if (sellerCnpj == null || sellerCnpj.isEmpty()) {
+            sellerCnpj = this.cnpj;
         }
-        OrderItemsAdapter a = (OrderItemsAdapter) h.items.getAdapter();
+
+        OrderItemsAdapter a = new OrderItemsAdapter(new ArrayList<>(), sellerCnpj, mongoService);
+        h.items.setAdapter(a);
 
         Call<List<OrderItem>> c = service.getOrderItems(o.getIdPedido());
         c.enqueue(new Callback<List<OrderItem>>() {
             @Override
             public void onResponse(@NonNull Call<List<OrderItem>> call, @NonNull Response<List<OrderItem>> response) {
-                if (response.isSuccessful() && response.body() != null && a != null) {
+                if (response.isSuccessful() && response.body() != null) {
                     a.updateList(response.body());
                 }
             }
@@ -198,7 +203,6 @@ public class PurchaseAdapter extends RecyclerView.Adapter<PurchaseAdapter.VH> {
     static class VH extends RecyclerView.ViewHolder {
         RecyclerView items;
         TextView id, total, status, date;
-
         Button payOrderButton;
         ImageView deleteButton;
 

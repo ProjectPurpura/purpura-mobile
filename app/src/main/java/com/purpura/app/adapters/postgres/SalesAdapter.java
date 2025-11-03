@@ -6,7 +6,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -18,6 +17,7 @@ import com.purpura.app.model.postgres.order.OrderItem;
 import com.purpura.app.remote.service.MongoService;
 import com.purpura.app.remote.service.PostgresService;
 
+import java.text.DecimalFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
@@ -25,6 +25,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -36,12 +37,14 @@ public class SalesAdapter extends RecyclerView.Adapter<SalesAdapter.VH> {
     private final PostgresService service;
     private final String cnpj;
     private final MongoService mongoService;
+    private final DecimalFormat numberFmt = (DecimalFormat) DecimalFormat.getNumberInstance(new Locale("pt", "BR"));
 
     public SalesAdapter(List<OrderResponse> orders, PostgresService service, String cnpj, MongoService mongoService) {
         this.orders = orders != null ? orders : new ArrayList<>();
         this.service = service;
         this.cnpj = cnpj;
         this.mongoService = mongoService;
+        numberFmt.applyPattern("#,##0.00");
     }
 
     @NonNull
@@ -56,6 +59,7 @@ public class SalesAdapter extends RecyclerView.Adapter<SalesAdapter.VH> {
         OrderResponse o = orders.get(position);
         h.id.setText(String.valueOf(o.getIdPedido()));
         h.approveOrderButton.setEnabled(false);
+
         String dataBr;
         Object raw = o.getData();
         try {
@@ -82,11 +86,13 @@ public class SalesAdapter extends RecyclerView.Adapter<SalesAdapter.VH> {
 
         h.date.setText(dataBr);
         h.status.setText(o.getStatus().toUpperCase());
-        h.total.setText(String.valueOf(o.getValorTotal()));
+        h.total.setText(o.getValorTotal() == null ? "-" : numberFmt.format(o.getValorTotal()));
+
         boolean delete = "ABERTO".equals(h.status.getText().toString())
                 || "APROVADO".equals(h.status.getText().toString());
         h.deleteSale.setEnabled(delete);
         h.approveOrderButton.setEnabled(delete);
+
         h.approveOrderButton.setOnClickListener(v -> {
             service.approveOrder(Integer.valueOf(h.id.getText().toString())).enqueue(new Callback<OrderResponse>() {
                 @Override
@@ -95,10 +101,10 @@ public class SalesAdapter extends RecyclerView.Adapter<SalesAdapter.VH> {
                 }
 
                 @Override
-                public void onFailure(Call<OrderResponse> call, Throwable t) {
-                }
+                public void onFailure(Call<OrderResponse> call, Throwable t) { }
             });
         });
+
         h.deleteSale.setOnClickListener(v -> {
             Call<Void> del = service.deleteOrderByOrderId(o.getIdPedido());
             del.enqueue(new Callback<Void>() {
@@ -116,6 +122,7 @@ public class SalesAdapter extends RecyclerView.Adapter<SalesAdapter.VH> {
                 public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) { }
             });
         });
+
         if (h.items.getLayoutManager() == null) {
             h.items.setLayoutManager(new LinearLayoutManager(h.itemView.getContext()));
         }
@@ -133,7 +140,7 @@ public class SalesAdapter extends RecyclerView.Adapter<SalesAdapter.VH> {
             }
 
             @Override
-            public void onFailure(@NonNull Call<List<OrderItem>> call, @NonNull Throwable t) {}
+            public void onFailure(@NonNull Call<List<OrderItem>> call, @NonNull Throwable t) { }
         });
     }
 
