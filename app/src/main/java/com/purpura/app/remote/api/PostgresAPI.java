@@ -101,7 +101,7 @@ public interface PostgresAPI {
     );
 
     @PATCH("pedido/{id}/concluir")
-    Call<ResponseBody> concluirPedido(
+    Call<OrderItem> concluirPedido(
             @Path("id") Integer id
     );
 
