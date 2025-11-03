@@ -1,7 +1,6 @@
 package com.purpura.app.adapters.postgres;
 
 import android.app.Activity;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,8 +13,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.purpura.app.R;
 import com.purpura.app.configuration.Methods;
 import com.purpura.app.model.mongo.Residue;
@@ -48,7 +45,6 @@ public class PurchaseAdapter extends RecyclerView.Adapter<PurchaseAdapter.VH> {
     private final MongoService mongoService;
     Methods methods = new Methods();
 
-    private final DateTimeFormatter dateFmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     private final DecimalFormat numberFmt = (DecimalFormat) DecimalFormat.getNumberInstance(new Locale("pt", "BR"));
 
     public PurchaseAdapter(List<OrderResponse> orders, Activity activity, PostgresService service, String cnpj, MongoService mongoService) {
@@ -78,27 +74,53 @@ public class PurchaseAdapter extends RecyclerView.Adapter<PurchaseAdapter.VH> {
         h.total.setText(o.getValorTotal() == null ? "-" : numberFmt.format(o.getValorTotal()));
 
         boolean pay = "APROVADO".equals(h.status.getText().toString());
-
-        if(pay){
+        if (pay) {
             h.payOrderButton.setEnabled(true);
         }
 
-        h.payOrderButton.setOnClickListener(v -> {
-            service.getOrderItems(Integer.valueOf(h.id.getText().toString())).enqueue(new Callback<List<OrderItem>>() {
-                @Override
-                public void onResponse(Call<List<OrderItem>> call, Response<List<OrderItem>> response) {
-                    if(response.isSuccessful()){
-                        List<OrderItem> orders = response.body();
-                        getPixKey(activity, String.valueOf(orders.get(0).getId()), "");
+        String dataBr;
+        Object raw = o.getData();
+        try {
+            if (raw instanceof Number) {
+                long v = ((Number) raw).longValue();
+                Instant inst = (v < 10_000_000_000L) ? Instant.ofEpochSecond(v) : Instant.ofEpochMilli(v);
+                dataBr = inst.atZone(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+            } else {
+                String s = String.valueOf(raw).trim();
+                try {
+                    dataBr = Instant.parse(s).atZone(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+                } catch (Exception e1) {
+                    try {
+                        dataBr = OffsetDateTime.parse(s).atZoneSameInstant(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+                    } catch (Exception e2) {
+                        LocalDateTime ldt = LocalDateTime.parse(s);
+                        dataBr = ldt.atZone(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
                     }
                 }
+            }
+        } catch (Exception e) {
+            dataBr = "-";
+        }
 
+        h.date.setText(dataBr);
+
+        h.payOrderButton.setOnClickListener(v -> {
+            service.getOrderItems(Integer.parseInt(h.id.getText().toString())).enqueue(new Callback<List<OrderItem>>() {
                 @Override
-                public void onFailure(Call<List<OrderItem>> call, Throwable t) {
-
+                public void onResponse(@NonNull Call<List<OrderItem>> call, @NonNull Response<List<OrderItem>> response) {
+                    if (response.isSuccessful() && response.body() != null && !response.body().isEmpty()) {
+                        List<OrderItem> orderItems = response.body();
+                        String residueId = orderItems.get(0).getIdResiduo();
+                        String sellerCnpj = o.getIdVendedor() == null || o.getIdVendedor().isEmpty() ? PurchaseAdapter.this.cnpj : o.getIdVendedor();
+                        Double total = o.getValorTotal();
+                        getPixKey(activity, residueId, sellerCnpj, total == null ? 0d : total, o.getIdPedido());
+                    }
                 }
+                @Override
+                public void onFailure(@NonNull Call<List<OrderItem>> call, @NonNull Throwable t) { }
             });
         });
+
         h.deleteButton.setOnClickListener(v -> {
             Call<Void> del = service.deleteOrderByOrderId(o.getIdPedido());
             del.enqueue(new Callback<Void>() {
@@ -141,47 +163,20 @@ public class PurchaseAdapter extends RecyclerView.Adapter<PurchaseAdapter.VH> {
         });
     }
 
-    public void getPixKey(Activity activity, String id, String cnpj){
-        mongoService.getResidueById(cnpj, id).enqueue(new Callback<Residue>() {
+    public void getPixKey(Activity activity, String residueId, String cnpj, double total, int orderId) {
+        mongoService.getResidueById(cnpj, residueId).enqueue(new Callback<Residue>() {
             @Override
-            public void onResponse(Call<Residue> call, Response<Residue> response) {
-                if(response.isSuccessful() && response.body() != null){
+            public void onResponse(@NonNull Call<Residue> call, @NonNull Response<Residue> response) {
+                if (response.isSuccessful() && response.body() != null) {
                     Bundle bundle = new Bundle();
-                    System.out.println(response.body().getIdChavePix());
-                    System.out.println(response.body().getIdChavePix());
-                    System.out.println(response.body().getIdChavePix());
-                    System.out.println(response.body().getIdChavePix());
-                    System.out.println(response.body().getIdChavePix());
-                    System.out.println(response.body().getIdChavePix());
-                    System.out.println(response.body().getIdChavePix());
-                    System.out.println(response.body().getIdChavePix());
-                    System.out.println(response.body().getIdChavePix());
-                    System.out.println(response.body().getIdChavePix());
-                    System.out.println(response.body().getIdChavePix());
-                    System.out.println(response.body().getIdChavePix());
-                    System.out.println(response.body().getIdChavePix());
-                    System.out.println(response.body().getIdChavePix());
-                    System.out.println(response.body().getIdChavePix());
-                    System.out.println(response.body().getIdChavePix());
-                    System.out.println(response.body().getIdChavePix());
-                    System.out.println(response.body().getIdChavePix());
-                    System.out.println(response.body().getIdChavePix());
-                    System.out.println(response.body().getIdChavePix());
-                    System.out.println(response.body().getIdChavePix());
-                    System.out.println(response.body().getIdChavePix());
-                    System.out.println(response.body().getIdChavePix());
-                    System.out.println(response.body().getIdChavePix());
-                    System.out.println(response.body().getIdChavePix());
-                    System.out.println(response.body().getIdChavePix());
                     bundle.putString("pix", response.body().getIdChavePix());
+                    bundle.putDouble("total", total);
+                    bundle.putInt("orderId", orderId);
                     methods.openScreenActivityWithBundle(activity, QrCodePayment.class, bundle);
                 }
             }
-
             @Override
-            public void onFailure(Call<Residue> call, Throwable t) {
-
-            }
+            public void onFailure(@NonNull Call<Residue> call, @NonNull Throwable t) { }
         });
     }
 

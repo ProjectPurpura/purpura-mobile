@@ -4,6 +4,7 @@ import com.purpura.app.configuration.EnvironmentVariables;
 import com.purpura.app.model.micro.QrRequest;
 import com.purpura.app.remote.util.Api;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -16,5 +17,5 @@ public interface MicroApi {
     Call<Boolean> cep_is_valid(@Path("cep") String cep);
 
     @POST("qr/generate")
-    Call<byte[]> generateQr(@Body QrRequest qrRequest);
+    Call<ResponseBody> generateQr(@Body QrRequest qrRequest);
 }
