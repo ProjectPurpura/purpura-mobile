@@ -85,10 +85,10 @@ app/
    * Git
 
 2. Clonagem:
-   bash
-   git clone https://github.com/ProjectPurpura/purpura-mobile.git
-   cd purpura-mobile
-   
+```bash
+git clone https://github.com/ProjectPurpura/purpura-mobile.git
+cd purpura-mobile
+``` 
 
 3. Build e Execução:
    * Abra o projeto no Android Studio
