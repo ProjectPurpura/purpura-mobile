@@ -84,14 +84,14 @@ public class SalesAdapter extends RecyclerView.Adapter<SalesAdapter.VH> {
         h.status.setText(o.getStatus().toUpperCase());
         h.total.setText(String.valueOf(o.getValorTotal()));
         boolean delete = "ABERTO".equals(h.status.getText().toString())
-                || "EM APROVAÇÃO".equals(h.status.getText().toString());
+                || "APROVADO".equals(h.status.getText().toString());
         h.deleteSale.setEnabled(delete);
         h.approveOrderButton.setEnabled(delete);
         h.approveOrderButton.setOnClickListener(v -> {
             service.approveOrder(Integer.valueOf(h.id.getText().toString())).enqueue(new Callback<OrderResponse>() {
                 @Override
                 public void onResponse(Call<OrderResponse> call, Response<OrderResponse> response) {
-                    h.status.setText("EM APROVAÇÃO");
+                    h.status.setText("APROVADO");
                 }
 
                 @Override
