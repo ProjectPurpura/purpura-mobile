@@ -1,5 +1,8 @@
 package com.purpura.app.adapters.postgres;
 
+import android.app.Activity;
+import android.os.Build;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,11 +14,16 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.purpura.app.R;
+import com.purpura.app.configuration.Methods;
+import com.purpura.app.model.mongo.Residue;
 import com.purpura.app.model.postgres.order.OrderItem;
 import com.purpura.app.model.postgres.order.OrderResponse;
 import com.purpura.app.remote.service.MongoService;
 import com.purpura.app.remote.service.PostgresService;
+import com.purpura.app.ui.screens.QrCodePayment;
 
 import java.text.DecimalFormat;
 import java.time.Instant;
@@ -36,14 +44,17 @@ public class PurchaseAdapter extends RecyclerView.Adapter<PurchaseAdapter.VH> {
     private List<OrderResponse> orders;
     private final PostgresService service;
     private final String cnpj;
+    Activity activity;
     private final MongoService mongoService;
+    Methods methods = new Methods();
 
     private final DateTimeFormatter dateFmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     private final DecimalFormat numberFmt = (DecimalFormat) DecimalFormat.getNumberInstance(new Locale("pt", "BR"));
 
-    public PurchaseAdapter(List<OrderResponse> orders, PostgresService service, String cnpj, MongoService mongoService) {
+    public PurchaseAdapter(List<OrderResponse> orders, Activity activity, PostgresService service, String cnpj, MongoService mongoService) {
         this.orders = orders != null ? orders : new ArrayList<>();
         this.service = service;
+        this.activity = activity;
         this.cnpj = cnpj;
         this.mongoService = mongoService;
         numberFmt.applyPattern("#,##0.00");
@@ -60,40 +71,34 @@ public class PurchaseAdapter extends RecyclerView.Adapter<PurchaseAdapter.VH> {
     @Override
     public void onBindViewHolder(@NonNull VH h, int position) {
         OrderResponse o = orders.get(position);
+        h.payOrderButton.setEnabled(false);
 
         h.id.setText(String.valueOf(o.getIdPedido()));
         h.status.setText(o.getStatus() == null ? "-" : o.getStatus().toUpperCase());
         h.total.setText(o.getValorTotal() == null ? "-" : numberFmt.format(o.getValorTotal()));
 
-        String dataBr;
-        Object raw = o.getData();
-        try {
-            if (raw instanceof Number) {
-                long v = ((Number) raw).longValue();
-                Instant inst = (v < 10_000_000_000L) ? Instant.ofEpochSecond(v) : Instant.ofEpochMilli(v);
-                dataBr = inst.atZone(ZoneId.systemDefault()).format(dateFmt);
-            } else {
-                String s = String.valueOf(raw).trim();
-                try {
-                    dataBr = Instant.parse(s).atZone(ZoneId.systemDefault()).format(dateFmt);
-                } catch (Exception e1) {
-                    try {
-                        dataBr = OffsetDateTime.parse(s).atZoneSameInstant(ZoneId.systemDefault()).format(dateFmt);
-                    } catch (Exception e2) {
-                        LocalDateTime ldt = LocalDateTime.parse(s);
-                        dataBr = ldt.atZone(ZoneId.systemDefault()).format(dateFmt);
+        boolean pay = "APROVADO".equals(h.status.getText().toString());
+
+        if(pay){
+            h.payOrderButton.setEnabled(true);
+        }
+
+        h.payOrderButton.setOnClickListener(v -> {
+            service.getOrderItems(Integer.valueOf(h.id.getText().toString())).enqueue(new Callback<List<OrderItem>>() {
+                @Override
+                public void onResponse(Call<List<OrderItem>> call, Response<List<OrderItem>> response) {
+                    if(response.isSuccessful()){
+                        List<OrderItem> orders = response.body();
+                        getPixKey(activity, String.valueOf(orders.get(0).getId()), "");
                     }
                 }
-            }
-        } catch (Exception e) {
-            dataBr = "-";
-        }
-        h.date.setText(dataBr);
 
-        boolean podeExcluir = "ABERTO".equals(h.status.getText().toString())
-                || "EM APROVAÇÃO".equals(h.status.getText().toString());
-        h.deleteButton.setEnabled(podeExcluir);
+                @Override
+                public void onFailure(Call<List<OrderItem>> call, Throwable t) {
 
+                }
+            });
+        });
         h.deleteButton.setOnClickListener(v -> {
             Call<Void> del = service.deleteOrderByOrderId(o.getIdPedido());
             del.enqueue(new Callback<Void>() {
@@ -133,6 +138,50 @@ public class PurchaseAdapter extends RecyclerView.Adapter<PurchaseAdapter.VH> {
             }
             @Override
             public void onFailure(@NonNull Call<List<OrderItem>> call, @NonNull Throwable t) { }
+        });
+    }
+
+    public void getPixKey(Activity activity, String id, String cnpj){
+        mongoService.getResidueById(cnpj, id).enqueue(new Callback<Residue>() {
+            @Override
+            public void onResponse(Call<Residue> call, Response<Residue> response) {
+                if(response.isSuccessful() && response.body() != null){
+                    Bundle bundle = new Bundle();
+                    System.out.println(response.body().getIdChavePix());
+                    System.out.println(response.body().getIdChavePix());
+                    System.out.println(response.body().getIdChavePix());
+                    System.out.println(response.body().getIdChavePix());
+                    System.out.println(response.body().getIdChavePix());
+                    System.out.println(response.body().getIdChavePix());
+                    System.out.println(response.body().getIdChavePix());
+                    System.out.println(response.body().getIdChavePix());
+                    System.out.println(response.body().getIdChavePix());
+                    System.out.println(response.body().getIdChavePix());
+                    System.out.println(response.body().getIdChavePix());
+                    System.out.println(response.body().getIdChavePix());
+                    System.out.println(response.body().getIdChavePix());
+                    System.out.println(response.body().getIdChavePix());
+                    System.out.println(response.body().getIdChavePix());
+                    System.out.println(response.body().getIdChavePix());
+                    System.out.println(response.body().getIdChavePix());
+                    System.out.println(response.body().getIdChavePix());
+                    System.out.println(response.body().getIdChavePix());
+                    System.out.println(response.body().getIdChavePix());
+                    System.out.println(response.body().getIdChavePix());
+                    System.out.println(response.body().getIdChavePix());
+                    System.out.println(response.body().getIdChavePix());
+                    System.out.println(response.body().getIdChavePix());
+                    System.out.println(response.body().getIdChavePix());
+                    System.out.println(response.body().getIdChavePix());
+                    bundle.putString("pix", response.body().getIdChavePix());
+                    methods.openScreenActivityWithBundle(activity, QrCodePayment.class, bundle);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Residue> call, Throwable t) {
+
+            }
         });
     }
 

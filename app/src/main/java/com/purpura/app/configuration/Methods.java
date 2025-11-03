@@ -10,7 +10,6 @@ import android.net.Network;
 import android.net.NetworkCapabilities;
 import android.os.Bundle;
 import android.text.Editable;
-import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -70,7 +69,9 @@ public class Methods implements TextWatcher {
 
     public void openScreenActivityWithBundle(Activity actualScreen, Class<?> nextScreen, Bundle bundle) {
         Intent route = new Intent(actualScreen, nextScreen);
-        route.putExtras(bundle);
+        if (bundle != null) {
+            route.putExtras(bundle);
+        }
         actualScreen.startActivity(route);
     }
 
