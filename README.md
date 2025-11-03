@@ -108,6 +108,18 @@ O aplicativo utiliza uma paleta de cores consistente:
 * Roxo Claro: <span style="color: black;background-color:#E4CFFF;border-radius:4px;padding:0.5%;font-family:monospace">#E4CFFF</span>
 * Elementos: Bordas arredondadas, sombras suaves e transições fluidas
 
+## Funcionalidades:
+* Firebase - Autenticação de usuários (Register, Login)
+* Recurso de hardware - Tirar foto de um produto ao cadastrar (RegisterProduct)
+* Persistência de dados - Usamos três APIs (MongoAPI, PostgresAPI e MicroAPI)
+* SplashScreen - Primeira tela do app (SplashScreen)
+* Configurar Perfil - Atualizar perfil (UpdateProfile)
+* Uso de notificação no celular - Quando um pedido é criado e quando o e-mail de recuperação de senha (Notifications)
+* App ajustado para celular e tablet - Algumas telas ajustadas caso não ficassem boas em ambos (layouts)
+
+## Aviso:
+* O render demora um pouquinho, então o chat estará mais lento do que as demais funcionalidades. Pedimos um pouco de paciência :)
+
 ## 👨‍💻 Autores
 Feito com 💜 por:
 * [Isadora Gonçalves Jardim](https://github.com/Dora3003)
