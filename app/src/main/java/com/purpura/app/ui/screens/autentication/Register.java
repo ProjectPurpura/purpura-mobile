@@ -48,7 +48,6 @@ import com.purpura.app.model.mongo.Company;
 import com.purpura.app.remote.service.MongoService;
 import com.purpura.app.ui.screens.MainActivity;
 
-import java.sql.SQLOutput;
 import java.util.HashMap;
 import java.util.Map;
 

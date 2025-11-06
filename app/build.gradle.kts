@@ -38,7 +38,7 @@ android {
 
 dependencies {
     // Firebase BoM para alinhar versões automaticamente
-    implementation(platform("com.google.firebase:firebase-bom:32.2.0"))
+    implementation(platform("com.google.firebase:firebase-bom:34.1.0"))
 
     // Firebase libs sem versão (usará a versão do BoM)
     implementation("com.google.firebase:firebase-auth")
@@ -54,7 +54,7 @@ dependencies {
     // Google Sign-In
     implementation("com.google.android.gms:play-services-auth:21.0.0")
     implementation("androidx.credentials:credentials:1.5.0")
-    implementation("androidx.credentials:credentials-play-services-auth:1.5.0")
+    implementation("com.google.android.gms:play-services-auth:21.0.0")
     implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
 
     // AndroidX e Material
