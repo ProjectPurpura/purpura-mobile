@@ -9,6 +9,16 @@
 
     <include layout="@layout/content_my_products" />
 
+    <TextView
+        android:id="@+id/myProductsEmptyMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:text="Você ainda não cadastrou nenhum produto.\nClique no '+' para começar!"
+        android:textSize="18sp"
+        android:visibility="gone"
+        tools:visibility="visible" />
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/addProducts"
         android:layout_width="wrap_content"

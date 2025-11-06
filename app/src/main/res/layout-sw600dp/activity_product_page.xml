@@ -24,7 +24,6 @@
             tools:layout_editor_absoluteX="14dp"
             tools:layout_editor_absoluteY="35dp">
 
-            <!-- Botão de voltar -->
             <ImageView
                 android:id="@+id/productPageBackButton"
                 android:layout_width="40sp"
@@ -35,7 +34,6 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/back_button" />
 
-            <!-- ViewPager2 (imagens do produto) -->
             <ImageView
                 android:id="@+id/productPageImage"
                 android:layout_width="420sp"
@@ -46,10 +44,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <!-- Nome do produto -->
-
-            <!-- Nome da empresa -->
-
             <TextView
                 android:id="@+id/productPageProductValue2"
                 android:layout_width="wrap_content"
@@ -57,37 +51,36 @@
                 android:layout_marginTop="20dp"
                 android:text="00,00"
                 android:textSize="20sp"
+                android:textColor="#095D19"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/productPageProductName"
                 app:layout_constraintTop_toBottomOf="@+id/productPageImage" />
 
             <TextView
                 android:id="@+id/productPageCompanyName"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
+                android:layout_marginEnd="20dp"
                 android:layout_marginTop="55dp"
                 android:text="Nome da empresa"
                 android:textSize="16sp"
+                android:maxLines="1"
+                android:ellipsize="end"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/productPageCompanyPhoto"
                 app:layout_constraintTop_toBottomOf="@+id/productPageProductName" />
 
-            <!-- Peso ícone -->
-
-            <!-- Descrição -->
-
-            <!-- Peso -->
-
-            <EditText
+            <TextView
                 android:id="@+id/productPageDescription"
                 android:layout_width="420sp"
                 android:layout_height="70sp"
                 android:layout_marginTop="20dp"
-                android:ems="10"
-                android:focusable="true"
                 android:gravity="start|top"
                 android:hint="Descrição do produto"
-                android:inputType="textMultiLine"
+                android:scrollbars="vertical"
+                android:textSize="16sp"
+                android:textColor="@color/black"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/productPageCompanyPhoto" />
@@ -102,12 +95,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/productPageProductName"
                 app:srcCompat="@drawable/generic_error" />
-
-            <!-- Unidade de medida -->
-
-            <!-- Ícone localização -->
-
-            <!-- Localização -->
 
             <ImageView
                 android:id="@+id/imageView20"
@@ -164,10 +151,6 @@
                 android:text="Measure"
                 app:layout_constraintStart_toEndOf="@+id/productPageProductWeight"
                 app:layout_constraintTop_toBottomOf="@+id/productPageDescription" />
-
-            <!-- Botão adicionar ao carrinho -->
-
-            <!-- Botão conversar com vendedor -->
 
             <TextView
                 android:id="@+id/productPageProductLocation"

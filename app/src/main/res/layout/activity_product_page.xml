@@ -24,7 +24,6 @@
             tools:layout_editor_absoluteX="-80dp"
             tools:layout_editor_absoluteY="-1dp">
 
-            <!-- Botão de voltar -->
             <ImageView
                 android:id="@+id/productPageBackButton"
                 android:layout_width="40sp"
@@ -35,7 +34,6 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/back_button" />
 
-            <!-- ViewPager2 (imagens do produto) -->
             <ImageView
                 android:id="@+id/productPageImage"
                 android:layout_width="320sp"
@@ -46,17 +44,18 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <!-- Nome do produto -->
             <TextView
                 android:id="@+id/productPageProductName"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="264dp"
+                android:layout_marginEnd="8dp"
+                android:ellipsize="end"
+                android:maxLines="1"
                 android:text="Nome do produto"
                 android:textSize="20sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.188"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/productPageProductValue2"
+                app:layout_constraintStart_toStartOf="@+id/productPageBackButton"
                 app:layout_constraintTop_toBottomOf="@+id/productPageBackButton" />
 
             <TextView
@@ -67,6 +66,7 @@
                 android:layout_marginEnd="44dp"
                 android:text="00,00"
                 android:textSize="20sp"
+                android:textColor="#095D19"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/productPageBackButton" />
 
@@ -81,21 +81,21 @@
                 app:layout_constraintTop_toBottomOf="@+id/productPageProductName"
                 app:srcCompat="@drawable/generic_error" />
 
-            <!-- Nome da empresa -->
             <TextView
                 android:id="@+id/productPageCompanyName"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="35dp"
+                android:layout_marginEnd="20dp"
                 android:text="Nome da empresa"
                 android:textSize="16sp"
+                android:maxLines="1"
+                android:ellipsize="end"
                 app:layout_constraintStart_toEndOf="@+id/productPageCompanyPhoto"
-                app:layout_constraintTop_toBottomOf="@+id/productPageProductName" />
+                app:layout_constraintTop_toBottomOf="@+id/productPageProductName"
+                app:layout_constraintEnd_toEndOf="parent" />
 
-            <!-- Peso ícone -->
-
-            <!-- Descrição -->
             <ImageView
                 android:id="@+id/imageView20"
                 android:layout_width="35sp"
@@ -108,22 +108,21 @@
                 app:srcCompat="@drawable/weight_vector"
                 app:tint="@color/verde_padrao" />
 
-            <EditText
+            <TextView
                 android:id="@+id/productPageDescription"
                 android:layout_width="320sp"
                 android:layout_height="70sp"
                 android:layout_marginTop="15dp"
-                android:ems="10"
-                android:focusable="true"
                 android:gravity="start|top"
                 android:hint="Descrição do produto"
-                android:inputType="textMultiLine"
+                android:scrollbars="vertical"
+                android:textSize="16sp"
+                android:textColor="@color/black"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.528"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/productPageCompanyPhoto" />
 
-            <!-- Peso -->
             <TextView
                 android:id="@+id/productPageProductWeight"
                 android:layout_width="wrap_content"
@@ -134,7 +133,6 @@
                 app:layout_constraintStart_toEndOf="@+id/imageView20"
                 app:layout_constraintTop_toBottomOf="@+id/productPageDescription" />
 
-            <!-- Unidade de medida -->
             <TextView
                 android:id="@+id/producPageUnitMesure"
                 android:layout_width="wrap_content"
@@ -145,7 +143,6 @@
                 app:layout_constraintStart_toEndOf="@+id/productPageProductWeight"
                 app:layout_constraintTop_toBottomOf="@+id/productPageDescription" />
 
-            <!-- Ícone localização -->
             <ImageView
                 android:id="@+id/imageView19"
                 android:layout_width="35sp"
@@ -158,7 +155,6 @@
                 app:srcCompat="@drawable/location_vector"
                 app:tint="@color/verde_padrao" />
 
-            <!-- Localização -->
             <TextView
                 android:id="@+id/productPageProductLocation"
                 android:layout_width="wrap_content"
@@ -169,9 +165,6 @@
                 app:layout_constraintStart_toEndOf="@+id/imageView19"
                 app:layout_constraintTop_toBottomOf="@+id/productPageProductWeight" />
 
-            <!-- Botão adicionar ao carrinho -->
-
-            <!-- Botão conversar com vendedor -->
             <Button
                 android:id="@+id/productPageAddToShoppingCart"
                 android:layout_width="320sp"
@@ -258,4 +251,5 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

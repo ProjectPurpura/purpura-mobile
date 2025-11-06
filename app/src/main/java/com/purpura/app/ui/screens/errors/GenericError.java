@@ -33,9 +33,10 @@ public class GenericError extends AppCompatActivity {
         Button tryAgain = findViewById(R.id.tryAgainErrorButton);
         tryAgain.setOnClickListener(v -> {
             if(FirebaseAuth.getInstance().getCurrentUser() != null){
-                methods.openScreenActivity(this, MainActivity.class);
-            }else{
+
                 finish();
+            } else {
+                methods.openScreenActivity(this, RegisterOrLogin.class);
             }
         });
     }
