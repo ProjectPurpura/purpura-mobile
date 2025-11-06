@@ -31,6 +31,7 @@ public class SplashScreen extends AppCompatActivity {
         }else{
             methods.openScreenActivity(this, MainActivity.class);
         }
+        finish();
     }
 
 

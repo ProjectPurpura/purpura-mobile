@@ -17,6 +17,19 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:clipToPadding="false"
         android:padding="8dp"
-        tools:listitem="@layout/my_orders_card" />
+        tools:listitem="@layout/my_orders_card"
+        android:visibility="visible" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <TextView
+        android:id="@+id/mySalesEmptyMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Você ainda não fez nenhuma venda 💸"
+        android:textSize="18sp"
+        android:gravity="center"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:visibility="visible" /> </androidx.constraintlayout.widget.ConstraintLayout>

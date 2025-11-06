@@ -91,6 +91,16 @@
                 app:layout_constraintStart_toEndOf="@id/accountBagIcon"
                 app:layout_constraintTop_toBottomOf="@+id/imageView9" />
 
+            <View
+                android:id="@+id/myOrdersRow"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="?attr/selectableItemBackground"
+                app:layout_constraintBottom_toBottomOf="@id/accountBagIcon"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/accountBagIcon" />
+
             <ImageView
                 android:id="@+id/imageView9"
                 android:layout_width="400sp"
@@ -125,6 +135,16 @@
                 app:layout_constraintStart_toEndOf="@+id/accountBoxIcon"
                 app:layout_constraintTop_toBottomOf="@+id/accountBagText" />
 
+            <View
+                android:id="@+id/myProductsRow"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="?attr/selectableItemBackground"
+                app:layout_constraintBottom_toBottomOf="@id/accountBoxIcon"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/accountBoxIcon" />
+
             <ImageView
                 android:id="@+id/accountLocationIcon"
                 android:layout_width="45sp"
@@ -150,6 +170,16 @@
                 app:layout_constraintStart_toEndOf="@+id/accountLocationIcon"
                 app:layout_constraintTop_toBottomOf="@+id/accountProductsText" />
 
+            <View
+                android:id="@+id/myAddressesRow"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="?attr/selectableItemBackground"
+                app:layout_constraintBottom_toBottomOf="@id/accountLocationIcon"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/accountLocationIcon" />
+
             <ImageView
                 android:id="@+id/accountPixcon"
                 android:layout_width="45sp"
@@ -173,6 +203,16 @@
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toEndOf="@+id/accountPixcon"
                 app:layout_constraintTop_toBottomOf="@+id/accountLocationText" />
+
+            <View
+                android:id="@+id/myPixKeysRow"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="?attr/selectableItemBackground"
+                app:layout_constraintBottom_toBottomOf="@id/accountPixcon"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/accountPixcon" />
 
             <ImageView
                 android:id="@+id/imageView13"
@@ -207,6 +247,16 @@
                 app:layout_constraintStart_toEndOf="@+id/accountPasswordIcon"
                 app:layout_constraintTop_toBottomOf="@+id/accountFragmentDasboardText" />
 
+            <View
+                android:id="@+id/changePasswordRow"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="?attr/selectableItemBackground"
+                app:layout_constraintBottom_toBottomOf="@id/accountPasswordIcon"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/accountPasswordIcon" />
+
             <ImageView
                 android:id="@+id/accountProfileImage"
                 android:layout_width="45sp"
@@ -229,6 +279,16 @@
                 app:layout_constraintHorizontal_bias="0.065"
                 app:layout_constraintStart_toEndOf="@+id/accountProfileImage"
                 app:layout_constraintTop_toBottomOf="@+id/accountPasswordText" />
+
+            <View
+                android:id="@+id/editProfileRow"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="?attr/selectableItemBackground"
+                app:layout_constraintBottom_toBottomOf="@id/accountProfileImage"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/accountProfileImage" />
 
             <ImageView
                 android:id="@+id/accountLogOutIcon"
@@ -257,6 +317,16 @@
                 app:layout_constraintStart_toEndOf="@+id/accountLogOutIcon"
                 app:layout_constraintTop_toBottomOf="@+id/imageView16" />
 
+            <View
+                android:id="@+id/logOutRow"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="?attr/selectableItemBackground"
+                app:layout_constraintBottom_toBottomOf="@id/accountLogOutIcon"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/accountLogOutIcon" />
+
             <ImageView
                 android:id="@+id/imageView16"
                 android:layout_width="400sp"
@@ -279,6 +349,16 @@
                 app:layout_constraintStart_toEndOf="@+id/accountFragmentDashboardIcon"
                 app:layout_constraintTop_toBottomOf="@+id/imageView13" />
 
+            <View
+                android:id="@+id/dashboardsRow"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="?attr/selectableItemBackground"
+                app:layout_constraintBottom_toBottomOf="@id/accountFragmentDashboardIcon"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/accountFragmentDashboardIcon" />
+
             <TextView
                 android:id="@+id/accountFragmentCompanyName"
                 android:layout_width="wrap_content"
@@ -300,8 +380,6 @@
                 app:layout_constraintEnd_toEndOf="@+id/toolbar3"
                 app:layout_constraintStart_toStartOf="@+id/toolbar3"
                 app:layout_constraintTop_toTopOf="@+id/toolbar3" />
-
-            <!-- continue com os próximos itens -->
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

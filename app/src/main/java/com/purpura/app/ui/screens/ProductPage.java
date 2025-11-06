@@ -5,9 +5,9 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Button;
-import android.widget.EditText;
+// import android.widget.EditText; // Removido
+import android.widget.TextView; // Adicionado (embora já estivesse lá, agora é o único)
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -55,7 +55,10 @@ public class ProductPage extends AppCompatActivity {
     private ImageView residueImage;
     private TextView residueName;
     private TextView residuePrice;
-    private EditText residueDescription;
+
+    // AQUI ESTÁ A MUDANÇA
+    private TextView residueDescription; // Trocado de EditText para TextView
+
     private TextView residueWeight;
     private TextView residueUnitType;
     private ShapeableImageView companyPhoto;
@@ -84,6 +87,7 @@ public class ProductPage extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_product_page);
         bindViews();
+
         addToCart.setEnabled(false);
         goToChat.setEnabled(false);
         Bundle env = getIntent().getExtras();
@@ -117,7 +121,7 @@ public class ProductPage extends AppCompatActivity {
             removeQuantity.setOnClickListener(v -> {
                 int currentQuantity = safeParseInt(productQuantity != null ? productQuantity.getText().toString() : "1", 1);
                 if (productQuantity != null && currentQuantity > 1) {
-                    productQuantity.setText(String.valueOf(currentQuantity - 1));
+                    productQuantity.setText(String.valueOf(currentQuantity + 1));
                 }
             });
         }
@@ -150,6 +154,8 @@ public class ProductPage extends AppCompatActivity {
                 Toast.makeText(this, "Erro: vendedor não identificado, por favor tente novamente.", Toast.LENGTH_SHORT).show();
                 return;
             }
+
+            Toast.makeText(ProductPage.this, "Processando sua compra...", Toast.LENGTH_SHORT).show();
             createOrder();
         });
     }
@@ -158,12 +164,17 @@ public class ProductPage extends AppCompatActivity {
         NumberFormat nf = NumberFormat.getCurrencyInstance(PT_BR);
         setTextSafe(residueName, nvl(residue.getNome()));
         setTextSafe(residuePrice, formatPriceBRL(residue.getPreco(), nf));
+
+        // Esta linha funciona igual para TextView, então está tudo certo
         if (residueDescription != null) residueDescription.setText(nvl(residue.getDescricao()));
+
         setTextSafe(residueWeight, formatNumber(residue.getPeso()));
         setTextSafe(residueUnitType, nvl(residue.getTipoUnidade()));
         loadResidueImage(residue.getUrlFoto());
+
         setTextSafe(companyName, "Carregando empresa...");
         setTextSafe(addressName, "Carregando endereço...");
+        loadCompanyPhoto(null);
 
         sellerId = effectiveCnpj(nvl(residue.getCnpj()), cnpjFallback);
         Log.d("ProductPage", "CNPJ efetivo para sellerId: " + sellerId);
@@ -174,8 +185,9 @@ public class ProductPage extends AppCompatActivity {
 
     private void loadCompany(String cnpj) {
         if (isEmpty(cnpj)) {
-            setTextSafe(companyName, "Empresa não encontrada");
+            setTextSafe(companyName, "Carregando vendedor...");
             loadCompanyPhoto(null);
+
             probeOwnerCnpj();
             return;
         }
@@ -204,6 +216,7 @@ public class ProductPage extends AppCompatActivity {
             public void onFailure(Call<Company> call, Throwable t) {
                 setTextSafe(companyName, "Empresa não encontrada");
                 loadCompanyPhoto(null);
+
                 probeOwnerCnpj();
             }
         });
@@ -272,7 +285,7 @@ public class ProductPage extends AppCompatActivity {
         residueImage       = findViewById(R.id.productPageImage);
         residueName        = findViewById(R.id.productPageProductName);
         residuePrice       = findViewById(R.id.productPageProductValue2);
-        residueDescription = findViewById(R.id.productPageDescription);
+        residueDescription = findViewById(R.id.productPageDescription); // Esta linha funciona igual
         residueWeight      = findViewById(R.id.productPageProductWeight);
         residueUnitType    = findViewById(R.id.producPageUnitMesure);
         if (residueUnitType == null) {

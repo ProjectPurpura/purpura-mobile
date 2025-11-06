@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView; // Importado
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -29,6 +30,7 @@ import retrofit2.Response;
 public class MyPurchasesFragment extends Fragment {
 
     private RecyclerView recyclerView;
+    private TextView emptyMessage; // View para a mensagem amigável
     private PurchaseAdapter adapter;
     private final PostgresService service = new PostgresService();
     private final MongoService mongoService = new MongoService();
@@ -38,51 +40,88 @@ public class MyPurchasesFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_my_purchases, container, false);
+
+        // Encontra as views
         recyclerView = v.findViewById(R.id.myPurchasesRecyclerView);
+        emptyMessage = v.findViewById(R.id.myPurchasesEmptyMessage); // Encontra o TextView
+
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-        adapter = new PurchaseAdapter(new ArrayList<>(), this.getActivity(), service, "", mongoService);
-        recyclerView.setAdapter(adapter);
+
+        // O Adapter será criado e setado dentro do loadSales, depois que tivermos o CNPJ
+
         loadSales();
         return v;
     }
 
     private void loadSales() {
+        // Esconde tudo e mostra um "carregando" (implícito, lista vazia)
+        recyclerView.setVisibility(View.GONE);
+        emptyMessage.setVisibility(View.GONE);
+
         FirebaseFirestore.getInstance()
                 .collection("empresa")
                 .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .get()
                 .addOnSuccessListener(d -> {
+                    if (!isAdded()) return; // Garante que o Fragment ainda existe
+
                     cnpj = d.getString("cnpj");
                     if (cnpj == null || cnpj.isEmpty()) {
                         Toast.makeText(requireContext(), "CNPJ não encontrado", Toast.LENGTH_SHORT).show();
+                        emptyMessage.setText("Erro: CNPJ não encontrado."); // Mostra erro
+                        emptyMessage.setVisibility(View.VISIBLE);
                         return;
                     }
 
-                    salesCall = service.getOrdersByClient(cnpj);
-
+                    // AGORA SIM: Cria o adapter com o CNPJ correto
                     adapter = new PurchaseAdapter(new ArrayList<>(), this.getActivity(), service, cnpj, mongoService);
                     recyclerView.setAdapter(adapter);
 
+                    salesCall = service.getOrdersByClient(cnpj);
                     salesCall.enqueue(new Callback<List<OrderResponse>>() {
                         @Override
                         public void onResponse(@NonNull Call<List<OrderResponse>> call, @NonNull Response<List<OrderResponse>> response) {
                             if (!isAdded()) return;
-                            if (response.isSuccessful() && response.body() != null) {
-                                adapter.updateList(response.body());
+
+                            List<OrderResponse> purchases = response.body();
+
+                            // AQUI ESTÁ A MÁGICA
+                            if (response.isSuccessful() && purchases != null && !purchases.isEmpty()) {
+                                // LISTA CHEIA!
+                                recyclerView.setVisibility(View.VISIBLE);
+                                emptyMessage.setVisibility(View.GONE);
+                                adapter.updateList(purchases);
                             } else {
-                                Toast.makeText(requireContext(), "HTTP " + response.code(), Toast.LENGTH_SHORT).show();
+                                // LISTA VAZIA!
+                                recyclerView.setVisibility(View.GONE);
+                                emptyMessage.setVisibility(View.VISIBLE);
+
+                                if (!response.isSuccessful()) {
+                                    emptyMessage.setText("Erro ao carregar compras (HTTP " + response.code() + ")");
+                                } else {
+                                    // A MENSAGEM AMIGÁVEL
+                                    emptyMessage.setText("Você ainda não fez nenhuma compra 🛒");
+                                }
                             }
                         }
 
                         @Override
                         public void onFailure(@NonNull Call<List<OrderResponse>> call, @NonNull Throwable t) {
                             if (!isAdded()) return;
+                            // Erro de API
+                            recyclerView.setVisibility(View.GONE);
+                            emptyMessage.setVisibility(View.VISIBLE);
+                            emptyMessage.setText("Erro de conexão. Tente novamente.");
                             Toast.makeText(requireContext(), "Erro: " + t.getMessage(), Toast.LENGTH_LONG).show();
                         }
                     });
                 })
                 .addOnFailureListener(e -> {
                     if (!isAdded()) return;
+                    // Erro de Firestore
+                    recyclerView.setVisibility(View.GONE);
+                    emptyMessage.setVisibility(View.VISIBLE);
+                    emptyMessage.setText("Erro ao buscar dados da empresa.");
                     Toast.makeText(requireContext(), "Erro empresa: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }

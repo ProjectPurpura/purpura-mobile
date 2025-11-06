@@ -4,7 +4,9 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.view.View; // Import
 import android.widget.ImageView;
+import android.widget.TextView; // Import
 import android.widget.Toast;
 
 import androidx.navigation.NavController;
@@ -42,6 +44,9 @@ public class MyProducts extends AppCompatActivity {
     private AppBarConfiguration appBarConfiguration;
     private ActivityMyProductsBinding binding;
 
+    // Nova View para a mensagem
+    private TextView emptyMessageTextView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,12 +57,32 @@ public class MyProducts extends AppCompatActivity {
         ImageView backButton = findViewById(R.id.myProductsBackButton);
         backButton.setOnClickListener(v -> finish());
 
+        // Encontra as Views
+        emptyMessageTextView = findViewById(R.id.myProductsEmptyMessage);
+        recyclerView = findViewById(R.id.myProductsRecyclerView);
+
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_my_prroducts);
         appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
 
-        recyclerView = findViewById(R.id.myProductsRecyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        // Configura o Layout Manager uma vez
+        int numeroDeColunas = 2;
+        recyclerView.setLayoutManager(new GridLayoutManager(this, numeroDeColunas));
 
+        // Configura o FAB
+        binding.addProducts.setOnClickListener(v -> {
+            methods.openScreenActivity(MyProducts.this, RegisterProduct.class);
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Carrega os produtos toda vez que a tela ficar visível
+        // Isso garante que a lista atualize após cadastrar um novo produto
+        loadProducts();
+    }
+
+    private void loadProducts() {
         try {
             FirebaseFirestore.getInstance()
                     .collection("empresa")
@@ -71,9 +96,21 @@ public class MyProducts extends AppCompatActivity {
                                 public void onResponse(Call<List<Residue>> call, Response<List<Residue>> response) {
                                     if (response.isSuccessful()) {
                                         List<Residue> residues = response.body();
-                                        binding.addProducts.setOnClickListener(v -> {
-                                            methods.openScreenActivity(MyProducts.this, RegisterProduct.class);
-                                        });
+
+                                        // AQUI ESTÁ A LÓGICA DA MENSAGEM AMIGÁVEL
+                                        if (residues == null || residues.isEmpty()) {
+                                            // Não há produtos, mostra a mensagem
+                                            recyclerView.setVisibility(View.GONE);
+                                            emptyMessageTextView.setVisibility(View.VISIBLE);
+                                        } else {
+                                            // Há produtos, mostra a lista
+                                            recyclerView.setVisibility(View.VISIBLE);
+                                            emptyMessageTextView.setVisibility(View.GONE);
+
+                                            // Popula o adapter com os dados
+                                            MyResiduesAdapter adapter = new MyResiduesAdapter(residues, MyProducts.this);
+                                            recyclerView.setAdapter(adapter);
+                                        }
                                     } else {
                                         Toast.makeText(MyProducts.this, "Erro ao buscar resíduos", Toast.LENGTH_SHORT).show();
                                         methods.openScreenActivity(MyProducts.this, GenericError.class);
@@ -88,17 +125,7 @@ public class MyProducts extends AppCompatActivity {
                     });
         } catch (Exception e) {
             methods.openScreenActivity(this, GenericError.class);
-            throw new RuntimeException(e);
         }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        int numeroDeColunas = 2;
-        GridLayoutManager layoutManager = new GridLayoutManager(this, numeroDeColunas);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(new MyResiduesAdapter(new ArrayList<Residue>(), this));
     }
 
     @Override

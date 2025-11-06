@@ -1,5 +1,7 @@
 package com.purpura.app.adapters.postgres;
 
+import android.app.Activity; // Importado
+import android.content.Context; // Importado
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -111,9 +113,21 @@ public class OrderItemsAdapter extends RecyclerView.Adapter<OrderItemsAdapter.VH
         });
     }
 
+    // MÉTODO CORRIGIDO
     private void bindResidue(@NonNull VH h, @NonNull Residue residue) {
+        Context context = h.image.getContext();
+
+        // CHECAGEM DE SEGURANÇA
+        if (context instanceof Activity) {
+            Activity activity = (Activity) context;
+            if (activity.isDestroyed() || activity.isFinishing()) {
+                return; // A tela morreu, não faça nada!
+            }
+        }
+
+        // Se chegamos aqui, a tela está viva.
         h.title.setText(residue.getNome() == null ? "Sem nome" : residue.getNome());
-        Glide.with(h.image.getContext())
+        Glide.with(context)
                 .load(residue.getUrlFoto())
                 .circleCrop()
                 .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
@@ -122,20 +136,43 @@ public class OrderItemsAdapter extends RecyclerView.Adapter<OrderItemsAdapter.VH
                 .into(h.image);
     }
 
+    // MÉTODO CORRIGIDO
     private void bindError(@NonNull VH h, @NonNull String msg) {
+        Context context = h.image.getContext();
+
+        // CHECAGEM DE SEGURANÇA
+        if (context instanceof Activity) {
+            Activity activity = (Activity) context;
+            if (activity.isDestroyed() || activity.isFinishing()) {
+                return; // A tela morreu, não faça nada!
+            }
+        }
+
+        // Se chegamos aqui, a tela está viva.
         h.title.setText(msg);
-        Glide.with(h.image.getContext())
+        Glide.with(context)
                 .load(R.drawable.ic_image_placeholder)
                 .circleCrop()
                 .into(h.image);
     }
 
+    // MÉTODO CORRIGIDO
     @Override
     public void onViewRecycled(@NonNull VH h) {
         super.onViewRecycled(h);
         if (h.currentCall != null) h.currentCall.cancel();
         h.currentCall = null;
-        Glide.with(h.image.getContext()).clear(h.image);
+
+        Context context = h.image.getContext();
+
+        // CHECAGEM DE SEGURANÇA
+        if (context instanceof Activity) {
+            Activity activity = (Activity) context;
+            if (activity.isDestroyed() || activity.isFinishing()) {
+                return; // A tela morreu, não faça nada!
+            }
+        }
+        Glide.with(context).clear(h.image);
     }
 
     @Override
