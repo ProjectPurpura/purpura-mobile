@@ -74,32 +74,28 @@ public class MySalesFragment extends Fragment {
                     }
 
                     // AGORA SIM: Cria o adapter com o CNPJ correto
-                    adapter = new SalesAdapter(new ArrayList<>(), service, cnpj, mongoService);
+                    adapter = new SalesAdapter(new ArrayList<>(), service, cnpj, mongoService, this.getActivity());
                     recyclerView.setAdapter(adapter);
 
                     salesCall = service.getOrdersBySeller(cnpj);
-                    salesCall.enqueue(new Callback<List<OrderResponse>>() {
+                    salesCall.enqueue(new Callback<>() {
                         @Override
                         public void onResponse(@NonNull Call<List<OrderResponse>> call, @NonNull Response<List<OrderResponse>> response) {
                             if (!isAdded()) return;
 
                             List<OrderResponse> sales = response.body();
 
-                            // AQUI ESTÁ A MÁGICA
                             if (response.isSuccessful() && sales != null && !sales.isEmpty()) {
-                                // LISTA CHEIA!
                                 recyclerView.setVisibility(View.VISIBLE);
                                 emptyMessage.setVisibility(View.GONE);
                                 adapter.updateList(sales);
                             } else {
-                                // LISTA VAZIA!
                                 recyclerView.setVisibility(View.GONE);
                                 emptyMessage.setVisibility(View.VISIBLE);
 
                                 if (!response.isSuccessful()) {
                                     emptyMessage.setText("Erro ao carregar vendas (HTTP " + response.code() + ")");
                                 } else {
-                                    // A MENSAGEM AMIGÁVEL
                                     emptyMessage.setText("Você ainda não fez nenhuma venda 💸");
                                 }
                             }

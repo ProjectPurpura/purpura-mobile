@@ -1,11 +1,14 @@
 package com.purpura.app.adapters.postgres;
 
+import android.app.Activity;
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -38,12 +41,14 @@ public class SalesAdapter extends RecyclerView.Adapter<SalesAdapter.VH> {
     private final String cnpj;
     private final MongoService mongoService;
     private final DecimalFormat numberFmt = (DecimalFormat) DecimalFormat.getNumberInstance(new Locale("pt", "BR"));
+    private final Activity activity;
 
-    public SalesAdapter(List<OrderResponse> orders, PostgresService service, String cnpj, MongoService mongoService) {
+    public SalesAdapter(List<OrderResponse> orders, PostgresService service, String cnpj, MongoService mongoService, Activity activity) {
         this.orders = orders != null ? orders : new ArrayList<>();
         this.service = service;
         this.cnpj = cnpj;
         this.mongoService = mongoService;
+        this.activity = activity;
         numberFmt.applyPattern("#,##0.00");
     }
 
@@ -98,6 +103,10 @@ public class SalesAdapter extends RecyclerView.Adapter<SalesAdapter.VH> {
                 @Override
                 public void onResponse(Call<OrderResponse> call, Response<OrderResponse> response) {
                     h.status.setText("APROVADO");
+
+                    activity.runOnUiThread(() -> {
+                        Toast.makeText(activity, "Pedido Aprovado com sucesso", Toast.LENGTH_SHORT).show();
+                    });
                 }
 
                 @Override
